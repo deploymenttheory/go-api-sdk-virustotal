@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "WrongCredentialsError",
+    "message": "The provided API key is incorrect"
+  }
+}

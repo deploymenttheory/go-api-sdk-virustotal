@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "NotFoundError",
+    "message": "IP address \"999.999.999.999\" not found"
+  }
+}
