@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1055",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1055"
+      },
+      "context_attributes": {
+        "severity": "HIGH"
+      }
+    },
+    {
+      "type": "attack_technique",
+      "id": "T1082",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1082"
+      },
+      "context_attributes": {
+        "severity": "INFO"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/file_behaviours/sandbox123/relationships/attack_techniques"
+  },
+  "meta": {
+    "count": 2
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "data": {
+    "attributes": {
+      "categories": {
+        "Alexa": "search engines and portals",
+        "BitDefender": "search engines",
+        "Webroot": "search engines"
+      },
+      "first_submission_date": 1634000000,
+      "last_analysis_date": 1640000000,
+      "last_analysis_results": {
+        "AlienVault": {
+          "category": "harmless",
+          "engine_name": "AlienVault",
+          "method": "blacklist",
+          "result": "clean"
+        },
+        "Google Safebrowsing": {
+          "category": "harmless",
+          "engine_name": "Google Safebrowsing",
+          "method": "blacklist",
+          "result": "clean"
+        },
+        "Sophos": {
+          "category": "harmless",
+          "engine_name": "Sophos",
+          "method": "blacklist",
+          "result": "unrated"
+        }
+      },
+      "last_analysis_stats": {
+        "harmless": 78,
+        "malicious": 0,
+        "suspicious": 0,
+        "timeout": 0,
+        "undetected": 10
+      },
+      "last_final_url": "https://www.example.com/",
+      "last_http_response_code": 200,
+      "last_http_response_content_length": 1256,
+      "last_http_response_content_sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+      "last_http_response_headers": {
+        "content-type": "text/html; charset=UTF-8",
+        "server": "Apache/2.4.41"
+      },
+      "last_modification_date": 1640000000,
+      "last_submission_date": 1640000000,
+      "reputation": 1450,
+      "tags": [
+        "popular"
+      ],
+      "times_submitted": 8542,
+      "title": "Example Domain",
+      "total_votes": {
+        "harmless": 1400,
+        "malicious": 5
+      },
+      "url": "https://www.example.com"
+    },
+    "id": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/urls/275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f"
+    },
+    "type": "url"
+  }
+}

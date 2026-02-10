@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "date": 1640000000,
+        "value": 1,
+        "verdict": "harmless"
+      },
+      "id": "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-vote123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/votes/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-vote123"
+      },
+      "type": "vote"
+    },
+    {
+      "attributes": {
+        "date": 1639900000,
+        "value": 1,
+        "verdict": "harmless"
+      },
+      "id": "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-vote456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/votes/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-vote456"
+      },
+      "type": "vote"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/votes"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "count": 2
+  },
+  "data": [
+    {
+      "type": "file_behaviour",
+      "id": "testfile123_VirusTotal Jujubox",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/file_behaviours/testfile123_VirusTotal Jujubox"
+      },
+      "attributes": {
+        "analysis_date": 1609459200,
+        "behash": "abc123def456",
+        "sandbox_name": "VirusTotal Jujubox",
+        "has_html_report": true,
+        "has_pcap": true,
+        "has_evtx": false,
+        "has_memdump": true,
+        "last_modification_date": 1609459300,
+        "calls_highlighted": [
+          "GetTickCount"
+        ],
+        "files_opened": [
+          "C:\\WINDOWS\\system32\\kernel32.dll"
+        ],
+        "tags": [
+          "DIRECT_CPU_CLOCK_ACCESS"
+        ]
+      }
+    },
+    {
+      "type": "file_behaviour",
+      "id": "testfile123_Zenbox",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/file_behaviours/testfile123_Zenbox"
+      },
+      "attributes": {
+        "analysis_date": 1609459250,
+        "behash": "def456abc789",
+        "sandbox_name": "Zenbox",
+        "has_html_report": true,
+        "has_pcap": false,
+        "has_evtx": true,
+        "has_memdump": false,
+        "last_modification_date": 1609459350,
+        "processes_created": [
+          "notepad.exe"
+        ],
+        "tags": [
+          "RUNTIME_MODULES"
+        ]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/testfile123/behaviours"
+  }
+}

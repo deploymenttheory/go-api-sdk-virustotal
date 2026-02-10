@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "UnauthorizedError",
+    "message": "Invalid API key"
+  }
+}

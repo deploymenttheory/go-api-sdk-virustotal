@@ -75,6 +75,25 @@ func (c *Client) PostWithQuery(ctx context.Context, path string, queryParams map
 	return c.executeRequest(req, "POST", path)
 }
 
+// PostForm executes a POST request with form-urlencoded data
+func (c *Client) PostForm(ctx context.Context, path string, formData map[string]string, headers map[string]string, result any) error {
+	req := c.client.R().
+		SetContext(ctx).
+		SetResult(result)
+
+	if formData != nil {
+		req.SetFormData(formData)
+	}
+
+	for k, v := range headers {
+		if v != "" && k != "Content-Type" { // Skip Content-Type as resty handles it automatically for form data
+			req.SetHeader(k, v)
+		}
+	}
+
+	return c.executeRequest(req, "POST", path)
+}
+
 // PostMultipart executes a POST request with multipart form data and progress tracking
 func (c *Client) PostMultipart(ctx context.Context, path string, fileField string, fileName string, fileReader io.Reader, fileSize int64, formFields map[string]string, headers map[string]string, progressCallback interfaces.MultipartProgressCallback, result any) error {
 	req := c.client.R().
@@ -193,8 +212,9 @@ func (c *Client) DeleteWithBody(ctx context.Context, path string, body any, head
 	return c.executeRequest(req, "DELETE", path)
 }
 
-// GetCSV performs a GET request for CSV format and returns raw bytes
-func (c *Client) GetCSV(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) ([]byte, error) {
+// GetBytes performs a GET request and returns raw bytes without unmarshaling
+// Use this for non-JSON responses like HTML, CSV, binary files (EVTX, PCAP, memdump), etc.
+func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) ([]byte, error) {
 	req := c.client.R().
 		SetContext(ctx)
 
@@ -210,16 +230,16 @@ func (c *Client) GetCSV(ctx context.Context, path string, queryParams map[string
 		}
 	}
 
-	c.logger.Debug("Executing CSV request",
+	c.logger.Debug("Executing bytes request",
 		zap.String("method", "GET"),
 		zap.String("path", path))
 
 	resp, err := req.Get(path)
 	if err != nil {
-		c.logger.Error("CSV request failed",
+		c.logger.Error("Bytes request failed",
 			zap.String("path", path),
 			zap.Error(err))
-		return nil, fmt.Errorf("CSV request failed: %w", err)
+		return nil, fmt.Errorf("bytes request failed: %w", err)
 	}
 
 	if resp.IsError() {
@@ -234,7 +254,7 @@ func (c *Client) GetCSV(ctx context.Context, path string, queryParams map[string
 	}
 
 	body := []byte(resp.String())
-	c.logger.Debug("CSV request completed successfully",
+	c.logger.Debug("Bytes request completed successfully",
 		zap.String("path", path),
 		zap.Int("status_code", resp.StatusCode()),
 		zap.Int("content_length", len(body)))

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "attributes": {
+      "date": 1640000000,
+      "html": "<p>This is a test comment</p>",
+      "tags": [],
+      "text": "This is a test comment",
+      "votes": {
+        "harmless": 0,
+        "malicious": 0
+      }
+    },
+    "id": "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-newComment123",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/comments/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-newComment123"
+    },
+    "type": "comment"
+  }
+}

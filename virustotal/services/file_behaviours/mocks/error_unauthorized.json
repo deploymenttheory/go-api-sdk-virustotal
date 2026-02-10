@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "WrongCredentialsError",
+    "message": "Your API key is not valid or you are not authorized to access this resource."
+  }
+}

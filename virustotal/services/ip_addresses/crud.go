@@ -205,7 +205,6 @@ func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, r
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -223,7 +222,6 @@ func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, r
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allObjects []RelatedObject
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
@@ -266,7 +264,6 @@ func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -284,7 +281,6 @@ func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allDescriptors []ObjectDescriptor
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
@@ -324,7 +320,6 @@ func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetV
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -342,7 +337,6 @@ func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetV
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allVotes []Vote
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {

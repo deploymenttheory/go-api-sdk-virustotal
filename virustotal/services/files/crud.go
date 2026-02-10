@@ -313,7 +313,6 @@ func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRel
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -331,7 +330,6 @@ func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRel
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allObjects []RelatedObject
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
@@ -410,7 +408,6 @@ func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relati
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -428,7 +425,6 @@ func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relati
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allObjects []RelatedObject
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
@@ -471,7 +467,6 @@ func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id stri
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -489,7 +484,6 @@ func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id stri
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allDescriptors []ObjectDescriptor
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
@@ -577,7 +571,6 @@ func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesO
 
 	queryParams := make(map[string]string)
 
-	// Manual Pagination Mode: opts provided means single page request
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -595,7 +588,6 @@ func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesO
 		return &result, nil
 	}
 
-	// Default Paginated GET: Automatically fetch all pages
 	var allVotes []Vote
 
 	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {

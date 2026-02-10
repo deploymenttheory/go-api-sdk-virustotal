@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1055",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1055"
+      },
+      "attributes": {
+        "name": "Process Injection",
+        "severity": "HIGH"
+      }
+    },
+    {
+      "type": "attack_technique",
+      "id": "T1082",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1082"
+      },
+      "attributes": {
+        "name": "System Information Discovery",
+        "severity": "INFO"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/file_behaviours/sandbox123/attack_techniques"
+  },
+  "meta": {
+    "count": 2
+  }
+}

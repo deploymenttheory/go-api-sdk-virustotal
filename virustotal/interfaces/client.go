@@ -17,12 +17,13 @@ type HTTPClient interface {
 	Get(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) error
 	Post(ctx context.Context, path string, body any, headers map[string]string, result any) error
 	PostWithQuery(ctx context.Context, path string, queryParams map[string]string, body any, headers map[string]string, result any) error
+	PostForm(ctx context.Context, path string, formData map[string]string, headers map[string]string, result any) error
 	PostMultipart(ctx context.Context, path string, fileField string, fileName string, fileReader io.Reader, fileSize int64, formFields map[string]string, headers map[string]string, progressCallback MultipartProgressCallback, result any) error
 	Put(ctx context.Context, path string, body any, headers map[string]string, result any) error
 	Patch(ctx context.Context, path string, body any, headers map[string]string, result any) error
 	Delete(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) error
 	DeleteWithBody(ctx context.Context, path string, body any, headers map[string]string, result any) error
-	GetCSV(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) ([]byte, error)
+	GetBytes(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) ([]byte, error)
 	GetLogger() *zap.Logger
 	QueryBuilder() ServiceQueryBuilder
 

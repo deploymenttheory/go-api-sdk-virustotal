@@ -1,0 +1,38 @@
+{
+  "data": {
+    "calls_highlighted": [
+      "GetTickCount"
+    ],
+    "files_opened": [
+      "C:\\WINDOWS\\system32\\ws2_32.dll",
+      "C:\\WINDOWS\\system32\\kernel32.dll"
+    ],
+    "modules_loaded": [
+      "comctl32.dll",
+      "USER32.dll"
+    ],
+    "mutexes_created": [
+      "CTF.LBES.MutexDefaultS-1-5-21-1482476501-1645522239-1417001333-500"
+    ],
+    "processes_tree": [
+      {
+        "process_id": "1036",
+        "name": "test.exe"
+      }
+    ],
+    "registry_keys_opened": [
+      "\\Registry\\Machine\\Software\\Microsoft\\Windows NT\\CurrentVersion"
+    ],
+    "tags": [
+      "DIRECT_CPU_CLOCK_ACCESS",
+      "RUNTIME_MODULES"
+    ],
+    "text_highlighted": [
+      "&Open",
+      "&Cancel"
+    ]
+  },
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/testfile123/behaviour_summary"
+  }
+}

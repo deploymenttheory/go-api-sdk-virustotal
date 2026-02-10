@@ -1,0 +1,55 @@
+{
+  "data": {
+    "VirusTotal Jujubox": {
+      "tactics": [
+        {
+          "id": "TA0007",
+          "name": "Discovery",
+          "description": "The adversary is trying to figure out your environment.",
+          "link": "https://attack.mitre.org/tactics/TA0007/",
+          "techniques": [
+            {
+              "id": "T1082",
+              "name": "System Information Discovery",
+              "description": "An adversary may attempt to get detailed information about the operating system and hardware.",
+              "link": "https://attack.mitre.org/techniques/T1082/",
+              "signatures": [
+                {
+                  "severity": "INFO",
+                  "description": "Reads software policies"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "Zenbox": {
+      "tactics": [
+        {
+          "id": "TA0005",
+          "name": "Defense Evasion",
+          "description": "The adversary is trying to avoid being detected.",
+          "link": "https://attack.mitre.org/tactics/TA0005/",
+          "techniques": [
+            {
+              "id": "T1055",
+              "name": "Process Injection",
+              "description": "Adversaries may inject code into processes.",
+              "link": "https://attack.mitre.org/techniques/T1055/",
+              "signatures": [
+                {
+                  "severity": "HIGH",
+                  "description": "Spawns processes"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/testfile123/behaviour_mitre_trees"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "data": {
+    "calls_highlighted": [
+      "GetTickCount",
+      "CreateFileW"
+    ],
+    "files_opened": [
+      "C:\\WINDOWS\\system32\\ws2_32.dll"
+    ],
+    "modules_loaded": [
+      "comctl32.dll"
+    ],
+    "tags": [
+      "DIRECT_CPU_CLOCK_ACCESS"
+    ]
+  },
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/behaviour_summary?hashes=hash1,hash2"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "data": {
+    "type": "file_behaviour",
+    "id": "sandbox123",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/file_behaviours/sandbox123"
+    },
+    "attributes": {
+      "analysis_date": 1609459200,
+      "behash": "abc123def456",
+      "sandbox_name": "VirusTotal Jujubox",
+      "has_html_report": true,
+      "has_pcap": true,
+      "has_evtx": false,
+      "has_memdump": true,
+      "last_modification_date": 1609459300,
+      "calls_highlighted": [
+        "GetTickCount",
+        "CreateFileW"
+      ],
+      "files_opened": [
+        "C:\\WINDOWS\\system32\\kernel32.dll",
+        "C:\\WINDOWS\\system32\\ws2_32.dll"
+      ],
+      "modules_loaded": [
+        "comctl32.dll",
+        "USER32.dll"
+      ],
+      "processes_tree": [
+        {
+          "process_id": "1036",
+          "name": "test.exe"
+        }
+      ],
+      "registry_keys_opened": [
+        "\\Registry\\Machine\\Software\\Microsoft\\Windows NT\\CurrentVersion"
+      ],
+      "tags": [
+        "DIRECT_CPU_CLOCK_ACCESS",
+        "RUNTIME_MODULES"
+      ],
+      "verdicts": [
+        "malicious"
+      ]
+    }
+  }
+}
