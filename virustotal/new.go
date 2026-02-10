@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/comments"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/domains"
 	filebehaviours "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/file_behaviours"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/files"
@@ -23,6 +24,7 @@ type Client struct {
 	Files          *files.Service
 	FileBehaviours *filebehaviours.Service
 	URLs           *urls.Service
+	Comments       *comments.Service
 }
 
 // NewClient creates a new VirusTotal API client
@@ -52,6 +54,7 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 		Files:          files.NewService(httpClient),
 		FileBehaviours: filebehaviours.NewService(httpClient),
 		URLs:           urls.NewService(httpClient),
+		Comments:       comments.NewService(httpClient),
 	}
 
 	return c, nil

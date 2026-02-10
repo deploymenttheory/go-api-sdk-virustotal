@@ -1,0 +1,50 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "date": 1640000000,
+        "html": "<p>This URL looks suspicious #malware</p>",
+        "tags": [
+          "malware"
+        ],
+        "text": "This URL looks suspicious #malware",
+        "votes": {
+          "positive": 5,
+          "negative": 1,
+          "abuse": 0
+        }
+      },
+      "id": "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
+      },
+      "type": "comment"
+    },
+    {
+      "attributes": {
+        "date": 1639900000,
+        "html": "<p>Clean domain #safe</p>",
+        "tags": [
+          "safe"
+        ],
+        "text": "Clean domain #safe",
+        "votes": {
+          "positive": 10,
+          "negative": 0,
+          "abuse": 0
+        }
+      },
+      "id": "d-example.com-def67890",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/d-example.com-def67890"
+      },
+      "type": "comment"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/comments?limit=2"
+  },
+  "meta": {
+    "count": 2
+  }
+}

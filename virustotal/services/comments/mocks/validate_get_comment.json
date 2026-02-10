@@ -1,0 +1,22 @@
+{
+  "data": {
+    "attributes": {
+      "date": 1640000000,
+      "html": "<p>This URL looks suspicious #malware</p>",
+      "tags": [
+        "malware"
+      ],
+      "text": "This URL looks suspicious #malware",
+      "votes": {
+        "positive": 5,
+        "negative": 1,
+        "abuse": 0
+      }
+    },
+    "id": "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/comments/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
+    },
+    "type": "comment"
+  }
+}

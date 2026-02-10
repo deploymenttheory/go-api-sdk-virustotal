@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "id": "user123",
+      "type": "user"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/comments/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345/relationships/author"
+  },
+  "meta": {
+    "count": 1
+  }
+}
