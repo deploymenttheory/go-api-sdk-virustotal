@@ -1,0 +1,56 @@
+{
+  "data": {
+    "type": "file",
+    "id": "44d88612fea8a8f36de82e1278abb02f",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f"
+    },
+    "attributes": {
+      "md5": "44d88612fea8a8f36de82e1278abb02f",
+      "sha1": "3395856ce81f2b7382dee72602f798b642f14140",
+      "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+      "type_description": "Executable file",
+      "type_tag": "peexe",
+      "size": 5120,
+      "names": ["test.exe"],
+      "meaningful_name": "test.exe",
+      "magic": "PE32 executable (console) Intel 80386, for MS Windows",
+      "tags": ["peexe", "64bits"],
+      "last_analysis_date": 1638360000,
+      "last_analysis_results": {
+        "Avast": {
+          "category": "undetected",
+          "engine_name": "Avast",
+          "method": "blacklist",
+          "result": null
+        },
+        "Microsoft": {
+          "category": "malicious",
+          "engine_name": "Microsoft",
+          "method": "blacklist",
+          "result": "Trojan:Win32/Test"
+        }
+      },
+      "last_analysis_stats": {
+        "harmless": 50,
+        "malicious": 15,
+        "suspicious": 3,
+        "undetected": 7,
+        "timeout": 0
+      },
+      "reputation": -50,
+      "total_votes": {
+        "harmless": 5,
+        "malicious": 25
+      },
+      "creation_date": 1638360000,
+      "first_submission_date": 1638360000,
+      "last_submission_date": 1638360000,
+      "last_modification_date": 1638360000,
+      "times_submitted": 100,
+      "ssdeep": "96:W7W7W7W7W7W7W7W7W7W7W7W7W7W7W7W7:WWWWWWWWWWWWWWWW",
+      "tlsh": "T1ABC123DEF456GHI789JKL012MNO345PQR678STU901VWX234YZA567BCD",
+      "vhash": "015066655d4d1d1d1d1z1d"
+    }
+  }
+}

@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ipaddresses"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/domains"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/files"
+	ipaddresses "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ip_addresses"
 )
 
 // Client is the main entry point for the VirusTotal API SDK
@@ -15,6 +17,8 @@ type Client struct {
 
 	// Services
 	IPAddresses *ipaddresses.Service
+	Domains     *domains.Service
+	Files       *files.Service
 }
 
 // NewClient creates a new VirusTotal API client
@@ -40,6 +44,8 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 	c := &Client{
 		Client:      httpClient,
 		IPAddresses: ipaddresses.NewService(httpClient),
+		Domains:     domains.NewService(httpClient),
+		Files:       files.NewService(httpClient),
 	}
 
 	return c, nil

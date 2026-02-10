@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "AuthenticationRequiredError",
+    "message": "API key required"
+  }
+}

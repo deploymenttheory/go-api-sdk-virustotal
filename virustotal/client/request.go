@@ -3,7 +3,9 @@ package client
 import (
 	"context"
 	"fmt"
+	"io"
 
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 	"go.uber.org/zap"
 	"resty.dev/v3"
 )
@@ -66,6 +68,46 @@ func (c *Client) PostWithQuery(ctx context.Context, path string, queryParams map
 
 	for k, v := range headers {
 		if v != "" {
+			req.SetHeader(k, v)
+		}
+	}
+
+	return c.executeRequest(req, "POST", path)
+}
+
+// PostMultipart executes a POST request with multipart form data and progress tracking
+func (c *Client) PostMultipart(ctx context.Context, path string, fileField string, fileName string, fileReader io.Reader, fileSize int64, formFields map[string]string, headers map[string]string, progressCallback interfaces.MultipartProgressCallback, result any) error {
+	req := c.client.R().
+		SetContext(ctx).
+		SetResult(result)
+
+	// Set file field using SetMultipartFields with progress callback
+	if fileReader != nil && fileName != "" && fileField != "" {
+		multipartField := &resty.MultipartField{
+			Name:     fileField,
+			FileName: fileName,
+			Reader:   fileReader,
+			FileSize: fileSize,
+		}
+
+		// Add progress callback if provided
+		if progressCallback != nil {
+			multipartField.ProgressCallback = func(progress resty.MultipartFieldProgress) {
+				progressCallback(progress.Name, progress.FileName, progress.Written, progress.FileSize)
+			}
+		}
+
+		req.SetMultipartFields(multipartField)
+	}
+
+	// Set form fields using SetMultipartFormData for multipart requests
+	if len(formFields) > 0 {
+		req.SetMultipartFormData(formFields)
+	}
+
+	// Set headers (excluding Content-Type as resty automatically handles it for multipart)
+	for k, v := range headers {
+		if v != "" && k != "Content-Type" {
 			req.SetHeader(k, v)
 		}
 	}

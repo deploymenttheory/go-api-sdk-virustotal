@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "BadRequestError",
+    "message": "Comment text is required"
+  }
+}

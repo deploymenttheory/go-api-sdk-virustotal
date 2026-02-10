@@ -1,0 +1,15 @@
+{
+  "data": {
+    "type": "comment",
+    "id": "f-44d88612fea8a8f36de82e1278abb02f-5f8d5e2b",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/comments/f-44d88612fea8a8f36de82e1278abb02f-5f8d5e2b"
+    },
+    "attributes": {
+      "date": 1603123243,
+      "text": "This is a test comment",
+      "html": "<p>This is a test comment</p>",
+      "tags": []
+    }
+  }
+}

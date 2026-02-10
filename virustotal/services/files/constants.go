@@ -1,0 +1,52 @@
+package files
+
+// API endpoints for files
+const (
+	EndpointFiles        = "/files"
+	EndpointSigmaRules   = "/sigma_rules"
+	EndpointYARARulesets = "/yara_rulesets"
+)
+
+// Relationship names for files (from VT API documentation)
+const (
+	RelationshipAnalyses             = "analyses"
+	RelationshipBehaviours           = "behaviours"
+	RelationshipBundledFiles         = "bundled_files"
+	RelationshipCarbonBlackChildren  = "carbonblack_children"
+	RelationshipCarbonBlackParents   = "carbonblack_parents"
+	RelationshipCollections          = "collections"
+	RelationshipComments             = "comments"
+	RelationshipCompressedParents    = "compressed_parents"
+	RelationshipContactedDomains     = "contacted_domains"
+	RelationshipContactedIPs         = "contacted_ips"
+	RelationshipContactedURLs        = "contacted_urls"
+	RelationshipDroppedFiles         = "dropped_files"
+	RelationshipEmailAttachments     = "email_attachments"
+	RelationshipEmailParents         = "email_parents"
+	RelationshipEmbeddedDomains      = "embedded_domains"
+	RelationshipEmbeddedIPs          = "embedded_ips"
+	RelationshipEmbeddedURLs         = "embedded_urls"
+	RelationshipExecutionParents     = "execution_parents"
+	RelationshipGraphs               = "graphs"
+	RelationshipITWDomains           = "itw_domains"
+	RelationshipITWIPs               = "itw_ips"
+	RelationshipITWURLs              = "itw_urls"
+	RelationshipOverlayChildren      = "overlay_children"
+	RelationshipOverlayParents       = "overlay_parents"
+	RelationshipPCAPChildren         = "pcap_children"
+	RelationshipPCAPParents          = "pcap_parents"
+	RelationshipPEResourceChildren   = "pe_resource_children"
+	RelationshipPEResourceParents    = "pe_resource_parents"
+	RelationshipRelatedReferences    = "related_references"
+	RelationshipRelatedThreatActors  = "related_threat_actors"
+	RelationshipScreenshots          = "screenshots"
+	RelationshipSigmaAnalysis        = "sigma_analysis"
+	RelationshipSimilarFiles         = "similar_files"
+	RelationshipSubmissions          = "submissions"
+	RelationshipURLsForEmbeddedJS    = "urls_for_embedded_js"
+	RelationshipUserVotes            = "user_votes"
+	RelationshipVotes                = "votes"
+	RelationshipMemoryPatternDomains = "memory_pattern_domains"
+	RelationshipMemoryPatternIPs     = "memory_pattern_ips"
+	RelationshipMemoryPatternURLs    = "memory_pattern_urls"
+)

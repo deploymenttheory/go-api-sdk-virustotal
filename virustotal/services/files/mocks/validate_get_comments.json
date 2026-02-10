@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "f-44d88612fea8a8f36de82e1278abb02f-5f8d5e2b",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/f-44d88612fea8a8f36de82e1278abb02f-5f8d5e2b"
+      },
+      "attributes": {
+        "date": 1603123243,
+        "text": "This is a test file #test #sample",
+        "html": "<p>This is a test file <a href=\"#test\">#test</a> <a href=\"#sample\">#sample</a></p>",
+        "tags": ["test", "sample"],
+        "votes": {
+          "positive": 5,
+          "negative": 1
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/comments",
+    "next": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/comments?cursor=abc123"
+  },
+  "meta": {
+    "count": 1,
+    "cursor": "abc123"
+  }
+}

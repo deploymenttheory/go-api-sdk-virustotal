@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "f-8.8.8.8-1234567890",
+      "context_attributes": {
+        "timestamp": 1640000000
+      }
+    },
+    {
+      "type": "comment",
+      "id": "f-8.8.8.8-0987654321",
+      "context_attributes": {
+        "timestamp": 1641000000
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/relationships/comments?limit=10"
+  },
+  "meta": {
+    "count": 2
+  }
+}

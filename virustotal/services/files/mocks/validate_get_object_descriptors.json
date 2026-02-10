@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "example.com",
+      "context_attributes": {
+        "timestamp": 1603123243
+      }
+    },
+    {
+      "type": "domain",
+      "id": "test.com",
+      "context_attributes": {
+        "timestamp": 1603123244
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/relationships/contacted_domains"
+  },
+  "meta": {
+    "count": 2
+  }
+}

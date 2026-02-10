@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "AuthenticationRequiredError",
+    "message": "Authenticate required. Please login and try again."
+  }
+}

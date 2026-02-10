@@ -25,7 +25,6 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 		return nil, fmt.Errorf("failed to create logger: %w", err)
 	}
 
-	// Create auth config
 	authConfig := &AuthConfig{
 		APIKey:     apiKey,
 		APIVersion: DefaultAPIVersion,
@@ -54,12 +53,10 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 		}
 	}
 
-	// Setup authentication
 	if err := SetupAuthentication(restyClient, authConfig, logger); err != nil {
 		return nil, fmt.Errorf("failed to setup authentication: %w", err)
 	}
 
-	// Set base URL
 	restyClient.SetBaseURL(client.BaseURL)
 
 	logger.Info("VirusTotal API client created",

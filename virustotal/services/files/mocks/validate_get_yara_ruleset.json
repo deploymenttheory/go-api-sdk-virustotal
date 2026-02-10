@@ -1,0 +1,20 @@
+{
+  "data": {
+    "type": "yara_ruleset",
+    "id": "yara-ruleset-123",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/yara_rulesets/yara-ruleset-123"
+    },
+    "attributes": {
+      "name": "Malware Detection Rules",
+      "description": "Collection of YARA rules for malware detection",
+      "rules": [
+        "rule MalwareFamily { condition: true }",
+        "rule Trojan { condition: true }"
+      ],
+      "source": "Community",
+      "author": "Security Researcher",
+      "tags": ["malware", "trojan", "apt"]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "data": {
+    "attributes": {
+      "date": 1574246672,
+      "value": 1,
+      "verdict": "harmless"
+    },
+    "id": "d-example.com-a68784ad",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/votes/d-example.com-a68784ad"
+    },
+    "type": "vote"
+  }
+}

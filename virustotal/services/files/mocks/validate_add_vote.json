@@ -1,0 +1,14 @@
+{
+  "data": {
+    "type": "vote",
+    "id": "f-44d88612fea8a8f36de82e1278abb02f-user1",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/votes/user1"
+    },
+    "attributes": {
+      "date": 1603123243,
+      "value": 1,
+      "verdict": "harmless"
+    }
+  }
+}

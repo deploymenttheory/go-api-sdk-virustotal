@@ -1,0 +1,23 @@
+{
+  "data": {
+    "type": "comment",
+    "id": "ip-8.8.8.8-1234567890abcdef",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/comments/ip-8.8.8.8-1234567890abcdef"
+    },
+    "attributes": {
+      "text": "This IP is used by Google DNS and is #benign #dns",
+      "date": 1671691600,
+      "tags": [
+        "benign",
+        "dns"
+      ],
+      "html": "<p>This IP is used by Google DNS and is <a href=\"/intelligence/search?query=tag:benign\">#benign</a> <a href=\"/intelligence/search?query=tag:dns\">#dns</a></p>",
+      "votes": {
+        "harmless": 5,
+        "malicious": 0
+      },
+      "votes_count": 5
+    }
+  }
+}

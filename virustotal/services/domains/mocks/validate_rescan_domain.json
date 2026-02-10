@@ -1,0 +1,20 @@
+{
+  "data": {
+    "attributes": {
+      "date": 1640000000,
+      "stats": {
+        "harmless": 75,
+        "malicious": 0,
+        "suspicious": 0,
+        "timeout": 0,
+        "undetected": 11
+      },
+      "status": "queued"
+    },
+    "id": "u-12345678901234567890123456789012-example.com",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/analyses/u-12345678901234567890123456789012-example.com"
+    },
+    "type": "analysis"
+  }
+}

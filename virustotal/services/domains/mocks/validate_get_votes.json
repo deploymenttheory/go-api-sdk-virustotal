@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "date": 1574246328,
+        "value": 1,
+        "verdict": "harmless"
+      },
+      "id": "d-example.com-a68784ad",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/votes/d-example.com-a68784ad"
+      },
+      "type": "vote"
+    },
+    {
+      "attributes": {
+        "date": 1569486791,
+        "value": -1,
+        "verdict": "malicious"
+      },
+      "id": "d-example.com-e15e57e9",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/votes/d-example.com-e15e57e9"
+      },
+      "type": "vote"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/votes?limit=10"
+  }
+}

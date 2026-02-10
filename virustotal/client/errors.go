@@ -33,22 +33,22 @@ const (
 
 // VirusTotal API Error Codes
 const (
-	ErrorCodeBadRequest                   = "BadRequestError"
-	ErrorCodeInvalidArgument              = "InvalidArgumentError"
-	ErrorCodeNotAvailableYet              = "NotAvailableYet"
-	ErrorCodeUnselectiveContentQuery      = "UnselectiveContentQueryError"
-	ErrorCodeUnsupportedContentQuery      = "UnsupportedContentQueryError"
-	ErrorCodeAuthenticationRequired       = "AuthenticationRequiredError"
-	ErrorCodeUserNotActive                = "UserNotActiveError"
-	ErrorCodeWrongCredentials             = "WrongCredentialsError"
-	ErrorCodeForbidden                    = "ForbiddenError"
-	ErrorCodeNotFound                     = "NotFoundError"
-	ErrorCodeAlreadyExists                = "AlreadyExistsError"
-	ErrorCodeFailedDependency             = "FailedDependencyError"
-	ErrorCodeQuotaExceeded                = "QuotaExceededError"
-	ErrorCodeTooManyRequests              = "TooManyRequestsError"
-	ErrorCodeTransient                    = "TransientError"
-	ErrorCodeDeadlineExceeded             = "DeadlineExceededError"
+	ErrorCodeBadRequest              = "BadRequestError"
+	ErrorCodeInvalidArgument         = "InvalidArgumentError"
+	ErrorCodeNotAvailableYet         = "NotAvailableYet"
+	ErrorCodeUnselectiveContentQuery = "UnselectiveContentQueryError"
+	ErrorCodeUnsupportedContentQuery = "UnsupportedContentQueryError"
+	ErrorCodeAuthenticationRequired  = "AuthenticationRequiredError"
+	ErrorCodeUserNotActive           = "UserNotActiveError"
+	ErrorCodeWrongCredentials        = "WrongCredentialsError"
+	ErrorCodeForbidden               = "ForbiddenError"
+	ErrorCodeNotFound                = "NotFoundError"
+	ErrorCodeAlreadyExists           = "AlreadyExistsError"
+	ErrorCodeFailedDependency        = "FailedDependencyError"
+	ErrorCodeQuotaExceeded           = "QuotaExceededError"
+	ErrorCodeTooManyRequests         = "TooManyRequestsError"
+	ErrorCodeTransient               = "TransientError"
+	ErrorCodeDeadlineExceeded        = "DeadlineExceededError"
 )
 
 // APIError represents an error response from the VirusTotal API
@@ -95,17 +95,13 @@ func ParseErrorResponse(body []byte, statusCode int, status, method, endpoint st
 		Method:     method,
 	}
 
-	logger.Debug("Parsing error response",
-		zap.String("raw_body", string(body)),
-		zap.Int("body_length", len(body)))
-
 	// Try to parse as VirusTotal API v3 error response format
 	var vtErr vtErrorResponse
 	if err := json.Unmarshal(body, &vtErr); err == nil && vtErr.Error.Code != "" {
 		// Successfully parsed VT error response
 		apiError.Code = vtErr.Error.Code
 		apiError.Message = vtErr.Error.Message
-		
+
 		logger.Error("API error response",
 			zap.Int("status_code", statusCode),
 			zap.String("status", status),
@@ -119,12 +115,12 @@ func ParseErrorResponse(body []byte, statusCode int, status, method, endpoint st
 		logger.Debug("Failed to parse error response as VirusTotal error format, using raw body",
 			zap.Error(err),
 			zap.String("body", string(body)))
-		
+
 		// If no message was parsed, set a default message based on status code
 		if apiError.Message == "" {
 			apiError.Message = getDefaultErrorMessage(statusCode)
 		}
-		
+
 		logger.Error("API error response",
 			zap.Int("status_code", statusCode),
 			zap.String("status", status),
@@ -259,7 +255,7 @@ func IsAuthenticationError(err error) bool {
 		if apiErr.StatusCode == StatusUnauthorized {
 			return true
 		}
-		// Check error codes
+
 		return apiErr.Code == ErrorCodeAuthenticationRequired ||
 			apiErr.Code == ErrorCodeUserNotActive ||
 			apiErr.Code == ErrorCodeWrongCredentials
@@ -344,7 +340,7 @@ func GetErrorCode(err error) string {
 func IsMonitorQuotaError(err error) bool {
 	if apiErr, ok := err.(*APIError); ok {
 		if apiErr.StatusCode == StatusTooManyRequests {
-			// Check if error message contains Monitor-specific quota text
+
 			msg := strings.ToLower(apiErr.Message)
 			return strings.Contains(msg, "disk space") ||
 				strings.Contains(msg, "virustotal monitor")
