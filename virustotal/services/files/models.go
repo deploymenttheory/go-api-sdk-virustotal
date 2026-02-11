@@ -1,6 +1,11 @@
 package files
 
-import "io"
+import (
+	"io"
+
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models"
+	file_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/files"
+)
 
 // =============================================================================
 // File Upload Models
@@ -22,9 +27,9 @@ type UploadFileResponse struct {
 
 // AnalysisData contains the analysis information
 type AnalysisData struct {
-	Type  string `json:"type"` // "analysis"
-	ID    string `json:"id"`   // Analysis ID
-	Links Links  `json:"links"`
+	Type  string                    `json:"type"` // "analysis"
+	ID    string                    `json:"id"`   // Analysis ID
+	Links shared_models.ObjectLinks `json:"links"`
 }
 
 // =============================================================================
@@ -47,15 +52,10 @@ type FileResponse struct {
 
 // File represents a file object from VirusTotal API
 type File struct {
-	Type       string         `json:"type"`       // Object type (always "file")
-	ID         string         `json:"id"`         // File hash (SHA256)
-	Links      Links          `json:"links"`      // Object links
-	Attributes FileAttributes `json:"attributes"` // File attributes
-}
-
-// Links represents the links section of an object
-type Links struct {
-	Self string `json:"self"` // URL to this object
+	Type       string                    `json:"type"`       // Object type (always "file")
+	ID         string                    `json:"id"`         // File hash (SHA256)
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
+	Attributes FileAttributes            `json:"attributes"` // File attributes
 }
 
 // FileAttributes contains the attributes of a file
@@ -220,7 +220,7 @@ type AddCommentResponse struct {
 type Comment struct {
 	Type       string                    `json:"type"`       // Object type ("comment")
 	ID         string                    `json:"id"`         // Comment ID
-	Links      Links                     `json:"links"`      // Object links
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
 	Attributes CommentAttributesResponse `json:"attributes"` // Comment attributes
 }
 
@@ -237,57 +237,163 @@ type CommentAttributesResponse struct {
 // Related Objects Models
 // =============================================================================
 
-// RelatedObjectsResponse represents the response for related objects
-type RelatedObjectsResponse struct {
-	Data  []RelatedObject `json:"data"`
-	Links RelatedLinks    `json:"links,omitempty"`
-	Meta  Meta            `json:"meta,omitempty"`
-}
+// RelatedObjectsResponse represents the response from getting related objects
+type RelatedObjectsResponse = shared_models.RelatedObjectsResponse
 
-// RelatedObject represents an object related to a file
-type RelatedObject struct {
-	Type              string         `json:"type"`                         // Object type (e.g., "domain", "url")
-	ID                string         `json:"id"`                           // Object ID
-	Links             Links          `json:"links"`                        // Object links
-	Attributes        map[string]any `json:"attributes"`                   // Object attributes (varies by type)
-	ContextAttributes map[string]any `json:"context_attributes,omitempty"` // Context-specific attributes
-}
+// RelatedObject represents a related object (file, URL, domain, etc.)
+type RelatedObject = shared_models.RelatedObject
 
-// RelatedLinks represents pagination links
-type RelatedLinks struct {
-	Self string `json:"self,omitempty"`
-	Next string `json:"next,omitempty"` // Next page URL
-}
+// RelatedObjectDescriptorsResponse represents the response from getting related object descriptors
+type RelatedObjectDescriptorsResponse = shared_models.ObjectDescriptorsResponse
 
-// Meta represents metadata about the response
-type Meta struct {
-	Count  int    `json:"count,omitempty"`
-	Cursor string `json:"cursor,omitempty"` // Pagination cursor
-}
+// ObjectDescriptor represents a lightweight descriptor of a related object (ID and type only)
+type ObjectDescriptor = shared_models.ObjectDescriptor
 
-// GetRelatedObjectsOptions contains optional parameters for related objects requests
-type GetRelatedObjectsOptions struct {
-	Limit  int    // Number of items per page (default 10, max 40)
-	Cursor string // Continuation cursor for pagination
-}
+// GetRelatedObjectsOptions contains query parameters for relationship requests
+type GetRelatedObjectsOptions = shared_models.RelatedObjectsOptions
 
 // =============================================================================
-// Object Descriptors Models
+// Specific Relationship Response Types
 // =============================================================================
 
-// RelatedObjectDescriptorsResponse represents the response for related object descriptors
-type RelatedObjectDescriptorsResponse struct {
-	Data  []ObjectDescriptor `json:"data"`
-	Links RelatedLinks       `json:"links,omitempty"`
-	Meta  Meta               `json:"meta,omitempty"`
-}
+// AnalysesResponse represents the response from getting analyses (VT Enterprise only)
+type AnalysesResponse = file_relationships.AnalysesResponse
 
-// ObjectDescriptor represents a lightweight descriptor for a related object
-type ObjectDescriptor struct {
-	Type              string         `json:"type"`                         // Object type
-	ID                string         `json:"id"`                           // Object ID
-	ContextAttributes map[string]any `json:"context_attributes,omitempty"` // Context-specific attributes
-}
+// BehavioursResponse represents the response from getting behaviour reports
+type BehavioursResponse = file_relationships.BehavioursResponse
+
+// BundledFilesResponse represents the response from getting bundled files
+type BundledFilesResponse = file_relationships.BundledFilesResponse
+
+// CarbonBlackChildrenResponse represents the response from getting Carbon Black children (VT Enterprise only)
+type CarbonBlackChildrenResponse = file_relationships.CarbonBlackChildrenResponse
+
+// CarbonBlackParentsResponse represents the response from getting Carbon Black parents (VT Enterprise only)
+type CarbonBlackParentsResponse = file_relationships.CarbonBlackParentsResponse
+
+// CollectionsResponse represents the response from getting collections
+type CollectionsResponse = file_relationships.CollectionsResponse
+
+// CommentsResponse represents the response from getting comments
+type CommentsResponse = file_relationships.CommentsResponse
+
+// CompressedParentsResponse represents the response from getting compressed parent files (VT Enterprise only)
+type CompressedParentsResponse = file_relationships.CompressedParentsResponse
+
+// ContactedDomainsResponse represents the response from getting contacted domains
+type ContactedDomainsResponse = file_relationships.ContactedDomainsResponse
+
+// ContactedIPsResponse represents the response from getting contacted IP addresses
+type ContactedIPsResponse = file_relationships.ContactedIPsResponse
+
+// ContactedURLsResponse represents the response from getting contacted URLs
+type ContactedURLsResponse = file_relationships.ContactedURLsResponse
+
+// DroppedFilesResponse represents the response from getting dropped files
+type DroppedFilesResponse = file_relationships.DroppedFilesResponse
+
+// EmailAttachmentsResponse represents the response from getting email attachments (VT Enterprise only)
+type EmailAttachmentsResponse = file_relationships.EmailAttachmentsResponse
+
+// EmailParentsResponse represents the response from getting email parent files (VT Enterprise only)
+type EmailParentsResponse = file_relationships.EmailParentsResponse
+
+// EmbeddedDomainsResponse represents the response from getting embedded domains (VT Enterprise only)
+type EmbeddedDomainsResponse = file_relationships.EmbeddedDomainsResponse
+
+// EmbeddedIPsResponse represents the response from getting embedded IP addresses (VT Enterprise only)
+type EmbeddedIPsResponse = file_relationships.EmbeddedIPsResponse
+
+// EmbeddedURLsResponse represents the response from getting embedded URLs (VT Enterprise only)
+type EmbeddedURLsResponse = file_relationships.EmbeddedURLsResponse
+
+// ExecutionParentsResponse represents the response from getting execution parent files
+type ExecutionParentsResponse = file_relationships.ExecutionParentsResponse
+
+// GraphsResponse represents the response from getting graphs
+type GraphsResponse = file_relationships.GraphsResponse
+
+// ITWDomainsResponse represents the response from getting in-the-wild domains (VT Enterprise only)
+type ITWDomainsResponse = file_relationships.ITWDomainsResponse
+
+// ITWIPsResponse represents the response from getting in-the-wild IP addresses (VT Enterprise only)
+type ITWIPsResponse = file_relationships.ITWIPsResponse
+
+// ITWURLsResponse represents the response from getting in-the-wild URLs (VT Enterprise only)
+type ITWURLsResponse = file_relationships.ITWURLsResponse
+
+// MemoryPatternDomainsResponse represents the response from getting memory pattern domains (VT Enterprise only)
+type MemoryPatternDomainsResponse = file_relationships.MemoryPatternDomainsResponse
+
+// MemoryPatternIPsResponse represents the response from getting memory pattern IPs (VT Enterprise only)
+type MemoryPatternIPsResponse = file_relationships.MemoryPatternIPsResponse
+
+// MemoryPatternURLsResponse represents the response from getting memory pattern URLs (VT Enterprise only)
+type MemoryPatternURLsResponse = file_relationships.MemoryPatternURLsResponse
+
+// OverlayChildrenResponse represents the response from getting overlay children files (VT Enterprise only)
+type OverlayChildrenResponse = file_relationships.OverlayChildrenResponse
+
+// OverlayParentsResponse represents the response from getting overlay parent files (VT Enterprise only)
+type OverlayParentsResponse = file_relationships.OverlayParentsResponse
+
+// PCAPChildrenResponse represents the response from getting PCAP children files (VT Enterprise only)
+type PCAPChildrenResponse = file_relationships.PCAPChildrenResponse
+
+// PCAPParentsResponse represents the response from getting PCAP parent files (VT Enterprise only)
+type PCAPParentsResponse = file_relationships.PCAPParentsResponse
+
+// PEResourceChildrenResponse represents the response from getting PE resource children files
+type PEResourceChildrenResponse = file_relationships.PEResourceChildrenResponse
+
+// PEResourceParentsResponse represents the response from getting PE resource parent files
+type PEResourceParentsResponse = file_relationships.PEResourceParentsResponse
+
+// RelatedReferencesResponse represents the response from getting related references (VT Enterprise only)
+type RelatedReferencesResponse = file_relationships.RelatedReferencesResponse
+
+// RelatedThreatActorsResponse represents the response from getting related threat actors (VT Enterprise only)
+type RelatedThreatActorsResponse = file_relationships.RelatedThreatActorsResponse
+
+// ScreenshotsResponse represents the response from getting screenshots (VT Enterprise only)
+type ScreenshotsResponse = file_relationships.ScreenshotsResponse
+
+// SigmaAnalysisResponseRelationship represents the response from getting sigma analysis
+type SigmaAnalysisResponseRelationship = file_relationships.SigmaAnalysisResponse
+
+// SimilarFilesResponse represents the response from getting similar files (VT Enterprise only)
+type SimilarFilesResponse = file_relationships.SimilarFilesResponse
+
+// SubmissionsResponse represents the response from getting submissions (VT Enterprise only)
+type SubmissionsResponse = file_relationships.SubmissionsResponse
+
+// URLsForEmbeddedJSResponse represents the response from getting URLs with embedded JS (VT Enterprise only)
+type URLsForEmbeddedJSResponse = file_relationships.URLsForEmbeddedJSResponse
+
+// UserVotesResponse represents the response from getting current user's votes
+type UserVotesResponse = file_relationships.UserVotesResponse
+
+// VotesResponseRelationship represents the response from getting all votes via relationships endpoint
+type VotesResponseRelationship = file_relationships.VotesResponse
+
+// =============================================================================
+// Relationship Context Attributes
+// =============================================================================
+
+// RelatedCommentsContextAttributes contains context attributes for related comments
+type RelatedCommentsContextAttributes = file_relationships.RelatedCommentsContextAttributes
+
+// PostedInObject specifies the object where a comment was posted
+type PostedInObject = file_relationships.PostedInObject
+
+// RelatedReferencesContextAttributes contains context attributes for related references
+type RelatedReferencesContextAttributes = file_relationships.RelatedReferencesContextAttributes
+
+// RelatedThreatActorsContextAttributes contains context attributes for related threat actors
+type RelatedThreatActorsContextAttributes = file_relationships.RelatedThreatActorsContextAttributes
+
+// RelatedFromObject specifies an object from which something is related
+type RelatedFromObject = file_relationships.RelatedFromObject
 
 // =============================================================================
 // Sigma Rules Models
@@ -300,10 +406,10 @@ type SigmaRuleResponse struct {
 
 // SigmaRule represents a crowdsourced Sigma rule
 type SigmaRule struct {
-	Type       string              `json:"type"`       // Object type ("sigma_rule")
-	ID         string              `json:"id"`         // Rule ID
-	Links      Links               `json:"links"`      // Object links
-	Attributes SigmaRuleAttributes `json:"attributes"` // Rule attributes
+	Type       string                    `json:"type"`       // Object type ("sigma_rule")
+	ID         string                    `json:"id"`         // Rule ID
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
+	Attributes SigmaRuleAttributes       `json:"attributes"` // Rule attributes
 }
 
 // SigmaRuleAttributes contains the attributes of a Sigma rule
@@ -328,10 +434,10 @@ type YARARulesetResponse struct {
 
 // YARARuleset represents a crowdsourced YARA ruleset
 type YARARuleset struct {
-	Type       string                `json:"type"`       // Object type ("yara_ruleset")
-	ID         string                `json:"id"`         // Ruleset ID
-	Links      Links                 `json:"links"`      // Object links
-	Attributes YARARulesetAttributes `json:"attributes"` // Ruleset attributes
+	Type       string                    `json:"type"`       // Object type ("yara_ruleset")
+	ID         string                    `json:"id"`         // Ruleset ID
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
+	Attributes YARARulesetAttributes     `json:"attributes"` // Ruleset attributes
 }
 
 // YARARulesetAttributes contains the attributes of a YARA ruleset
@@ -348,18 +454,19 @@ type YARARulesetAttributes struct {
 // Votes Models
 // =============================================================================
 
-// VotesResponse represents the response for votes on a file
+// VotesResponse represents the response for votes on a file from the /votes endpoint
 type VotesResponse struct {
-	Data  []Vote       `json:"data"`
-	Links RelatedLinks `json:"links,omitempty"`
+	Data  []Vote              `json:"data"`
+	Links shared_models.Links `json:"links,omitempty"`
+	Meta  *shared_models.Meta `json:"meta,omitempty"`
 }
 
 // Vote represents a vote on a file
 type Vote struct {
-	Attributes VoteAttributes `json:"attributes"`
-	ID         string         `json:"id"`
-	Links      Links          `json:"links"`
-	Type       string         `json:"type"` // "vote"
+	Type       string                     `json:"type"`       // Object type ("vote")
+	ID         string                     `json:"id"`         // Vote ID
+	Links      *shared_models.ObjectLinks `json:"links,omitempty"` // Vote links
+	Attributes VoteAttributes             `json:"attributes"` // Vote attributes
 }
 
 // VoteAttributes contains the attributes of a vote
@@ -370,10 +477,7 @@ type VoteAttributes struct {
 }
 
 // GetVotesOptions contains optional parameters for votes requests
-type GetVotesOptions struct {
-	Limit  int    // Number of items per page (default 10, max 40)
-	Cursor string // Continuation cursor for pagination
-}
+type GetVotesOptions = shared_models.RelatedObjectsOptions
 
 // =============================================================================
 // Add Vote Models

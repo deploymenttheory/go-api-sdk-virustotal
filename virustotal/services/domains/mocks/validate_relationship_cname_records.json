@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "cname_record",
+      "id": "cdn.example.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/example.com/cname_records"
+      },
+      "attributes": {
+        "value": "cdn.example.com"
+      },
+      "context_attributes": {
+        "timestamp": 1640000000,
+        "ttl": 300
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/cname_records"
+  },
+  "meta": {
+    "count": 1
+  }
+}

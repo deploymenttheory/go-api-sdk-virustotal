@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "peresparent1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/peresparent1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+      },
+      "attributes": {
+        "type_description": "PE32 executable",
+        "size": 524288,
+        "md5": "peresparent1234567890abcdef",
+        "sha1": "peresparent1234567890abcdef1234567890abcd",
+        "sha256": "peresparent1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/pe_resource_parents"
+  },
+  "meta": {
+    "count": 1
+  }
+}

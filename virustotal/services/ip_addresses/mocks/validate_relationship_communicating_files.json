@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+      },
+      "attributes": {
+        "type_description": "Win32 EXE",
+        "meaningful_name": "malware.exe",
+        "size": 102400,
+        "last_analysis_stats": {
+          "harmless": 0,
+          "malicious": 45,
+          "suspicious": 8,
+          "undetected": 40
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/communicating_files?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

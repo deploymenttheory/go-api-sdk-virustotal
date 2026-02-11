@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "comment-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/comment-12345"
+      },
+      "attributes": {
+        "date": 1640000000,
+        "text": "This file appears to be malicious",
+        "html": "<p>This file appears to be malicious</p>",
+        "votes": {
+          "harmless": 0,
+          "malicious": 5
+        }
+      },
+      "context_attributes": {
+        "posted_in": {
+          "id": "44d88612fea8a8f36de82e1278abb02f",
+          "type": "file"
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/comments"
+  },
+  "meta": {
+    "count": 1
+  }
+}

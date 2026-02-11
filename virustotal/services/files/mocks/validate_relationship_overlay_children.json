@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "overlaychild1234567890abcdef1234567890abcdef1234567890abcdef123456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/overlaychild1234567890abcdef1234567890abcdef1234567890abcdef123456"
+      },
+      "attributes": {
+        "type_description": "Data",
+        "size": 256,
+        "md5": "overlaychild1234567890abcdef",
+        "sha1": "overlaychild1234567890abcdef1234567890abcd",
+        "sha256": "overlaychild1234567890abcdef1234567890abcdef1234567890abcdef123456"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/overlay_children"
+  },
+  "meta": {
+    "count": 1
+  }
+}

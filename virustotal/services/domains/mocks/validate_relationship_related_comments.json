@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "comment-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/comment-12345"
+      },
+      "attributes": {
+        "date": 1640000000,
+        "text": "This comment was posted on a related object",
+        "html": "<p>This comment was posted on a related object</p>",
+        "votes": {
+          "harmless": 5,
+          "malicious": 0
+        }
+      },
+      "context_attributes": {
+        "posted_in": {
+          "id": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+          "type": "file"
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/related_comments"
+  },
+  "meta": {
+    "count": 1
+  }
+}

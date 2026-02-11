@@ -193,6 +193,44 @@ func (m *DomainsMock) RegisterAddVoteToDomainMock() {
 	)
 }
 
+// RegisterRelationshipMocks registers all relationship mock responses
+func (m *DomainsMock) RegisterRelationshipMocks(baseURL string) {
+	relationships := map[string]string{
+		"caa_records":                   "validate_relationship_caa_records.json",
+		"cname_records":                 "validate_relationship_cname_records.json",
+		"collections":                   "validate_relationship_collections.json",
+		"communicating_files":           "validate_relationship_communicating_files.json",
+		"downloaded_files":              "validate_relationship_downloaded_files.json",
+		"graphs":                        "validate_relationship_graphs.json",
+		"historical_ssl_certificates":   "validate_relationship_historical_ssl_certificates.json",
+		"historical_whois":              "validate_relationship_historical_whois.json",
+		"mx_records":                    "validate_relationship_mx_records.json",
+		"ns_records":                    "validate_relationship_ns_records.json",
+		"referrer_files":                "validate_relationship_referrer_files.json",
+		"related_comments":              "validate_relationship_related_comments.json",
+		"related_references":            "validate_relationship_related_references.json",
+		"related_threat_actors":         "validate_relationship_related_threat_actors.json",
+		"resolutions":                   "validate_relationship_resolutions.json",
+		"siblings":                      "validate_relationship_siblings.json",
+		"soa_records":                   "validate_relationship_soa_records.json",
+		"subdomains":                    "validate_relationship_subdomains.json",
+		"urls":                          "validate_relationship_urls.json",
+	}
+
+	for relationship, filename := range relationships {
+		mockData := m.loadMockData(filename)
+		endpoint := baseURL + "/domains/example.com/" + relationship
+
+		httpmock.RegisterResponder(
+			"GET",
+			endpoint,
+			httpmock.NewBytesResponder(200, mockData).HeaderSet(http.Header{
+				"Content-Type": []string{"application/json"},
+			}),
+		)
+	}
+}
+
 // RegisterErrorMocks registers all error response mocks
 func (m *DomainsMock) RegisterErrorMocks() {
 	m.RegisterUnauthorizedErrorMock()

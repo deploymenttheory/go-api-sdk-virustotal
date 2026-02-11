@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "id": "john_doe",
+      "type": "user"
+    },
+    {
+      "id": "jane_smith",
+      "type": "user"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/saved_searches/0a49acd622a44982b1986984ba31c15b/relationships/editors"
+  },
+  "meta": {
+    "count": 2
+  }
+}

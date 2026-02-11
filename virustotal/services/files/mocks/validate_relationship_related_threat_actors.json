@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "type": "threat_actor",
+      "id": "apt-group-456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/threat_actors/apt-group-456"
+      },
+      "attributes": {
+        "name": "APT Group 456",
+        "description": "Advanced persistent threat group",
+        "first_seen": 1600000000
+      },
+      "context_attributes": {
+        "related_from": [
+          {
+            "type": "reference",
+            "id": "reference-67890",
+            "attributes": {
+              "name": "Threat Report 2024"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/related_threat_actors"
+  },
+  "meta": {
+    "count": 1
+  }
+}

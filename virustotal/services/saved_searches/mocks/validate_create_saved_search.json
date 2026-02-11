@@ -1,0 +1,18 @@
+{
+  "data": {
+    "attributes": {
+      "name": "New Saved Search",
+      "description": "Test saved search",
+      "search_query": "type:file",
+      "private": true,
+      "tags": ["test"],
+      "creation_date": 1698355200,
+      "last_modification_date": 1698355200
+    },
+    "id": "abc123def456abc123def456abc12345",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/saved_searches/abc123def456abc123def456abc12345"
+    },
+    "type": "saved_search"
+  }
+}

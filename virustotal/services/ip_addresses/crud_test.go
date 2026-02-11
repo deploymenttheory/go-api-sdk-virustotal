@@ -407,3 +407,354 @@ func TestUnitAddVoteToIPAddress_InvalidVerdict(t *testing.T) {
 
 	assert.Equal(t, 0, httpmock.GetTotalCallCount())
 }
+
+// =============================================================================
+// GetObjectsRelatedToIPAddress Tests - All Relationships
+// =============================================================================
+
+func TestUnitGetObjectsRelatedToIPAddress_Collections(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipCollections, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "collection", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_Comments(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipComments, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "comment", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_CommunicatingFiles(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipCommunicatingFiles, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "file", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_DownloadedFiles(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipDownloadedFiles, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "file", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_Graphs(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipGraphs, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "graph", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_HistoricalSSLCertificates(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipHistoricalSSLCertificates, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "ssl_cert", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_HistoricalWhois(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipHistoricalWhois, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "whois", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_RelatedComments(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedComments, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "comment", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_RelatedReferences(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedReferences, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "reference", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_RelatedThreatActors(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedThreatActors, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "threat_actor", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_ReferrerFiles(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipReferrerFiles, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "file", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_Resolutions(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipResolutions, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "resolution", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_URLs(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipURLs, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "url", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_UserVotes(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipUserVotes, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "vote", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_Votes(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.IPAddressesMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+	defer mockHandler.CleanupMockState()
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipVotes, opts)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+	assert.Equal(t, "vote", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+
+	assert.Equal(t, 1, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_EmptyIP(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "", RelationshipComments, opts)
+
+	require.Error(t, err)
+	assert.Nil(t, result)
+	assert.Contains(t, err.Error(), "ip address is required")
+
+	assert.Equal(t, 0, httpmock.GetTotalCallCount())
+}
+
+func TestUnitGetObjectsRelatedToIPAddress_EmptyRelationship(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	ctx := context.Background()
+	opts := &GetRelatedObjectsOptions{
+		Limit: 10,
+	}
+	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", "", opts)
+
+	require.Error(t, err)
+	assert.Nil(t, result)
+	assert.Contains(t, err.Error(), "relationship is required")
+
+	assert.Equal(t, 0, httpmock.GetTotalCallCount())
+}

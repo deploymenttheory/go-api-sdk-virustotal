@@ -1,5 +1,10 @@
 package ipaddresses
 
+import (
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models"
+	ip_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/ip_addresses"
+)
+
 // =============================================================================
 // IP Address Report Models
 // =============================================================================
@@ -7,15 +12,10 @@ package ipaddresses
 // IPAddress represents an IP address object from VirusTotal API
 // Matches the schema from API v3 documentation
 type IPAddress struct {
-	Type       string              `json:"type"`       // Object type (always "ip_address")
-	ID         string              `json:"id"`         // IP address
-	Links      Links               `json:"links"`      // Object links
-	Attributes IPAddressAttributes `json:"attributes"` // IP address attributes
-}
-
-// Links represents the links section of an object
-type Links struct {
-	Self string `json:"self"` // URL to this object
+	Type       string                  `json:"type"`       // Object type (always "ip_address")
+	ID         string                  `json:"id"`         // IP address
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
+	Attributes IPAddressAttributes     `json:"attributes"` // IP address attributes
 }
 
 // IPAddressAttributes contains the attributes of an IP address
@@ -206,7 +206,7 @@ type AddCommentResponse struct {
 type Comment struct {
 	Type       string                    `json:"type"`       // "comment"
 	ID         string                    `json:"id"`         // Comment ID
-	Links      Links                     `json:"links"`      // Comment links
+	Links      shared_models.ObjectLinks `json:"links"`      // Comment links
 	Attributes CommentResponseAttributes `json:"attributes"` // Comment attributes
 }
 
@@ -225,62 +225,87 @@ type CommentResponseAttributes struct {
 // =============================================================================
 
 // RelatedObjectsResponse represents the response from getting related objects
-type RelatedObjectsResponse struct {
-	Data  []RelatedObject   `json:"data"`            // Array of related objects
-	Links RelationshipLinks `json:"links,omitempty"` // Pagination links
-	Meta  *RelationshipMeta `json:"meta,omitempty"`  // Metadata including cursor
-}
+type RelatedObjectsResponse = shared_models.RelatedObjectsResponse
 
-// RelatedObject represents a related object (can be file, URL, domain, etc.)
-type RelatedObject struct {
-	Type       string             `json:"type"`                 // Object type (file, url, domain, etc.)
-	ID         string             `json:"id"`                   // Object ID
-	Links      *Links             `json:"links,omitempty"`      // Object links
-	Attributes map[string]any     `json:"attributes,omitempty"` // Object attributes (varies by type)
-	Error      *RelationshipError `json:"error,omitempty"`      // Error if object not found
-}
+// RelatedObject represents a related object (file, URL, domain, etc.)
+type RelatedObject = shared_models.RelatedObject
 
-// RelationshipLinks contains pagination links for relationship collections
-type RelationshipLinks struct {
-	Self string `json:"self"`           // Self link
-	Next string `json:"next,omitempty"` // Next page link (if available)
-}
-
-// RelationshipMeta contains metadata for relationship collections
-type RelationshipMeta struct {
-	Cursor string `json:"cursor,omitempty"` // Pagination cursor
-	Count  int    `json:"count,omitempty"`  // Total count (if available)
-}
-
-// RelationshipError represents an error for a related object not found in the database
-type RelationshipError struct {
-	Code    string `json:"code"`    // Error code (e.g., "NotFoundError")
-	Message string `json:"message"` // Error message
-}
-
-// GetRelatedObjectsOptions contains query parameters for relationship requests
-type GetRelatedObjectsOptions struct {
-	Limit  int    // Maximum number of objects to return per page (used during pagination)
-	Cursor string // Pagination cursor - if provided, returns single page only (manual pagination mode)
-}
-
-// =============================================================================
-// Related Object Descriptors Models (IDs only)
-// =============================================================================
-
-// RelatedObjectDescriptorsResponse represents the response from getting related object descriptors (IDs only)
-type RelatedObjectDescriptorsResponse struct {
-	Data  []ObjectDescriptor `json:"data"`            // Array of object descriptors (IDs only)
-	Links RelationshipLinks  `json:"links,omitempty"` // Pagination links
-	Meta  *RelationshipMeta  `json:"meta,omitempty"`  // Metadata including cursor
-}
+// RelatedObjectDescriptorsResponse represents the response from getting related object descriptors
+type RelatedObjectDescriptorsResponse = shared_models.ObjectDescriptorsResponse
 
 // ObjectDescriptor represents a lightweight descriptor of a related object (ID and type only)
-type ObjectDescriptor struct {
-	Type              string         `json:"type"`                         // Object type (file, url, domain, etc.)
-	ID                string         `json:"id"`                           // Object ID
-	ContextAttributes map[string]any `json:"context_attributes,omitempty"` // Context-specific attributes
-}
+type ObjectDescriptor = shared_models.ObjectDescriptor
+
+// GetRelatedObjectsOptions contains query parameters for relationship requests
+type GetRelatedObjectsOptions = shared_models.RelatedObjectsOptions
+
+// =============================================================================
+// Specific Relationship Response Types
+// =============================================================================
+
+// CollectionsResponse represents collections containing this IP address
+type CollectionsResponse = ip_relationships.CollectionsResponse
+
+// CommentsResponse represents comments posted on the IP address
+type CommentsResponse = ip_relationships.CommentsResponse
+
+// CommunicatingFilesResponse represents files that communicate with the IP address
+type CommunicatingFilesResponse = ip_relationships.CommunicatingFilesResponse
+
+// DownloadedFilesResponse represents files downloaded from the IP address (VT Enterprise only)
+type DownloadedFilesResponse = ip_relationships.DownloadedFilesResponse
+
+// GraphsResponse represents graphs including the IP address
+type GraphsResponse = ip_relationships.GraphsResponse
+
+// HistoricalSSLCertificatesResponse represents SSL certificates associated with the IP
+type HistoricalSSLCertificatesResponse = ip_relationships.HistoricalSSLCertificatesResponse
+
+// HistoricalWhoisResponse represents WHOIS information for the IP address
+type HistoricalWhoisResponse = ip_relationships.HistoricalWhoisResponse
+
+// RelatedCommentsResponse represents community posted comments in the IP's related objects
+type RelatedCommentsResponse = ip_relationships.RelatedCommentsResponse
+
+// RelatedReferencesResponse represents references related to the IP address (VT Enterprise only)
+type RelatedReferencesResponse = ip_relationships.RelatedReferencesResponse
+
+// RelatedThreatActorsResponse represents threat actors related to the IP address (VT Enterprise only)
+type RelatedThreatActorsResponse = ip_relationships.RelatedThreatActorsResponse
+
+// ReferrerFilesResponse represents files containing the IP address
+type ReferrerFilesResponse = ip_relationships.ReferrerFilesResponse
+
+// ResolutionsResponse represents IP address' resolutions
+type ResolutionsResponse = ip_relationships.ResolutionsResponse
+
+// URLsResponse represents URLs related to the IP address (VT Enterprise only)
+type URLsResponse = ip_relationships.URLsResponse
+
+// UserVotesResponse represents votes for the current user
+type UserVotesResponse = ip_relationships.UserVotesResponse
+
+// =============================================================================
+// Relationship Context Attributes
+// =============================================================================
+
+// HistoricalSSLCertificatesContextAttributes represents context attributes for SSL certificates
+type HistoricalSSLCertificatesContextAttributes = ip_relationships.HistoricalSSLCertificatesContextAttributes
+
+// RelatedCommentsContextAttributes represents context attributes for related comments
+type RelatedCommentsContextAttributes = ip_relationships.RelatedCommentsContextAttributes
+
+// PostedInObject represents the object where a comment was posted
+type PostedInObject = ip_relationships.PostedInObject
+
+// RelatedReferencesContextAttributes represents context attributes for related references (VT Enterprise only)
+type RelatedReferencesContextAttributes = ip_relationships.RelatedReferencesContextAttributes
+
+// RelatedFromObject represents an object that a reference is related from
+type RelatedFromObject = ip_relationships.RelatedFromObject
+
+// RelatedThreatActorsContextAttributes represents context attributes for related threat actors (VT Enterprise only)
+type RelatedThreatActorsContextAttributes = ip_relationships.RelatedThreatActorsContextAttributes
 
 // =============================================================================
 // Votes Models
@@ -288,17 +313,17 @@ type ObjectDescriptor struct {
 
 // VotesResponse represents the response from getting votes on an IP address
 type VotesResponse struct {
-	Data  []Vote            `json:"data"`            // Array of votes
-	Links RelationshipLinks `json:"links,omitempty"` // Pagination links
-	Meta  *RelationshipMeta `json:"meta,omitempty"`  // Metadata including cursor
+	Data  []Vote          `json:"data"`            // Array of votes
+	Links shared_models.Links `json:"links,omitempty"` // Pagination links
+	Meta  *shared_models.Meta `json:"meta,omitempty"`  // Metadata including cursor
 }
 
 // Vote represents a vote on an IP address
 type Vote struct {
-	Type       string         `json:"type"`                 // Object type (always "vote")
-	ID         string         `json:"id"`                   // Vote ID
-	Links      *Links         `json:"links,omitempty"`      // Vote links
-	Attributes VoteAttributes `json:"attributes,omitempty"` // Vote attributes
+	Type       string                     `json:"type"`                 // Object type (always "vote")
+	ID         string                     `json:"id"`                   // Vote ID
+	Links      *shared_models.ObjectLinks `json:"links,omitempty"`      // Vote links
+	Attributes VoteAttributes             `json:"attributes,omitempty"` // Vote attributes
 }
 
 // VoteAttributes contains the attributes of a vote

@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "1234567890abcdef",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/1234567890abcdef"
+      },
+      "attributes": {
+        "url": "http://8.8.8.8/test",
+        "last_analysis_stats": {
+          "harmless": 80,
+          "malicious": 3,
+          "suspicious": 2,
+          "undetected": 15
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/urls?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

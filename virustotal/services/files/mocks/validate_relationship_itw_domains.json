@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "itw-domain.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/itw-domain.com"
+      },
+      "attributes": {
+        "last_analysis_stats": {
+          "malicious": 8,
+          "suspicious": 2,
+          "undetected": 58,
+          "harmless": 2
+        },
+        "reputation": -18
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/itw_domains"
+  },
+  "meta": {
+    "count": 1
+  }
+}

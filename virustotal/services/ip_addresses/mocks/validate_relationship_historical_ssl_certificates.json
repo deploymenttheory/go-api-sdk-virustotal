@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "type": "ssl_cert",
+      "id": "abc123sslcertificate",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/ssl_certificates/abc123sslcertificate"
+      },
+      "attributes": {
+        "subject": {
+          "CN": "*.google.com"
+        },
+        "issuer": {
+          "CN": "GTS CA 1O1",
+          "O": "Google Trust Services"
+        },
+        "validity": {
+          "not_after": "2024-12-31",
+          "not_before": "2023-01-01"
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/historical_ssl_certificates?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "pcapparent1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/pcapparent1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+      },
+      "attributes": {
+        "type_description": "PCAP file",
+        "size": 262144,
+        "md5": "pcapparent1234567890abcdef",
+        "sha1": "pcapparent1234567890abcdef1234567890abcd",
+        "sha256": "pcapparent1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/pcap_parents"
+  },
+  "meta": {
+    "count": 1
+  }
+}

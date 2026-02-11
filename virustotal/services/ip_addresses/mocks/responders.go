@@ -186,6 +186,44 @@ func (m *IPAddressesMock) RegisterNotFoundErrorMock(baseURL string) {
 	m.mockState = append(m.mockState, "GET:"+baseURL+"/ip_addresses/999.999.999.999:error")
 }
 
+// RegisterRelationshipMocks registers all relationship mock responses
+func (m *IPAddressesMock) RegisterRelationshipMocks(baseURL string) {
+	relationships := map[string]string{
+		"collections":                   "validate_relationship_collections.json",
+		"comments":                      "validate_relationship_comments.json",
+		"communicating_files":           "validate_relationship_communicating_files.json",
+		"downloaded_files":              "validate_relationship_downloaded_files.json",
+		"graphs":                        "validate_relationship_graphs.json",
+		"historical_ssl_certificates":   "validate_relationship_historical_ssl_certificates.json",
+		"historical_whois":              "validate_relationship_historical_whois.json",
+		"related_comments":              "validate_relationship_related_comments.json",
+		"related_references":            "validate_relationship_related_references.json",
+		"related_threat_actors":         "validate_relationship_related_threat_actors.json",
+		"referrer_files":                "validate_relationship_referrer_files.json",
+		"resolutions":                   "validate_relationship_resolutions.json",
+		"urls":                          "validate_relationship_urls.json",
+		"user_votes":                    "validate_relationship_user_votes.json",
+		"votes":                         "validate_relationship_votes.json",
+	}
+
+	for relationship, filename := range relationships {
+		mockData, err := loadMockResponse(filename)
+		if err != nil {
+			panic(fmt.Sprintf("Failed to load mock %s: %v", filename, err))
+		}
+
+		endpoint := fmt.Sprintf("%s/ip_addresses/8.8.8.8/%s", baseURL, relationship)
+		httpmock.RegisterResponder(
+			"GET",
+			endpoint,
+			httpmock.NewStringResponder(200, mockData).HeaderSet(http.Header{
+				"Content-Type": []string{"application/json"},
+			}),
+		)
+		m.mockState = append(m.mockState, "GET:"+endpoint)
+	}
+}
+
 // CleanupMockState clears registered mock state
 func (m *IPAddressesMock) CleanupMockState() {
 	m.mockState = []string{}

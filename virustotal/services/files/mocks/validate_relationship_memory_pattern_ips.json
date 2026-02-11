@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "ip_address",
+      "id": "192.0.2.100",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/ip_addresses/192.0.2.100"
+      },
+      "attributes": {
+        "last_analysis_stats": {
+          "malicious": 3,
+          "suspicious": 2,
+          "undetected": 64,
+          "harmless": 1
+        },
+        "reputation": -6
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/memory_pattern_ips"
+  },
+  "meta": {
+    "count": 1
+  }
+}

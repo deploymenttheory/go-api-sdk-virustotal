@@ -1,0 +1,18 @@
+{
+  "data": {
+    "attributes": {
+      "name": "Potential Gamaredon-related document activity",
+      "description": "This Intelligence search query is designed to find files that match a specific set of characteristics.",
+      "search_query": "(type:document) and (behavior_processes:*.ru* and behavior_processes:*DavSetCookie* and behavior_processes:*http*)",
+      "private": true,
+      "tags": ["FILE", "Gamaredon", "Behaviour"],
+      "creation_date": 1698268800,
+      "last_modification_date": 1698355200
+    },
+    "id": "0a49acd622a44982b1986984ba31c15b",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/saved_searches/0a49acd622a44982b1986984ba31c15b"
+    },
+    "type": "saved_search"
+  }
+}

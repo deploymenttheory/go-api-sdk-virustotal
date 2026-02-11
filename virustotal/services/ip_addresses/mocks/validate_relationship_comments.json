@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "i-8.8.8.8-abc12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/i-8.8.8.8-abc12345"
+      },
+      "attributes": {
+        "date": 1574246328,
+        "text": "This IP belongs to Google DNS #dns #benign",
+        "tags": ["dns", "benign"],
+        "votes": {
+          "positive": 5,
+          "negative": 0,
+          "abuse": 0
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/comments?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

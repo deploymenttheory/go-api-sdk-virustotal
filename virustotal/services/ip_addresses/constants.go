@@ -1,5 +1,9 @@
 package ipaddresses
 
+import (
+	ip_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/ip_addresses"
+)
+
 // API endpoints for IP addresses
 const (
 	EndpointIPAddresses = "/ip_addresses"
@@ -7,19 +11,19 @@ const (
 
 // Relationship names for IP addresses (from VT API documentation)
 const (
-	RelationshipCollections               = "collections"
-	RelationshipComments                  = "comments"
-	RelationshipCommunicatingFiles        = "communicating_files"
-	RelationshipDownloadedFiles           = "downloaded_files"
-	RelationshipGraphs                    = "graphs"
-	RelationshipHistoricalSSLCertificates = "historical_ssl_certificates"
-	RelationshipHistoricalWhois           = "historical_whois"
-	RelationshipRelatedComments           = "related_comments"
-	RelationshipRelatedReferences         = "related_references"
-	RelationshipRelatedThreatActors       = "related_threat_actors"
-	RelationshipReferrerFiles             = "referrer_files"
-	RelationshipResolutions               = "resolutions"
-	RelationshipURLs                      = "urls"
-	RelationshipUserVotes                 = "user_votes"
-	RelationshipVotes                     = "votes"
+	RelationshipCollections               = ip_relationships.RelationshipCollections
+	RelationshipComments                  = ip_relationships.RelationshipComments
+	RelationshipCommunicatingFiles        = ip_relationships.RelationshipCommunicatingFiles
+	RelationshipDownloadedFiles           = ip_relationships.RelationshipDownloadedFiles
+	RelationshipGraphs                    = ip_relationships.RelationshipGraphs
+	RelationshipHistoricalSSLCertificates = ip_relationships.RelationshipHistoricalSSLCertificates
+	RelationshipHistoricalWhois           = ip_relationships.RelationshipHistoricalWhois
+	RelationshipRelatedComments           = ip_relationships.RelationshipRelatedComments
+	RelationshipRelatedReferences         = ip_relationships.RelationshipRelatedReferences
+	RelationshipRelatedThreatActors       = ip_relationships.RelationshipRelatedThreatActors
+	RelationshipReferrerFiles             = ip_relationships.RelationshipReferrerFiles
+	RelationshipResolutions               = ip_relationships.RelationshipResolutions
+	RelationshipURLs                      = ip_relationships.RelationshipURLs
+	RelationshipUserVotes                 = ip_relationships.RelationshipUserVotes
+	RelationshipVotes                     = ip_relationships.RelationshipVotes
 )

@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "memory-pattern.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/memory-pattern.com"
+      },
+      "attributes": {
+        "last_analysis_stats": {
+          "malicious": 4,
+          "suspicious": 1,
+          "undetected": 64,
+          "harmless": 1
+        },
+        "reputation": -8
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/memory_pattern_domains"
+  },
+  "meta": {
+    "count": 1
+  }
+}

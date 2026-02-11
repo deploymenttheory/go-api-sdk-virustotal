@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+      },
+      "attributes": {
+        "type_description": "PE32 executable",
+        "size": 4096,
+        "md5": "fedcba0987654321fedcba0987654321",
+        "sha1": "fedcba0987654321fedcba0987654321fedcba09",
+        "sha256": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/carbonblack_parents"
+  },
+  "meta": {
+    "count": 1
+  }
+}

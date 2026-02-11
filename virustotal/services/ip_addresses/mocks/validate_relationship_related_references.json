@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "reference",
+      "id": "ref-abc123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/references/ref-abc123"
+      },
+      "attributes": {
+        "url": "https://example.com/threat-report",
+        "source_date": "2023-01-15",
+        "title": "Threat Analysis Report"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/related_references?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

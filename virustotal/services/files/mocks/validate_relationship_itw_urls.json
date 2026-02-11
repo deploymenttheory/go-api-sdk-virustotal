@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "https://itw-download.com/malware.exe",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9pdHctZG93bmxvYWQuY29tL21hbHdhcmUuZXhl"
+      },
+      "attributes": {
+        "url": "https://itw-download.com/malware.exe",
+        "last_analysis_stats": {
+          "malicious": 15,
+          "suspicious": 5,
+          "undetected": 45,
+          "harmless": 5
+        },
+        "reputation": -25
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/itw_urls"
+  },
+  "meta": {
+    "count": 1
+  }
+}

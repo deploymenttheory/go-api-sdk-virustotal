@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "type": "behaviour",
+      "id": "behaviour-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/behaviours/behaviour-12345"
+      },
+      "attributes": {
+        "sandbox_name": "Windows 10 x64",
+        "has_pcap": true,
+        "has_html_report": true,
+        "calls_highlighted": ["CreateProcess", "WriteFile"]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/behaviours"
+  },
+  "meta": {
+    "count": 1
+  }
+}

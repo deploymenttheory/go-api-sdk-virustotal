@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "emailattach1234567890abcdef1234567890abcdef1234567890abcdef123456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/emailattach1234567890abcdef1234567890abcdef1234567890abcdef123456"
+      },
+      "attributes": {
+        "type_description": "PDF document",
+        "size": 16384,
+        "md5": "emailattach1234567890abcdef",
+        "sha1": "emailattach1234567890abcdef1234567890abcd",
+        "sha256": "emailattach1234567890abcdef1234567890abcdef1234567890abcdef123456"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/email_attachments"
+  },
+  "meta": {
+    "count": 1
+  }
+}

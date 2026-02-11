@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "type": "graph",
+      "id": "graph-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/graphs/graph-12345"
+      },
+      "attributes": {
+        "name": "Domain Relationship Graph",
+        "description": "Graph showing relationships between domains and files",
+        "creation_date": 1630000000,
+        "modification_date": 1640000000
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/graphs"
+  },
+  "meta": {
+    "count": 1
+  }
+}

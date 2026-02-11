@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "graph",
+      "id": "graph-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/graphs/graph-12345"
+      },
+      "attributes": {
+        "name": "Malware Analysis Graph",
+        "description": "Graph showing relationships between malicious files",
+        "creation_date": 1640000000
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/graphs"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+      },
+      "attributes": {
+        "type_description": "Win32 EXE",
+        "size": 1024000,
+        "md5": "1234567890abcdef1234567890abcdef",
+        "sha1": "1234567890abcdef1234567890abcdef12345678",
+        "sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "last_analysis_stats": {
+          "harmless": 60,
+          "malicious": 5,
+          "suspicious": 2,
+          "undetected": 8,
+          "timeout": 0
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/communicating_files"
+  },
+  "meta": {
+    "count": 1
+  }
+}

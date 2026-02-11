@@ -332,6 +332,67 @@ func (m *FilesMock) RegisterInvalidCommentErrorMock() {
 	)
 }
 
+// RegisterRelationshipMocks registers all relationship endpoint mocks for file relationships
+// https://docs.virustotal.com/reference/files#relationships
+func (m *FilesMock) RegisterRelationshipMocks(baseURL string) {
+	// Map of relationship names to their mock JSON filenames
+	relationships := map[string]string{
+		"analyses":                 "validate_relationship_analyses.json",
+		"behaviours":               "validate_relationship_behaviours.json",
+		"bundled_files":            "validate_relationship_bundled_files.json",
+		"carbonblack_children":     "validate_relationship_carbonblack_children.json",
+		"carbonblack_parents":      "validate_relationship_carbonblack_parents.json",
+		"collections":              "validate_relationship_collections.json",
+		"comments":                 "validate_relationship_comments.json",
+		"compressed_parents":       "validate_relationship_compressed_parents.json",
+		"contacted_domains":        "validate_relationship_contacted_domains.json",
+		"contacted_ips":            "validate_relationship_contacted_ips.json",
+		"contacted_urls":           "validate_relationship_contacted_urls.json",
+		"dropped_files":            "validate_relationship_dropped_files.json",
+		"email_attachments":        "validate_relationship_email_attachments.json",
+		"email_parents":            "validate_relationship_email_parents.json",
+		"embedded_domains":         "validate_relationship_embedded_domains.json",
+		"embedded_ips":             "validate_relationship_embedded_ips.json",
+		"embedded_urls":            "validate_relationship_embedded_urls.json",
+		"execution_parents":        "validate_relationship_execution_parents.json",
+		"graphs":                   "validate_relationship_graphs.json",
+		"itw_domains":              "validate_relationship_itw_domains.json",
+		"itw_ips":                  "validate_relationship_itw_ips.json",
+		"itw_urls":                 "validate_relationship_itw_urls.json",
+		"memory_pattern_domains":   "validate_relationship_memory_pattern_domains.json",
+		"memory_pattern_ips":       "validate_relationship_memory_pattern_ips.json",
+		"memory_pattern_urls":      "validate_relationship_memory_pattern_urls.json",
+		"overlay_children":         "validate_relationship_overlay_children.json",
+		"overlay_parents":          "validate_relationship_overlay_parents.json",
+		"pcap_children":            "validate_relationship_pcap_children.json",
+		"pcap_parents":             "validate_relationship_pcap_parents.json",
+		"pe_resource_children":     "validate_relationship_pe_resource_children.json",
+		"pe_resource_parents":      "validate_relationship_pe_resource_parents.json",
+		"related_references":       "validate_relationship_related_references.json",
+		"related_threat_actors":    "validate_relationship_related_threat_actors.json",
+		"screenshots":              "validate_relationship_screenshots.json",
+		"sigma_analysis":           "validate_relationship_sigma_analysis.json",
+		"similar_files":            "validate_relationship_similar_files.json",
+		"submissions":              "validate_relationship_submissions.json",
+		"urls_for_embedded_js":     "validate_relationship_urls_for_embedded_js.json",
+		"user_votes":               "validate_relationship_user_votes.json",
+		"votes":                    "validate_relationship_votes.json",
+	}
+
+	for relationship, filename := range relationships {
+		mockData := m.loadMockData(filename)
+		endpoint := baseURL + "/files/44d88612fea8a8f36de82e1278abb02f/" + relationship
+
+		httpmock.RegisterResponder(
+			"GET",
+			endpoint,
+			httpmock.NewBytesResponder(200, mockData).HeaderSet(http.Header{
+				"Content-Type": []string{"application/json"},
+			}),
+		)
+	}
+}
+
 // loadMockData loads a mock JSON file from the mocks directory
 func (m *FilesMock) loadMockData(filename string) []byte {
 	_, currentFile, _, _ := runtime.Caller(0)

@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "related-comment-123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/related-comment-123"
+      },
+      "attributes": {
+        "date": 1574246328,
+        "text": "Related comment about this IP #related",
+        "tags": ["related"],
+        "votes": {
+          "positive": 2,
+          "negative": 0,
+          "abuse": 0
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/related_comments?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -381,3 +381,353 @@ func TestUnitAddVoteToDomain_InvalidVerdict(t *testing.T) {
 	require.Nil(t, result)
 	assert.Contains(t, err.Error(), "verdict must be 'harmless' or 'malicious'")
 }
+
+// =============================================================================
+// GetObjectsRelatedToDomain Relationship Tests
+// =============================================================================
+
+func TestUnitGetObjectsRelatedToDomain_CAARecords(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCAARecords, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_CNAMERecords(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCNAMERecords, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_Collections(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCollections, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "collection", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_CommunicatingFiles(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCommunicatingFiles, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "file", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_DownloadedFiles(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipDownloadedFiles, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "file", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_Graphs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipGraphs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "graph", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_HistoricalSSLCertificates(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipHistoricalSSLCertificates, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "ssl_cert", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+	// Verify context attributes
+	if result.Data[0].ContextAttributes != nil {
+		attrs := result.Data[0].ContextAttributes
+		assert.NotNil(t, attrs)
+	}
+}
+
+func TestUnitGetObjectsRelatedToDomain_HistoricalWhois(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipHistoricalWhois, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "whois", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_MXRecords(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipMXRecords, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_NSRecords(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipNSRecords, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_ReferrerFiles(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipReferrerFiles, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "file", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_RelatedComments(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedComments, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "comment", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+	// Verify context attributes
+	if result.Data[0].ContextAttributes != nil {
+		attrs := result.Data[0].ContextAttributes
+		assert.NotNil(t, attrs)
+	}
+}
+
+func TestUnitGetObjectsRelatedToDomain_RelatedReferences(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedReferences, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+	// Verify context attributes
+	if result.Data[0].ContextAttributes != nil {
+		attrs := result.Data[0].ContextAttributes
+		assert.NotNil(t, attrs)
+	}
+}
+
+func TestUnitGetObjectsRelatedToDomain_RelatedThreatActors(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedThreatActors, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "threat_actor", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+	// Verify context attributes
+	if result.Data[0].ContextAttributes != nil {
+		attrs := result.Data[0].ContextAttributes
+		assert.NotNil(t, attrs)
+	}
+}
+
+func TestUnitGetObjectsRelatedToDomain_Resolutions(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipResolutions, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "resolution", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_Siblings(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSiblings, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "domain", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_SOARecords(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSOARecords, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_Subdomains(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSubdomains, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "domain", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_URLs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewDomainsMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipURLs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "url", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToDomain_EmptyDomain(t *testing.T) {
+	service := setupMockClient(t)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "", RelationshipCollections, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "domain is required")
+}
+
+func TestUnitGetObjectsRelatedToDomain_EmptyRelationship(t *testing.T) {
+	service := setupMockClient(t)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", "", nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "relationship is required")
+}

@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "name": "john_doe",
+        "display_name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "id": "john_doe",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/users/john_doe"
+      },
+      "type": "user"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/saved_searches/0a49acd622a44982b1986984ba31c15b/owner"
+  },
+  "meta": {
+    "count": 1
+  }
+}

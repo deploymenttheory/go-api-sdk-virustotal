@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "https://malicious-site.com/payload",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9tYWxpY2lvdXMtc2l0ZS5jb20vcGF5bG9hZA"
+      },
+      "attributes": {
+        "url": "https://malicious-site.com/payload",
+        "last_analysis_stats": {
+          "malicious": 10,
+          "suspicious": 3,
+          "undetected": 55,
+          "harmless": 2
+        },
+        "reputation": -20
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/contacted_urls"
+  },
+  "meta": {
+    "count": 1
+  }
+}

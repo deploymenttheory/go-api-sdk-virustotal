@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "graph",
+      "id": "g-1234567890abcdef",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/graphs/g-1234567890abcdef"
+      },
+      "attributes": {
+        "name": "Investigation Graph",
+        "owner": "user456",
+        "creation_date": 1574246328
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/graphs?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

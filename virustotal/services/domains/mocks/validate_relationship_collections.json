@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "type": "collection",
+      "id": "security-research-collection",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/collections/security-research-collection"
+      },
+      "attributes": {
+        "name": "Security Research Collection",
+        "description": "Collection of domains used for security research",
+        "modification_date": 1640000000,
+        "creation_date": 1630000000
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/collections"
+  },
+  "meta": {
+    "count": 1
+  }
+}

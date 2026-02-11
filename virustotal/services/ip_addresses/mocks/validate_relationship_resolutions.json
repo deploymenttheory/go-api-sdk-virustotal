@@ -1,0 +1,20 @@
+{
+  "data": [
+    {
+      "type": "resolution",
+      "id": "8.8.8.8-dns.google.com-1574246328",
+      "attributes": {
+        "ip_address": "8.8.8.8",
+        "host_name": "dns.google.com",
+        "date": 1574246328,
+        "resolver": "VirusTotal"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/resolutions?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

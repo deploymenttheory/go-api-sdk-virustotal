@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "type": "whois",
+      "id": "example.com-1640000000",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/whois/example.com-1640000000"
+      },
+      "attributes": {
+        "whois": "Domain Name: EXAMPLE.COM\nRegistrar: Example Registrar, Inc.\nCreation Date: 1995-08-14T04:00:00Z\nExpiry Date: 2025-08-13T04:00:00Z\nName Server: ns1.example.com\nName Server: ns2.example.com",
+        "last_updated": 1640000000
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/historical_whois"
+  },
+  "meta": {
+    "count": 1
+  }
+}

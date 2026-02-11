@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "vote",
+      "id": "i-8.8.8.8-vote123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/votes/i-8.8.8.8-vote123"
+      },
+      "attributes": {
+        "date": 1574246328,
+        "value": 1,
+        "verdict": "harmless"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/votes?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

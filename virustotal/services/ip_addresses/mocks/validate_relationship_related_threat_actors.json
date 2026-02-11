@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "threat_actor",
+      "id": "apt-123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/threat_actors/apt-123"
+      },
+      "attributes": {
+        "name": "APT-123",
+        "description": "Advanced persistent threat group",
+        "aliases": ["Fancy Bear", "APT28"]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/related_threat_actors?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "data": [
+    {
+      "type": "soa_record",
+      "id": "ns1.example.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/example.com/soa_records"
+      },
+      "attributes": {
+        "value": "ns1.example.com hostmaster.example.com 2021010101 10800 3600 604800 86400"
+      },
+      "context_attributes": {
+        "rname": "hostmaster.example.com",
+        "retry": 3600,
+        "timestamp": 1640000000,
+        "refresh": 10800,
+        "minimum": 86400,
+        "expire": 604800,
+        "ttl": 3600,
+        "serial": 2021010101
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/soa_records"
+  },
+  "meta": {
+    "count": 1
+  }
+}

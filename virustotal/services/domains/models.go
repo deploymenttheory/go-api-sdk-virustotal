@@ -1,5 +1,10 @@
 package domains
 
+import (
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models"
+	domain_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/domains"
+)
+
 // =============================================================================
 // Domain Report Models
 // =============================================================================
@@ -7,15 +12,10 @@ package domains
 // Domain represents a domain object from VirusTotal API
 // Matches the schema from API v3 documentation
 type Domain struct {
-	Type       string           `json:"type"`       // Object type (always "domain")
-	ID         string           `json:"id"`         // Domain name
-	Links      Links            `json:"links"`      // Object links
-	Attributes DomainAttributes `json:"attributes"` // Domain attributes
-}
-
-// Links represents the links section of an object
-type Links struct {
-	Self string `json:"self"` // URL to this object
+	Type       string                    `json:"type"`       // Object type (always "domain")
+	ID         string                    `json:"id"`         // Domain name
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
+	Attributes DomainAttributes          `json:"attributes"` // Domain attributes
 }
 
 // DomainAttributes contains the attributes of a domain
@@ -197,10 +197,10 @@ type RescanResponse struct {
 
 // RescanData contains the analysis information
 type RescanData struct {
-	Type       string           `json:"type"`  // Object type (e.g., "analysis")
-	ID         string           `json:"id"`    // Analysis ID
-	Links      Links            `json:"links"` // Object links
-	Attributes RescanAttributes `json:"attributes"`
+	Type       string                    `json:"type"`  // Object type (e.g., "analysis")
+	ID         string                    `json:"id"`    // Analysis ID
+	Links      shared_models.ObjectLinks `json:"links"` // Object links
+	Attributes RescanAttributes          `json:"attributes"`
 }
 
 // RescanAttributes contains the attributes of a rescan analysis
@@ -248,7 +248,7 @@ type AddCommentResponse struct {
 type Comment struct {
 	Type       string                    `json:"type"`       // Object type ("comment")
 	ID         string                    `json:"id"`         // Comment ID
-	Links      Links                     `json:"links"`      // Object links
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
 	Attributes CommentAttributesResponse `json:"attributes"` // Comment attributes
 }
 
@@ -262,77 +262,152 @@ type CommentAttributesResponse struct {
 }
 
 // =============================================================================
-// Related Objects Models
+// Domain Relationships Models
 // =============================================================================
 
-// RelatedObjectsResponse represents the response for related objects
-type RelatedObjectsResponse struct {
-	Data  []RelatedObject `json:"data"`
-	Links RelatedLinks    `json:"links,omitempty"`
-	Meta  Meta            `json:"meta,omitempty"`
-}
+// RelatedObjectsResponse represents the response from getting related objects
+type RelatedObjectsResponse = shared_models.RelatedObjectsResponse
 
-// RelatedObject represents an object related to a domain
-type RelatedObject struct {
-	Type              string         `json:"type"`                         // Object type (e.g., "file", "url")
-	ID                string         `json:"id"`                           // Object ID
-	Links             Links          `json:"links"`                        // Object links
-	Attributes        map[string]any `json:"attributes"`                   // Object attributes (varies by type)
-	ContextAttributes map[string]any `json:"context_attributes,omitempty"` // Context-specific attributes
-}
+// RelatedObject represents a related object (file, URL, domain, etc.)
+type RelatedObject = shared_models.RelatedObject
 
-// RelatedLinks represents pagination links
-type RelatedLinks struct {
-	Self string `json:"self,omitempty"`
-	Next string `json:"next,omitempty"` // Next page URL
-}
+// RelatedObjectDescriptorsResponse represents the response from getting related object descriptors
+type RelatedObjectDescriptorsResponse = shared_models.ObjectDescriptorsResponse
 
-// Meta represents metadata about the response
-type Meta struct {
-	Count  int    `json:"count,omitempty"`
-	Cursor string `json:"cursor,omitempty"` // Pagination cursor
-}
+// ObjectDescriptor represents a lightweight descriptor of a related object (ID and type only)
+type ObjectDescriptor = shared_models.ObjectDescriptor
 
-// GetRelatedObjectsOptions contains optional parameters for related objects requests
-type GetRelatedObjectsOptions struct {
-	Limit  int    // Number of items per page (default 10, max 40)
-	Cursor string // Continuation cursor for pagination
-}
+// GetRelatedObjectsOptions contains query parameters for relationship requests
+type GetRelatedObjectsOptions = shared_models.RelatedObjectsOptions
 
 // =============================================================================
-// Object Descriptors Models
+// Specific Relationship Response Types
 // =============================================================================
 
-// RelatedObjectDescriptorsResponse represents the response for related object descriptors
-type RelatedObjectDescriptorsResponse struct {
-	Data  []ObjectDescriptor `json:"data"`
-	Links RelatedLinks       `json:"links,omitempty"`
-	Meta  Meta               `json:"meta,omitempty"`
-}
+// CAARecordsResponse represents the response from getting CAA records (VT Enterprise only)
+type CAARecordsResponse = domain_relationships.CAARecordsResponse
 
-// ObjectDescriptor represents a lightweight descriptor for a related object
-type ObjectDescriptor struct {
-	Type              string         `json:"type"`                         // Object type
-	ID                string         `json:"id"`                           // Object ID
-	ContextAttributes map[string]any `json:"context_attributes,omitempty"` // Context-specific attributes
-}
+// CNAMERecordsResponse represents the response from getting CNAME records (VT Enterprise only)
+type CNAMERecordsResponse = domain_relationships.CNAMERecordsResponse
+
+// CollectionsResponse represents the response from getting collections containing the domain
+type CollectionsResponse = domain_relationships.CollectionsResponse
+
+// CommentsResponse represents the response from getting comments on the domain
+type CommentsResponse = domain_relationships.CommentsResponse
+
+// CommunicatingFilesResponse represents the response from getting files that communicate with the domain
+type CommunicatingFilesResponse = domain_relationships.CommunicatingFilesResponse
+
+// DownloadedFilesResponse represents the response from getting files downloaded from the domain (VT Enterprise only)
+type DownloadedFilesResponse = domain_relationships.DownloadedFilesResponse
+
+// GraphsResponse represents the response from getting graphs containing the domain
+type GraphsResponse = domain_relationships.GraphsResponse
+
+// HistoricalSSLCertificatesResponse represents the response from getting historical SSL certificates
+type HistoricalSSLCertificatesResponse = domain_relationships.HistoricalSSLCertificatesResponse
+
+// HistoricalWhoisResponse represents the response from getting historical WHOIS information
+type HistoricalWhoisResponse = domain_relationships.HistoricalWhoisResponse
+
+// ImmediateParentResponse represents the response from getting the immediate parent domain
+type ImmediateParentResponse = domain_relationships.ImmediateParentResponse
+
+// MXRecordsResponse represents the response from getting MX records (VT Enterprise only)
+type MXRecordsResponse = domain_relationships.MXRecordsResponse
+
+// NSRecordsResponse represents the response from getting NS records (VT Enterprise only)
+type NSRecordsResponse = domain_relationships.NSRecordsResponse
+
+// ParentResponse represents the response from getting the top parent domain
+type ParentResponse = domain_relationships.ParentResponse
+
+// ReferrerFilesResponse represents the response from getting files containing the domain
+type ReferrerFilesResponse = domain_relationships.ReferrerFilesResponse
+
+// RelatedCommentsResponse represents the response from getting comments in related objects
+type RelatedCommentsResponse = domain_relationships.RelatedCommentsResponse
+
+// RelatedReferencesResponse represents the response from getting related references (VT Enterprise only)
+type RelatedReferencesResponse = domain_relationships.RelatedReferencesResponse
+
+// RelatedThreatActorsResponse represents the response from getting related threat actors (VT Enterprise only)
+type RelatedThreatActorsResponse = domain_relationships.RelatedThreatActorsResponse
+
+// ResolutionsResponse represents the response from getting DNS resolutions
+type ResolutionsResponse = domain_relationships.ResolutionsResponse
+
+// SiblingsResponse represents the response from getting sibling domains
+type SiblingsResponse = domain_relationships.SiblingsResponse
+
+// SOARecordsResponse represents the response from getting SOA records (VT Enterprise only)
+type SOARecordsResponse = domain_relationships.SOARecordsResponse
+
+// SubdomainsResponse represents the response from getting subdomains
+type SubdomainsResponse = domain_relationships.SubdomainsResponse
+
+// URLsResponse represents the response from getting URLs under the domain (VT Enterprise only)
+type URLsResponse = domain_relationships.URLsResponse
+
+// UserVotesResponse represents the response from getting current user's votes
+type UserVotesResponse = domain_relationships.UserVotesResponse
+
+// =============================================================================
+// Relationship Context Attributes
+// =============================================================================
+
+// CAARecordContextAttributes contains context attributes for CAA records
+type CAARecordContextAttributes = domain_relationships.CAARecordContextAttributes
+
+// CNAMERecordContextAttributes contains context attributes for CNAME records
+type CNAMERecordContextAttributes = domain_relationships.CNAMERecordContextAttributes
+
+// MXRecordContextAttributes contains context attributes for MX records
+type MXRecordContextAttributes = domain_relationships.MXRecordContextAttributes
+
+// NSRecordContextAttributes contains context attributes for NS records
+type NSRecordContextAttributes = domain_relationships.NSRecordContextAttributes
+
+// SOARecordContextAttributes contains context attributes for SOA records
+type SOARecordContextAttributes = domain_relationships.SOARecordContextAttributes
+
+// HistoricalSSLCertificatesContextAttributes contains context attributes for historical SSL certificates
+type HistoricalSSLCertificatesContextAttributes = domain_relationships.HistoricalSSLCertificatesContextAttributes
+
+// RelatedCommentsContextAttributes contains context attributes for related comments
+type RelatedCommentsContextAttributes = domain_relationships.RelatedCommentsContextAttributes
+
+// PostedInObject specifies the object where a comment was posted
+type PostedInObject = domain_relationships.PostedInObject
+
+// RelatedReferencesContextAttributes contains context attributes for related references
+type RelatedReferencesContextAttributes = domain_relationships.RelatedReferencesContextAttributes
+
+// RelatedThreatActorsContextAttributes contains context attributes for related threat actors
+type RelatedThreatActorsContextAttributes = domain_relationships.RelatedThreatActorsContextAttributes
+
+// RelatedFromObject specifies an object from which something is related
+type RelatedFromObject = domain_relationships.RelatedFromObject
 
 // =============================================================================
 // Votes Models
 // =============================================================================
 
 // VotesResponse represents the response for votes on a domain
+// Note: This is a custom response type specific to GetVotesOnDomain endpoint
 type VotesResponse struct {
-	Data  []Vote       `json:"data"`
-	Links RelatedLinks `json:"links,omitempty"`
+	Data  []Vote              `json:"data"`
+	Links shared_models.Links `json:"links,omitempty"`
+	Meta  *shared_models.Meta `json:"meta,omitempty"`
 }
 
 // Vote represents a vote on a domain
 type Vote struct {
-	Attributes VoteAttributes `json:"attributes"`
-	ID         string         `json:"id"`
-	Links      Links          `json:"links"`
-	Type       string         `json:"type"` // "vote"
+	Type       string                     `json:"type"`                 // Object type (always "vote")
+	ID         string                     `json:"id"`                   // Vote ID
+	Links      *shared_models.ObjectLinks `json:"links,omitempty"`      // Vote links
+	Attributes VoteAttributes             `json:"attributes,omitempty"` // Vote attributes
 }
 
 // VoteAttributes contains the attributes of a vote
@@ -343,10 +418,7 @@ type VoteAttributes struct {
 }
 
 // GetVotesOptions contains optional parameters for votes requests
-type GetVotesOptions struct {
-	Limit  int    // Number of items per page (default 10, max 40)
-	Cursor string // Continuation cursor for pagination
-}
+type GetVotesOptions = shared_models.RelatedObjectsOptions
 
 // =============================================================================
 // Add Vote Models
@@ -384,10 +456,10 @@ type ResolutionResponse struct {
 
 // Resolution represents a DNS resolution object
 type Resolution struct {
-	Type       string               `json:"type"`       // Object type ("resolution")
-	ID         string               `json:"id"`         // Resolution ID (domain-ip)
-	Links      Links                `json:"links"`      // Object links
-	Attributes ResolutionAttributes `json:"attributes"` // Resolution attributes
+	Type       string                    `json:"type"`       // Object type ("resolution")
+	ID         string                    `json:"id"`         // Resolution ID (domain-ip)
+	Links      shared_models.ObjectLinks `json:"links"`      // Object links
+	Attributes ResolutionAttributes      `json:"attributes"` // Resolution attributes
 }
 
 // ResolutionAttributes contains the attributes of a DNS resolution

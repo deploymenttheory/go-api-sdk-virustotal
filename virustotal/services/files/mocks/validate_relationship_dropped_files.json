@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "droppedfile1234567890abcdef1234567890abcdef1234567890abcdef123456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/droppedfile1234567890abcdef1234567890abcdef1234567890abcdef123456"
+      },
+      "attributes": {
+        "type_description": "DLL",
+        "size": 512,
+        "md5": "droppedfile1234567890abcdef",
+        "sha1": "droppedfile1234567890abcdef1234567890abcd",
+        "sha256": "droppedfile1234567890abcdef1234567890abcdef1234567890abcdef123456"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/dropped_files"
+  },
+  "meta": {
+    "count": 1
+  }
+}

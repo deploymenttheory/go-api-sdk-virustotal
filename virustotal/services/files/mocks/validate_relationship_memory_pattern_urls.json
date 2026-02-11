@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "https://memory-url.com/resource",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9tZW1vcnktdXJsLmNvbS9yZXNvdXJjZQ"
+      },
+      "attributes": {
+        "url": "https://memory-url.com/resource",
+        "last_analysis_stats": {
+          "malicious": 5,
+          "suspicious": 2,
+          "undetected": 61,
+          "harmless": 2
+        },
+        "reputation": -10
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/memory_pattern_urls"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "type": "sigma_analysis",
+      "id": "sigma-analysis-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/sigma_analyses/sigma-analysis-12345"
+      },
+      "attributes": {
+        "rule_id": "sigma-rule-123",
+        "rule_title": "Suspicious Process Creation",
+        "matched": true,
+        "severity": "high"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/sigma_analysis"
+  },
+  "meta": {
+    "count": 1
+  }
+}

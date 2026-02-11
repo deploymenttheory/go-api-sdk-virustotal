@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "type": "analysis",
+      "id": "MTY0NTEyMzQ1Njc4OS0xMjM0NTY3ODkwYWJjZGVm",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/analyses/MTY0NTEyMzQ1Njc4OS0xMjM0NTY3ODkwYWJjZGVm",
+        "item": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f"
+      },
+      "attributes": {
+        "date": 1645123456,
+        "status": "completed",
+        "stats": {
+          "malicious": 2,
+          "suspicious": 1,
+          "undetected": 65,
+          "harmless": 0
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/analyses"
+  },
+  "meta": {
+    "count": 1
+  }
+}

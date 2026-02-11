@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "similarfile1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/similarfile1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+      },
+      "attributes": {
+        "type_description": "PE32 executable",
+        "size": 45056,
+        "md5": "similarfile1234567890abcdef",
+        "sha1": "similarfile1234567890abcdef1234567890abcd",
+        "sha256": "similarfile1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+        "similarity": 0.95
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/similar_files"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "embedded-domain.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/embedded-domain.com"
+      },
+      "attributes": {
+        "last_analysis_stats": {
+          "malicious": 2,
+          "suspicious": 1,
+          "undetected": 66,
+          "harmless": 1
+        },
+        "reputation": -5
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/embedded_domains"
+  },
+  "meta": {
+    "count": 1
+  }
+}

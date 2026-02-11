@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "malicious-domain.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/malicious-domain.com"
+      },
+      "attributes": {
+        "last_analysis_stats": {
+          "malicious": 5,
+          "suspicious": 2,
+          "undetected": 60,
+          "harmless": 3
+        },
+        "reputation": -15
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/contacted_domains"
+  },
+  "meta": {
+    "count": 1
+  }
+}

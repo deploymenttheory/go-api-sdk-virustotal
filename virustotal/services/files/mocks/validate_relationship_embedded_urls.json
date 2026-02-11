@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "https://embedded.com/path",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly9lbWJlZGRlZC5jb20vcGF0aA"
+      },
+      "attributes": {
+        "url": "https://embedded.com/path",
+        "last_analysis_stats": {
+          "malicious": 0,
+          "suspicious": 1,
+          "undetected": 68,
+          "harmless": 1
+        },
+        "reputation": 5
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/embedded_urls"
+  },
+  "meta": {
+    "count": 1
+  }
+}

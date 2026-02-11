@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "type": "ip_address",
+      "id": "198.51.100.1",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/ip_addresses/198.51.100.1"
+      },
+      "attributes": {
+        "last_analysis_stats": {
+          "malicious": 6,
+          "suspicious": 2,
+          "undetected": 60,
+          "harmless": 2
+        },
+        "reputation": -12
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/itw_ips"
+  },
+  "meta": {
+    "count": 1
+  }
+}

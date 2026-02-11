@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+      },
+      "attributes": {
+        "type_description": "HTML document",
+        "size": 10240,
+        "md5": "fedcba0987654321fedcba0987654321",
+        "sha1": "fedcba0987654321fedcba0987654321fedcba09",
+        "sha256": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+        "last_analysis_stats": {
+          "harmless": 75,
+          "malicious": 0,
+          "suspicious": 0,
+          "undetected": 0,
+          "timeout": 0
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/domains/example.com/referrer_files"
+  },
+  "meta": {
+    "count": 1
+  }
+}

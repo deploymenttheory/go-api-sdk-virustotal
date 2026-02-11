@@ -93,7 +93,7 @@ func TestUnitUploadFile_WithProgressCallback(t *testing.T) {
 
 	assert.Equal(t, "analysis", result.Data.Type)
 	assert.NotEmpty(t, result.Data.ID)
-	
+
 	// Progress callback should have been called
 	assert.True(t, progressCalled, "Progress callback should have been called")
 	assert.Equal(t, int64(len(fileContent)), lastTotalBytes)
@@ -339,24 +339,6 @@ func TestUnitGetObjectsRelatedToFile_ManualPagination(t *testing.T) {
 	assert.NotEmpty(t, result.Data)
 }
 
-// TestGetObjectsRelatedToFile_EmptyID tests error when file ID is empty
-func TestUnitGetObjectsRelatedToFile_EmptyID(t *testing.T) {
-	service := setupMockClient(t)
-
-	_, err := service.GetObjectsRelatedToFile(context.Background(), "", "contacted_domains", nil)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "file ID is required")
-}
-
-// TestGetObjectsRelatedToFile_EmptyRelationship tests error when relationship is empty
-func TestUnitGetObjectsRelatedToFile_EmptyRelationship(t *testing.T) {
-	service := setupMockClient(t)
-
-	_, err := service.GetObjectsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "", nil)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "relationship is required")
-}
-
 // TestGetObjectDescriptorsRelatedToFile_Success tests successful object descriptors retrieval
 func TestUnitGetObjectDescriptorsRelatedToFile_Success(t *testing.T) {
 	service := setupMockClient(t)
@@ -520,4 +502,667 @@ func TestUnitAddVoteToFile_InvalidVerdict(t *testing.T) {
 	_, err := service.AddVoteToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "invalid")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "verdict must be 'harmless' or 'malicious'")
+}
+
+// =============================================================================
+// File Relationship Tests
+// =============================================================================
+// https://docs.virustotal.com/reference/files#relationships
+
+func TestUnitGetObjectsRelatedToFile_Analyses(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipAnalyses, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Behaviours(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipBehaviours, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_BundledFiles(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipBundledFiles, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_CarbonBlackChildren(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCarbonBlackChildren, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_CarbonBlackParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCarbonBlackParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Collections(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCollections, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Comments(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipComments, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_CompressedParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCompressedParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ContactedDomains(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedDomains, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ContactedIPs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedIPs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ContactedURLs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedURLs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_DroppedFiles(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipDroppedFiles, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_EmailAttachments(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmailAttachments, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_EmailParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmailParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_EmbeddedDomains(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedDomains, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_EmbeddedIPs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedIPs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_EmbeddedURLs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedURLs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ExecutionParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipExecutionParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Graphs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipGraphs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ITWDomains(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWDomains, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ITWIPs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWIPs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_ITWURLs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWURLs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_MemoryPatternDomains(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternDomains, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_MemoryPatternIPs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternIPs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_MemoryPatternURLs(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternURLs, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_OverlayChildren(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipOverlayChildren, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_OverlayParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipOverlayParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_PCAPChildren(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPCAPChildren, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_PCAPParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPCAPParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_PEResourceChildren(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPEResourceChildren, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_PEResourceParents(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPEResourceParents, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_RelatedReferences(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipRelatedReferences, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_RelatedThreatActors(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipRelatedThreatActors, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Screenshots(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipScreenshots, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_SigmaAnalysis(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSigmaAnalysis, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_SimilarFiles(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSimilarFiles, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Submissions(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSubmissions, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_URLsForEmbeddedJS(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipURLsForEmbeddedJS, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_UserVotes(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipUserVotes, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetObjectsRelatedToFile_Votes(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewFilesMock()
+	mockHandler.RegisterMocks()
+	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipVotes, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.NotEmpty(t, result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+// TestGetObjectsRelatedToFile_EmptyID tests validation for empty file ID
+func TestUnitGetObjectsRelatedToFile_EmptyID(t *testing.T) {
+	service := setupMockClient(t)
+
+	_, err := service.GetObjectsRelatedToFile(context.Background(), "", RelationshipComments, nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "file ID is required")
+}
+
+// TestGetObjectsRelatedToFile_EmptyRelationship tests validation for empty relationship
+func TestUnitGetObjectsRelatedToFile_EmptyRelationship(t *testing.T) {
+	service := setupMockClient(t)
+
+	_, err := service.GetObjectsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "", nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "relationship is required")
 }

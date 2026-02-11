@@ -1,0 +1,18 @@
+{
+  "data": {
+    "attributes": {
+      "name": "Updated Saved Search Name",
+      "description": "Updated description",
+      "search_query": "type:file and tag:malware",
+      "private": false,
+      "tags": ["updated", "test"],
+      "creation_date": 1698268800,
+      "last_modification_date": 1698441600
+    },
+    "id": "0a49acd622a44982b1986984ba31c15b",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/saved_searches/0a49acd622a44982b1986984ba31c15b"
+    },
+    "type": "saved_search"
+  }
+}

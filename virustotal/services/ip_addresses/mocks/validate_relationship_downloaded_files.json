@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/fedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+      },
+      "attributes": {
+        "type_description": "PDF",
+        "meaningful_name": "document.pdf",
+        "size": 204800,
+        "last_analysis_stats": {
+          "harmless": 80,
+          "malicious": 2,
+          "suspicious": 5,
+          "undetected": 13
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/downloaded_files?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

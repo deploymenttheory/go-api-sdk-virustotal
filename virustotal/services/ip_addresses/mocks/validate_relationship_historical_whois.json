@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "whois",
+      "id": "8.8.8.8-1574246328",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/whois/8.8.8.8-1574246328"
+      },
+      "attributes": {
+        "whois_date": 1574246328,
+        "registrar": "ARIN",
+        "whois": "NetRange: 8.0.0.0 - 8.255.255.255\nCIDR: 8.0.0.0/8\nNetName: LVLT-ORG-8-8"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/ip_addresses/8.8.8.8/historical_whois?limit=10"
+  },
+  "meta": {
+    "count": 1
+  }
+}

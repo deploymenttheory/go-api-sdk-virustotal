@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "https://website.com/page-with-js",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93ZWJzaXRlLmNvbS9wYWdlLXdpdGgtanM"
+      },
+      "attributes": {
+        "url": "https://website.com/page-with-js",
+        "last_analysis_stats": {
+          "malicious": 3,
+          "suspicious": 2,
+          "undetected": 64,
+          "harmless": 1
+        },
+        "reputation": -5
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/urls_for_embedded_js"
+  },
+  "meta": {
+    "count": 1
+  }
+}

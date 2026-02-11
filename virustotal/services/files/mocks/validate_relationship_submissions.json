@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "type": "submission",
+      "id": "submission-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/submissions/submission-12345"
+      },
+      "attributes": {
+        "date": 1645000000,
+        "country": "US",
+        "submission_type": "manual"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/submissions"
+  },
+  "meta": {
+    "count": 1
+  }
+}

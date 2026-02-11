@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "type": "collection",
+      "id": "collection-12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/collections/collection-12345"
+      },
+      "attributes": {
+        "name": "My Collection",
+        "description": "A collection of suspicious files",
+        "creation_date": 1640000000,
+        "modification_date": 1645000000
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/collections"
+  },
+  "meta": {
+    "count": 1
+  }
+}
