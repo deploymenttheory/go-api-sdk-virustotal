@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "44d88612fea8a8f36de82e1278abb02f"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/analyses/test-id/relationships/item"
+  }
+}

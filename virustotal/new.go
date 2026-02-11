@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/analyses"
+	attacktactics "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/attack_tactics"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/comments"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/domains"
 	filebehaviours "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/file_behaviours"
@@ -19,12 +21,14 @@ type Client struct {
 	*client.Client
 
 	// Services
-	IPAddresses    *ipaddresses.Service
-	Domains        *domains.Service
-	Files          *files.Service
+	Analyses      *analyses.Service
+	AttackTactics *attacktactics.Service
+	Comments      *comments.Service
+	Domains       *domains.Service
 	FileBehaviours *filebehaviours.Service
-	URLs           *urls.Service
-	Comments       *comments.Service
+	Files         *files.Service
+	IPAddresses   *ipaddresses.Service
+	URLs          *urls.Service
 }
 
 // NewClient creates a new VirusTotal API client
@@ -49,12 +53,14 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 	// Initialize service clients
 	c := &Client{
 		Client:         httpClient,
-		IPAddresses:    ipaddresses.NewService(httpClient),
-		Domains:        domains.NewService(httpClient),
-		Files:          files.NewService(httpClient),
-		FileBehaviours: filebehaviours.NewService(httpClient),
-		URLs:           urls.NewService(httpClient),
+		Analyses:       analyses.NewService(httpClient),
+		AttackTactics:  attacktactics.NewService(httpClient),
 		Comments:       comments.NewService(httpClient),
+		Domains:        domains.NewService(httpClient),
+		FileBehaviours: filebehaviours.NewService(httpClient),
+		Files:          files.NewService(httpClient),
+		IPAddresses:    ipaddresses.NewService(httpClient),
+		URLs:           urls.NewService(httpClient),
 	}
 
 	return c, nil

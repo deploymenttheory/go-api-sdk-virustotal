@@ -1,0 +1,12 @@
+{
+  "data": {
+    "attributes": {
+      "status": "finished"
+    },
+    "id": "334b32b7fa5b47c78369600fad91d1b4",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/operations/334b32b7fa5b47c78369600fad91d1b4"
+    },
+    "type": "operation"
+  }
+}
