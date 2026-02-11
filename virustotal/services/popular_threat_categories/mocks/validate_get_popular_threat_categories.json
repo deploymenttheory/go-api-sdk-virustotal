@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "type": "popular_threat_category",
+      "id": "trojan",
+      "attributes": {
+        "name": "trojan"
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/popular_threat_categories/trojan"
+      }
+    },
+    {
+      "type": "popular_threat_category",
+      "id": "ransomware",
+      "attributes": {
+        "name": "ransomware"
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/popular_threat_categories/ransomware"
+      }
+    },
+    {
+      "type": "popular_threat_category",
+      "id": "adware",
+      "attributes": {
+        "name": "adware"
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/popular_threat_categories/adware"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/popular_threat_categories"
+  }
+}

@@ -12,6 +12,7 @@ import (
 	filebehaviours "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/file_behaviours"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/files"
 	ipaddresses "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ip_addresses"
+	popularthreatcategories "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/popular_threat_categories"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/urls"
 )
 
@@ -21,14 +22,15 @@ type Client struct {
 	*client.Client
 
 	// Services
-	Analyses      *analyses.Service
-	AttackTactics *attacktactics.Service
-	Comments      *comments.Service
-	Domains       *domains.Service
-	FileBehaviours *filebehaviours.Service
-	Files         *files.Service
-	IPAddresses   *ipaddresses.Service
-	URLs          *urls.Service
+	Analyses                *analyses.Service
+	AttackTactics           *attacktactics.Service
+	Comments                *comments.Service
+	Domains                 *domains.Service
+	FileBehaviours          *filebehaviours.Service
+	Files                   *files.Service
+	IPAddresses             *ipaddresses.Service
+	PopularThreatCategories *popularthreatcategories.Service
+	URLs                    *urls.Service
 }
 
 // NewClient creates a new VirusTotal API client
@@ -52,15 +54,16 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 
 	// Initialize service clients
 	c := &Client{
-		Client:         httpClient,
-		Analyses:       analyses.NewService(httpClient),
-		AttackTactics:  attacktactics.NewService(httpClient),
-		Comments:       comments.NewService(httpClient),
-		Domains:        domains.NewService(httpClient),
-		FileBehaviours: filebehaviours.NewService(httpClient),
-		Files:          files.NewService(httpClient),
-		IPAddresses:    ipaddresses.NewService(httpClient),
-		URLs:           urls.NewService(httpClient),
+		Client:                  httpClient,
+		Analyses:                analyses.NewService(httpClient),
+		AttackTactics:           attacktactics.NewService(httpClient),
+		Comments:                comments.NewService(httpClient),
+		Domains:                 domains.NewService(httpClient),
+		FileBehaviours:          filebehaviours.NewService(httpClient),
+		Files:                   files.NewService(httpClient),
+		IPAddresses:             ipaddresses.NewService(httpClient),
+		PopularThreatCategories: popularthreatcategories.NewService(httpClient),
+		URLs:                    urls.NewService(httpClient),
 	}
 
 	return c, nil
