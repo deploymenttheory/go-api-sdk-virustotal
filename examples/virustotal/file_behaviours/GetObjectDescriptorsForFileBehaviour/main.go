@@ -12,21 +12,19 @@ import (
 )
 
 func main() {
-	// Retrieve API key from environment variable
+
 	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
 
 	if apiKey == "" {
 		log.Fatal("VIRUSTOTAL_API_KEY environment variable must be set")
 	}
 
-	// Create logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	// Create VirusTotal API client
 	vtClient, err := virustotal.NewClient(apiKey,
 		client.WithLogger(logger),
 	)
@@ -45,7 +43,6 @@ func main() {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}
 
-	// Print results
 	fmt.Printf("\n=== Object Descriptors for Behaviour ===\n")
 	fmt.Printf("Sandbox ID: %s\n", sandboxID)
 	fmt.Printf("Relationship: %s\n", relationship)
@@ -55,7 +52,7 @@ func main() {
 		fmt.Printf("Descriptor %d:\n", i+1)
 		fmt.Printf("  ID: %s\n", desc.ID)
 		fmt.Printf("  Type: %s\n", desc.Type)
-		
+
 		if len(desc.ContextAttributes) > 0 {
 			fmt.Printf("  Context Attributes:\n")
 			count := 0
@@ -69,9 +66,9 @@ func main() {
 				fmt.Printf("    ... and %d more attributes\n", len(desc.ContextAttributes)-5)
 			}
 		}
-		
+
 		fmt.Println()
-		
+
 		if i >= 9 { // Show first 10 descriptors
 			remaining := len(descriptors.Data) - 10
 			if remaining > 0 {

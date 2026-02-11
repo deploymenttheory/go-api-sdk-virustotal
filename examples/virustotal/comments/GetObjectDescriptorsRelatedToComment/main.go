@@ -12,21 +12,19 @@ import (
 )
 
 func main() {
-	// Retrieve API key from environment variable
+
 	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
 
 	if apiKey == "" {
 		log.Fatal("VIRUSTOTAL_API_KEY environment variable must be set")
 	}
 
-	// Create logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	// Create VirusTotal API client
 	vtClient, err := virustotal.NewClient(apiKey,
 		client.WithLogger(logger),
 	)
@@ -43,7 +41,6 @@ func main() {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}
 
-	// Print results
 	fmt.Printf("\n=== Object Descriptors Related to Comment ===\n")
 	fmt.Printf("Comment ID: %s\n", commentID)
 	fmt.Printf("Relationship: %s\n", relationship)

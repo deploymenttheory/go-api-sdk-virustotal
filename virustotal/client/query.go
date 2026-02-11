@@ -1,6 +1,7 @@
 package client
 
 import (
+	"maps"
 	"strconv"
 	"time"
 
@@ -120,9 +121,7 @@ func (qb *QueryBuilder) AddIfTrue(condition bool, key, value string) interfaces.
 
 // Merge merges parameters from another query builder or map
 func (qb *QueryBuilder) Merge(other map[string]string) interfaces.QueryBuilder {
-	for k, v := range other {
-		qb.params[k] = v
-	}
+	maps.Copy(qb.params, other)
 	return qb
 }
 
@@ -147,9 +146,7 @@ func (qb *QueryBuilder) Get(key string) string {
 func (qb *QueryBuilder) Build() map[string]string {
 	// Return a copy to prevent external modification
 	result := make(map[string]string, len(qb.params))
-	for k, v := range qb.params {
-		result[k] = v
-	}
+	maps.Copy(result, qb.params)
 	return result
 }
 

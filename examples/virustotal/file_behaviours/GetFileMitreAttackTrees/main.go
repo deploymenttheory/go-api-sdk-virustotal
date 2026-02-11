@@ -12,21 +12,19 @@ import (
 )
 
 func main() {
-	// Retrieve API key from environment variable
+
 	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
 
 	if apiKey == "" {
 		log.Fatal("VIRUSTOTAL_API_KEY environment variable must be set")
 	}
 
-	// Create logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	// Create VirusTotal API client
 	vtClient, err := virustotal.NewClient(apiKey,
 		client.WithLogger(logger),
 	)
@@ -42,7 +40,6 @@ func main() {
 		log.Fatalf("Failed to get MITRE ATT&CK trees: %v", err)
 	}
 
-	// Print results
 	fmt.Printf("\n=== MITRE ATT&CK Techniques ===\n")
 	fmt.Printf("File ID: %s\n\n", fileID)
 
@@ -54,7 +51,7 @@ func main() {
 	// Iterate through each sandbox's MITRE data
 	for sandboxName, sandboxTactics := range mitreData.Data {
 		fmt.Printf("Sandbox: %s\n", sandboxName)
-		
+
 		if len(sandboxTactics.Tactics) == 0 {
 			fmt.Println("  No tactics observed")
 			continue
@@ -62,12 +59,12 @@ func main() {
 
 		for _, tactic := range sandboxTactics.Tactics {
 			fmt.Printf("  Tactic: %s - %s\n", tactic.ID, tactic.Name)
-			
+
 			if len(tactic.Techniques) > 0 {
 				fmt.Printf("    Techniques:\n")
 				for _, technique := range tactic.Techniques {
 					fmt.Printf("      - %s: %s\n", technique.ID, technique.Name)
-					
+
 					if len(technique.Signatures) > 0 {
 						fmt.Printf("        Signatures:\n")
 						for _, sig := range technique.Signatures {

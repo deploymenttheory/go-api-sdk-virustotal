@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 )
 
@@ -183,7 +184,10 @@ func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID stri
 		return nil, fmt.Errorf("relationship is required")
 	}
 
-	endpoint := fmt.Sprintf("%s/%s/%s", EndpointComments, commentID, relationship)
+	endpoint, err := client.BuildRelationshipEndpoint(EndpointComments, commentID, relationship, false)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+	}
 
 	queryParams := make(map[string]string)
 	if opts != nil {
@@ -200,7 +204,7 @@ func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID stri
 	}
 
 	var result RelatedObjectsResponse
-	err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	err = s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +224,10 @@ func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, comm
 		return nil, fmt.Errorf("relationship is required")
 	}
 
-	endpoint := fmt.Sprintf("%s/%s/relationships/%s", EndpointComments, commentID, relationship)
+	endpoint, err := client.BuildRelationshipEndpoint(EndpointComments, commentID, relationship, true)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+	}
 
 	queryParams := make(map[string]string)
 	if opts != nil {
@@ -237,7 +244,7 @@ func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, comm
 	}
 
 	var result ObjectDescriptorsResponse
-	err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	err = s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 )
 
@@ -357,7 +358,10 @@ func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxI
 		return nil, fmt.Errorf("relationship is required")
 	}
 
-	endpoint := fmt.Sprintf("%s/%s/%s", EndpointFileBehaviours, sandboxID, relationship)
+	endpoint, err := client.BuildRelationshipEndpoint(EndpointFileBehaviours, sandboxID, relationship, false)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+	}
 
 	headers := map[string]string{
 		"Accept":       "application/json",
@@ -385,7 +389,7 @@ func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxI
 
 	var allObjects []RelatedObject
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -420,7 +424,10 @@ func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sand
 		return nil, fmt.Errorf("relationship is required")
 	}
 
-	endpoint := fmt.Sprintf("%s/%s/relationships/%s", EndpointFileBehaviours, sandboxID, relationship)
+	endpoint, err := client.BuildRelationshipEndpoint(EndpointFileBehaviours, sandboxID, relationship, true)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+	}
 
 	headers := map[string]string{
 		"Accept":       "application/json",
@@ -448,7 +455,7 @@ func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sand
 
 	var allDescriptors []ObjectDescriptor
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse ObjectDescriptorsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)

@@ -133,32 +133,33 @@ func ParseErrorResponse(body []byte, statusCode int, status, method, endpoint st
 }
 
 // getDefaultErrorMessage returns a default error message based on status code
+// Messages are mapped to official VirusTotal API documentation: https://docs.virustotal.com/reference/errors
 func getDefaultErrorMessage(statusCode int) string {
 	switch statusCode {
 	case StatusBadRequest:
-		return "Bad request or invalid arguments"
+		return "The API request is invalid or malformed. The message usually provides details about why the request is not valid."
 	case StatusUnauthorized:
-		return "Authentication required or invalid API key"
+		return "The operation requires an authenticated user. Verify that you have provided your correct API key."
 	case StatusForbidden:
-		return "Access forbidden"
+		return "You are not allowed to perform the requested operation."
 	case StatusNotFound:
-		return "Resource not found"
+		return "The requested resource was not found."
 	case StatusConflict:
-		return "Resource already exists"
+		return "The resource already exists."
 	case StatusUnprocessableEntity:
 		return "Validation error"
 	case StatusFailedDependency:
-		return "Request depended on another request that failed"
+		return "The request depended on another request and that request failed."
 	case StatusTooManyRequests:
-		return "Quota exceeded or too many requests"
+		return "You have exceeded one of your quotas (minute, daily or monthly). Daily quotas are reset every day at 00:00 UTC. You may have run out of disk space and/or number of files on your VirusTotal Monitor account. Or too many requests have been made in a given amount of time."
 	case StatusInternalServerError:
 		return "Internal server error"
 	case StatusBadGateway:
 		return "Bad gateway"
 	case StatusServiceUnavailable:
-		return "Service temporarily unavailable"
+		return "Transient server error. Retry might work."
 	case StatusGatewayTimeout:
-		return "Operation took too long to complete"
+		return "The operation took too long to complete."
 	default:
 		return "Unknown error"
 	}

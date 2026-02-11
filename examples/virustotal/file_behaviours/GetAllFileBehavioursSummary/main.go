@@ -12,21 +12,19 @@ import (
 )
 
 func main() {
-	// Retrieve API key from environment variable
+
 	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
 
 	if apiKey == "" {
 		log.Fatal("VIRUSTOTAL_API_KEY environment variable must be set")
 	}
 
-	// Create logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	// Create VirusTotal API client
 	vtClient, err := virustotal.NewClient(apiKey,
 		client.WithLogger(logger),
 	)
@@ -36,7 +34,7 @@ func main() {
 
 	ctx := context.Background()
 	fileHashes := []string{
-		"44d88612fea8a8f36de82e1278abb02f", // EICAR test file MD5
+		"44d88612fea8a8f36de82e1278abb02f",                                 // EICAR test file MD5
 		"275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f", // EICAR test file SHA-256
 	}
 
@@ -45,7 +43,6 @@ func main() {
 		log.Fatalf("Failed to get file behaviours summary: %v", err)
 	}
 
-	// Print results
 	fmt.Printf("\n=== Multiple Files Behaviour Summary ===\n")
 	fmt.Printf("Requested Files: %d\n\n", len(fileHashes))
 

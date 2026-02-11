@@ -13,21 +13,19 @@ import (
 )
 
 func main() {
-	// Retrieve API key from environment variable
+
 	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
 
 	if apiKey == "" {
 		log.Fatal("VIRUSTOTAL_API_KEY environment variable must be set")
 	}
 
-	// Create logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to create logger: %v", err)
 	}
 	defer logger.Sync()
 
-	// Create VirusTotal API client with available options
 	vtClient, err := virustotal.NewClient(apiKey,
 		client.WithLogger(logger),
 		client.WithTimeout(30*time.Second),
@@ -47,7 +45,6 @@ func main() {
 		log.Fatalf("Failed to request IP address rescan: %v", err)
 	}
 
-	// Print results
 	fmt.Printf("IP Address Rescan Initiated: %s\n", ip)
 	fmt.Printf("Analysis Type: %s\n", result.Data.Type)
 	fmt.Printf("Analysis ID: %s\n\n", result.Data.ID)
