@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "BadRequestError",
+    "message": "Invalid code or code_type parameter"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "QuotaExceededError",
+    "message": "Daily code insights analysis limit exceeded (50 requests per day)"
+  }
+}

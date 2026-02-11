@@ -159,7 +159,6 @@ func (s *Service) GetObjectDescriptorsRelatedToAttackTactic(ctx context.Context,
 		return nil, fmt.Errorf("relationship is required")
 	}
 
-	// Use RelationshipBuilder to construct the endpoint for descriptors only
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointAttackTactics, id, relationship, true)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)

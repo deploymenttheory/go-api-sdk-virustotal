@@ -179,7 +179,6 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 		return nil, fmt.Errorf("relationship is required")
 	}
 
-	// Use RelationshipBuilder to construct the endpoint for descriptors only
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointAnalyses, id, relationship, true)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
