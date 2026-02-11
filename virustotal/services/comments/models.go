@@ -1,5 +1,9 @@
 package comments
 
+import (
+	comment_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/comments"
+)
+
 // CommentVotes represents vote counts on a comment
 type CommentVotes struct {
 	Positive int `json:"positive"`
@@ -136,3 +140,10 @@ type GetRelatedObjectsOptions struct {
 	Limit  int    // Maximum number of objects to retrieve
 	Cursor string // Pagination cursor
 }
+
+// =============================================================================
+// Relationship Response Types
+// =============================================================================
+
+// AuthorResponse represents the response for the author relationship
+type AuthorResponse = comment_relationships.AuthorResponse

@@ -1,20 +1,19 @@
 package file_behaviours
 
+import (
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models"
+	file_behaviour_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/file_behaviours"
+)
+
 // =============================================================================
-// Common Structures
+// Common Structures (Type Aliases to Shared Models)
 // =============================================================================
 
 // Links represents API resource links
-type Links struct {
-	Self string `json:"self"`
-	Next string `json:"next,omitempty"`
-}
+type Links = shared_models.ObjectLinks
 
 // Meta contains metadata about the response
-type Meta struct {
-	Count  int    `json:"count,omitempty"`
-	Cursor string `json:"cursor,omitempty"`
-}
+type Meta = shared_models.Meta
 
 // =============================================================================
 // Behaviour Summary Models
@@ -404,7 +403,22 @@ type ObjectDescriptor struct {
 // =============================================================================
 
 // GetRelatedObjectsOptions contains optional query parameters for requests
-type GetRelatedObjectsOptions struct {
-	Limit  int    // Maximum number of results to return
-	Cursor string // Cursor for pagination
-}
+type GetRelatedObjectsOptions = shared_models.RelatedObjectsOptions
+
+// =============================================================================
+// File Behaviour Relationship Response Types
+// =============================================================================
+
+// FileResponse represents the response for the file relationship
+// https://docs.virustotal.com/reference/file-behaviour-object-file
+type FileResponse = file_behaviour_relationships.FileResponse
+
+// AttackTechniquesResponse represents the response for the attack_techniques relationship
+// https://docs.virustotal.com/reference/file-behaviour-object-attack-techniques
+type AttackTechniquesResponse = file_behaviour_relationships.AttackTechniquesResponse
+
+// AttackTechniqueContextAttributes represents context attributes for attack techniques
+type AttackTechniqueContextAttributes = file_behaviour_relationships.AttackTechniqueContextAttributes
+
+// AttackTechniqueSignature represents a signature for an attack technique
+type AttackTechniqueSignature = file_behaviour_relationships.AttackTechniqueSignature

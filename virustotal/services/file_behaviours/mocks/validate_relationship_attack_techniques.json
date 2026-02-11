@@ -1,0 +1,62 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1082",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1082"
+      },
+      "attributes": {
+        "name": "System Information Discovery",
+        "stix_id": "attack-pattern--354a7f88-63fb-41b5-a801-ce3b377b36f1",
+        "link": "https://attack.mitre.org/techniques/T1082/",
+        "description": "An adversary may attempt to get detailed information about the operating system and hardware.",
+        "revoked": false,
+        "creation_date": 1496266264,
+        "last_modification_date": 1615199581
+      },
+      "context_attributes": {
+        "signatures": [
+          {
+            "severity": "INFO",
+            "description": "Reads software policies"
+          },
+          {
+            "severity": "LOW",
+            "description": "Queries system information"
+          }
+        ]
+      }
+    },
+    {
+      "type": "attack_technique",
+      "id": "T1497",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1497"
+      },
+      "attributes": {
+        "name": "Virtualization/Sandbox Evasion",
+        "stix_id": "attack-pattern--82caa33e-d11a-433a-94ea-9b5a5fbef81d",
+        "link": "https://attack.mitre.org/techniques/T1497/",
+        "description": "Adversaries may employ various means to detect and avoid virtualization and analysis environments.",
+        "revoked": false,
+        "creation_date": 1555539744,
+        "last_modification_date": 1619018170
+      },
+      "context_attributes": {
+        "signatures": [
+          {
+            "severity": "MEDIUM",
+            "description": "May sleep (evasive loops) to hinder dynamic analysis"
+          }
+        ]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/file_behaviours/sandbox123/attack_techniques?limit=10"
+  },
+  "meta": {
+    "count": 2
+  }
+}

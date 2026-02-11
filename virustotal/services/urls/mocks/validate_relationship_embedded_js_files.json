@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "js1234567890abcdefjs1234567890abcdefjs1234567890abcdefjs12345678",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/js1234567890abcdefjs1234567890abcdefjs1234567890abcdefjs12345678"
+      },
+      "context_attributes": {
+        "url": "https://www.example.com/script.js",
+        "timestamp": 1642000000,
+        "embedded": true,
+        "download_url": "https://www.example.com/script.js",
+        "filename": "script.js"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/embedded_js_files"
+  },
+  "meta": {
+    "count": 1
+  }
+}

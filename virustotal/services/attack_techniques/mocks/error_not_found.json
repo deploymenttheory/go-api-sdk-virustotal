@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "NotFoundError",
+    "message": "Attack technique not found"
+  }
+}

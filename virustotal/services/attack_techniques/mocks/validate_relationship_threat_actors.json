@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "type": "threat_actor",
+      "id": "allanite",
+      "attributes": {
+        "info": {
+          "synonyms": [
+            "Palmetto Fusion",
+            "Allanite"
+          ],
+          "since": "2017",
+          "victimology": "Electric utilities, US and UK",
+          "mode-of-operation": "Watering-hole and phishing leading to ICS recon"
+        },
+        "link": "https://www.misp-project.org/galaxy.html#_allanite",
+        "uuid": "a9000eaf-2b75-4ec7-8dcf-fe1bb5c77470",
+        "name": "ALLANITE",
+        "description": "Adversaries abusing ICS systems"
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/threat_actors/allanite"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548/threat_actors"
+  },
+  "meta": {
+    "count": 1
+  }
+}

@@ -48,6 +48,12 @@ func (m *AttackTacticsMock) RegisterMocks(baseURL string) {
 	m.RegisterGetObjectDescriptorsRelatedToAttackTacticMock(baseURL)
 }
 
+// RegisterRelationshipMocks registers all relationship endpoint mocks
+func (m *AttackTacticsMock) RegisterRelationshipMocks(baseURL string) {
+	m.RegisterGetObjectsRelatedToAttackTacticMock(baseURL)
+	m.RegisterGetObjectDescriptorsRelatedToAttackTacticMock(baseURL)
+}
+
 // RegisterGetAttackTacticMock registers mock for GET /attack_tactics/{id}
 func (m *AttackTacticsMock) RegisterGetAttackTacticMock(baseURL string) {
 	mockData, err := loadMockResponse("validate_get_attack_tactic.json")

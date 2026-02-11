@@ -1,0 +1,64 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1548.001",
+      "attributes": {
+        "info": {
+          "x_mitre_platforms": [
+            "Linux",
+            "macOS"
+          ],
+          "x_mitre_is_subtechnique": true,
+          "x_mitre_permissions_required": [
+            "User"
+          ],
+          "x_mitre_version": "1.0"
+        },
+        "revoked": false,
+        "name": "Setuid and Setgid",
+        "creation_date": 1580393501,
+        "link": "https://attack.mitre.org/techniques/T1548/001/",
+        "stix_id": "attack-pattern--6831414d-bb70-42b7-8030-d4e06b2660c9",
+        "last_modification_date": 1585269838,
+        "description": "An adversary may perform shell escapes or exploit vulnerabilities in an application with the setsuid or setgid bits."
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548.001"
+      }
+    },
+    {
+      "type": "attack_technique",
+      "id": "T1548.002",
+      "attributes": {
+        "info": {
+          "x_mitre_platforms": [
+            "Windows"
+          ],
+          "x_mitre_is_subtechnique": true,
+          "x_mitre_permissions_required": [
+            "Administrator",
+            "User"
+          ],
+          "x_mitre_version": "2.0"
+        },
+        "revoked": false,
+        "name": "Bypass User Account Control",
+        "creation_date": 1580394274,
+        "link": "https://attack.mitre.org/techniques/T1548/002/",
+        "stix_id": "attack-pattern--120d5519-3098-4e1c-9191-2aa61232f073",
+        "last_modification_date": 1595453812,
+        "description": "Adversaries may bypass UAC mechanisms to elevate process privileges on system."
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548.002"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548/subtechniques"
+  },
+  "meta": {
+    "count": 2
+  }
+}

@@ -231,6 +231,52 @@ func (m *URLsMock) RegisterAddVoteToURLMock() {
 	)
 }
 
+// RegisterRelationshipMocks registers all relationship endpoint mocks
+func (m *URLsMock) RegisterRelationshipMocks() {
+	baseURL := "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
+	
+	relationships := map[string]string{
+		"analyses":                   "validate_relationship_analyses.json",
+		"collections":                "validate_relationship_collections.json",
+		"comments":                   "validate_get_comments.json",
+		"communicating_files":        "validate_relationship_communicating_files.json",
+		"contacted_domains":          "validate_relationship_contacted_domains.json",
+		"contacted_ips":              "validate_relationship_contacted_ips.json",
+		"downloaded_files":           "validate_relationship_downloaded_files.json",
+		"embedded_js_files":          "validate_relationship_embedded_js_files.json",
+		"graphs":                     "validate_relationship_graphs.json",
+		"last_serving_ip_address":    "validate_relationship_last_serving_ip_address.json",
+		"network_location":           "validate_relationship_network_location.json",
+		"redirecting_urls":           "validate_relationship_redirecting_urls.json",
+		"redirects_to":               "validate_relationship_redirects_to.json",
+		"referrer_files":             "validate_relationship_referrer_files.json",
+		"referrer_urls":              "validate_relationship_referrer_urls.json",
+		"related_comments":           "validate_relationship_related_comments.json",
+		"related_references":         "validate_relationship_related_references.json",
+		"related_threat_actors":      "validate_relationship_related_threat_actors.json",
+		"submissions":                "validate_relationship_submissions.json",
+		"user_votes":                 "validate_relationship_user_votes.json",
+		"votes":                      "validate_relationship_votes.json",
+		"urls_related_by_tracker_id": "validate_relationship_urls_related_by_tracker_id.json",
+	}
+	
+	for relationship, mockFile := range relationships {
+		rel := relationship
+		file := mockFile
+		
+		httpmock.RegisterResponder(
+			"GET",
+			baseURL+"/"+rel,
+			func(req *http.Request) (*http.Response, error) {
+				mockData := m.loadMockData(file)
+				resp := httpmock.NewBytesResponse(200, mockData)
+				resp.Header.Set("Content-Type", "application/json")
+				return resp, nil
+			},
+		)
+	}
+}
+
 // RegisterErrorMocks registers all error response mocks
 func (m *URLsMock) RegisterErrorMocks() {
 	m.RegisterUnauthorizedErrorMock()

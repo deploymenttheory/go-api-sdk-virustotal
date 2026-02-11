@@ -214,3 +214,80 @@ func TestUnitGetObjectDescriptorsRelatedToAttackTactic_EmptyRelationship(t *test
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "relationship is required")
 }
+
+// =============================================================================
+// Attack Techniques Relationship Tests
+// =============================================================================
+
+const testAttackTacticID = "TA0004"
+
+// TestUnitGetAttackTacticAttackTechniques_Success tests successful attack_techniques relationship retrieval
+func TestUnitGetAttackTacticAttackTechniques_Success(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := mocks.NewAttackTacticsMock()
+	mockHandler.RegisterRelationshipMocks(baseURL)
+
+	result, err := service.GetObjectsRelatedToAttackTactic(
+		context.Background(),
+		testAttackTacticID,
+		RelationshipAttackTechniques,
+		&GetRelatedObjectsOptions{Limit: 10},
+	)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "attack_technique", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+	assert.NotNil(t, result.Data[0].Attributes)
+}
+
+// TestUnitGetAttackTacticAttackTechniques_EmptyTacticID tests error handling for empty tactic ID
+func TestUnitGetAttackTacticAttackTechniques_EmptyTacticID(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	result, err := service.GetObjectsRelatedToAttackTactic(
+		context.Background(),
+		"",
+		RelationshipAttackTechniques,
+		nil,
+	)
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	assert.Contains(t, err.Error(), "attack tactic ID is required")
+}
+
+// TestUnitGetAttackTacticAttackTechniquesDescriptor_Success tests successful attack_techniques descriptor retrieval
+func TestUnitGetAttackTacticAttackTechniquesDescriptor_Success(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := mocks.NewAttackTacticsMock()
+	mockHandler.RegisterRelationshipMocks(baseURL)
+
+	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+		context.Background(),
+		testAttackTacticID,
+		RelationshipAttackTechniques,
+		&GetRelatedObjectsOptions{Limit: 10},
+	)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "attack_technique", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+// TestUnitGetAttackTacticAttackTechniquesDescriptor_EmptyTacticID tests error handling for empty tactic ID
+func TestUnitGetAttackTacticAttackTechniquesDescriptor_EmptyTacticID(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+		context.Background(),
+		"",
+		RelationshipAttackTechniques,
+		nil,
+	)
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	assert.Contains(t, err.Error(), "attack tactic ID is required")
+}

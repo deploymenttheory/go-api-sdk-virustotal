@@ -1,5 +1,9 @@
 package analyses
 
+import (
+	analyses_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/analyses"
+)
+
 // API endpoints for analyses, submissions, and operations
 const (
 	EndpointAnalyses    = "/analyses"
@@ -9,5 +13,5 @@ const (
 
 // Relationship names for analyses (from VT API documentation)
 const (
-	RelationshipItem = "item" // Returns the file or URL object that was analyzed
+	RelationshipItem = analyses_relationships.RelationshipItem
 )

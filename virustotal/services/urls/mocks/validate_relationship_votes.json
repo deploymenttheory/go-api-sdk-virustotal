@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "type": "vote",
+      "id": "vote-456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/votes/vote-456"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/votes"
+  },
+  "meta": {
+    "count": 1
+  }
+}

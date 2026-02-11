@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "1d5156ab08b6a193b8326c246847dcf14f7afcdff560729bee11b682b748ba75"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/analyses/f-1d5156ab08b6a193b8326c246847dcf14f7afcdff560729bee11b682b748ba75-1621141292/relationships/item"
+  },
+  "meta": {
+    "count": 1
+  }
+}

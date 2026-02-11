@@ -1,22 +1,17 @@
 package urls
 
+import (
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models"
+	url_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/urls"
+)
+
 // =============================================================================
 // Common Structures
 // =============================================================================
 
-type Links struct {
-	Self string `json:"self"`
-}
-
-type RelatedLinks struct {
-	Self string `json:"self,omitempty"`
-	Next string `json:"next,omitempty"`
-}
-
-type Meta struct {
-	Count  int    `json:"count,omitempty"`
-	Cursor string `json:"cursor,omitempty"`
-}
+type Links = shared_models.ObjectLinks
+type RelatedLinks = shared_models.Links
+type Meta = shared_models.Meta
 
 type Votes struct {
 	Harmless  int `json:"harmless,omitempty"`
@@ -235,3 +230,46 @@ type VoteDataAttributes struct {
 type AddVoteResponse struct {
 	Data Vote `json:"data"`
 }
+
+// =============================================================================
+// Relationship Response Types
+// =============================================================================
+
+// Generic relationship responses that return collections
+type AnalysesResponse = url_relationships.AnalysesResponse
+type CollectionsResponse = url_relationships.CollectionsResponse
+type CommentsResponse = url_relationships.CommentsResponse
+type CommunicatingFilesResponse = url_relationships.CommunicatingFilesResponse
+type ContactedDomainsResponse = url_relationships.ContactedDomainsResponse
+type ContactedIPsResponse = url_relationships.ContactedIPsResponse
+type DownloadedFilesResponse = url_relationships.DownloadedFilesResponse
+type EmbeddedJSFilesResponse = url_relationships.EmbeddedJSFilesResponse
+type GraphsResponse = url_relationships.GraphsResponse
+type RedirectingURLsResponse = url_relationships.RedirectingURLsResponse
+type RedirectsToResponse = url_relationships.RedirectsToResponse
+type ReferrerFilesResponse = url_relationships.ReferrerFilesResponse
+type ReferrerURLsResponse = url_relationships.ReferrerURLsResponse
+type RelatedCommentsResponse = url_relationships.RelatedCommentsResponse
+type RelatedReferencesResponse = url_relationships.RelatedReferencesResponse
+type RelatedThreatActorsResponse = url_relationships.RelatedThreatActorsResponse
+type SubmissionsResponse = url_relationships.SubmissionsResponse
+type UserVotesResponse = url_relationships.UserVotesResponse
+type VotesRelationshipResponse = url_relationships.VotesResponse
+type URLsRelatedByTrackerIDResponse = url_relationships.URLsRelatedByTrackerIDResponse
+
+// Special relationship responses that return single objects
+type LastServingIPAddressResponse = url_relationships.LastServingIPAddressResponse
+type NetworkLocationResponse = url_relationships.NetworkLocationResponse
+
+// =============================================================================
+// Relationship Context Attributes
+// =============================================================================
+
+type EmbeddedJSFileContextAttributes = url_relationships.EmbeddedJSFileContextAttributes
+type ReferrerURLContextAttributes = url_relationships.ReferrerURLContextAttributes
+type RelatedCommentsContextAttributes = url_relationships.RelatedCommentsContextAttributes
+type PostedInObject = url_relationships.PostedInObject
+type RelatedReferencesContextAttributes = url_relationships.RelatedReferencesContextAttributes
+type RelatedThreatActorsContextAttributes = url_relationships.RelatedThreatActorsContextAttributes
+type RelatedFromObject = url_relationships.RelatedFromObject
+type URLsRelatedByTrackerIDContextAttributes = url_relationships.URLsRelatedByTrackerIDContextAttributes

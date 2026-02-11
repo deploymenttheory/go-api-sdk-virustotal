@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "type": "threat_actor",
+      "id": "test-threat-actor",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/threat_actors/test-threat-actor"
+      },
+      "context_attributes": {
+        "related_from": [
+          {
+            "type": "domain",
+            "id": "example.com",
+            "attributes": {
+              "id": "example.com"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/related_threat_actors"
+  },
+  "meta": {
+    "count": 1
+  }
+}

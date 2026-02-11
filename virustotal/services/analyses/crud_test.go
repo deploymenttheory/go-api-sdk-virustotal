@@ -272,3 +272,95 @@ func TestUnitGetObjectDescriptorsRelatedToAnalysis_EmptyRelationship(t *testing.
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "relationship is required")
 }
+
+const testAnalysisID = "f-1d5156ab08b6a193b8326c246847dcf14f7afcdff560729bee11b682b748ba75-1621141292"
+
+// =============================================================================
+// Item Relationship Tests
+// =============================================================================
+
+func TestUnitGetAnalysisItem_Success(t *testing.T) {
+	service, _ := setupMockClient(t)
+	mockHandler := mocks.NewAnalysesMock()
+	mockHandler.RegisterRelationshipMocks()
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToAnalysis(ctx, testAnalysisID, RelationshipItem, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+
+	// The item can be either a file or URL
+	itemType := result.Data[0].Type
+	assert.True(t, itemType == "file" || itemType == "url", "item type should be either 'file' or 'url'")
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetAnalysisItem_EmptyAnalysisID(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToAnalysis(ctx, "", RelationshipItem, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "analysis ID is required")
+}
+
+func TestUnitGetAnalysisItem_InvalidAnalysisID(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := mocks.NewAnalysesMock()
+	mockHandler.RegisterErrorMocks(baseURL)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToAnalysis(ctx, "invalid-id", RelationshipItem, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+}
+
+// =============================================================================
+// Item Relationship Descriptor Tests
+// =============================================================================
+
+func TestUnitGetAnalysisItemDescriptor_Success(t *testing.T) {
+	service, _ := setupMockClient(t)
+	mockHandler := mocks.NewAnalysesMock()
+	mockHandler.RegisterRelationshipMocks()
+
+	ctx := context.Background()
+	result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, testAnalysisID, RelationshipItem, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+
+	// The item can be either a file or URL
+	itemType := result.Data[0].Type
+	assert.True(t, itemType == "file" || itemType == "url", "item type should be either 'file' or 'url'")
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetAnalysisItemDescriptor_EmptyAnalysisID(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	ctx := context.Background()
+	result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, "", RelationshipItem, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "analysis ID is required")
+}
+
+func TestUnitGetAnalysisItemDescriptor_InvalidAnalysisID(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := mocks.NewAnalysesMock()
+	mockHandler.RegisterErrorMocks(baseURL)
+
+	ctx := context.Background()
+	result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, "invalid-id", RelationshipItem, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+}

@@ -1,5 +1,9 @@
 package attack_tactics
 
+import (
+	attack_tactics_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/attack_tactics"
+)
+
 // AttackTacticResponse represents the response from GET /attack_tactics/{id}
 type AttackTacticResponse struct {
 	Data  AttackTactic `json:"data"`
@@ -72,3 +76,10 @@ type GetRelatedObjectsOptions struct {
 	Limit  int    // Number of items per page (default 10, max 40)
 	Cursor string // Continuation cursor for pagination
 }
+
+// =============================================================================
+// Relationship Response Types
+// =============================================================================
+
+// AttackTechniquesResponse represents the response for the attack_techniques relationship
+type AttackTechniquesResponse = attack_tactics_relationships.AttackTechniquesResponse

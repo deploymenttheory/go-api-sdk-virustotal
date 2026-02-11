@@ -154,6 +154,34 @@ func (m *FileBehavioursMock) RegisterGetObjectsRelatedToFileBehaviourMock(baseUR
 	m.mockState = append(m.mockState, "GET:"+baseURL+"/file_behaviours/sandbox123/attack_techniques")
 }
 
+// RegisterRelationshipMocks registers mocks for all file behaviour relationships
+// https://docs.virustotal.com/reference/file-behaviour-summary#relationships
+func (m *FileBehavioursMock) RegisterRelationshipMocks(baseURL string) {
+	sandboxID := "sandbox123"
+
+	relationships := map[string]string{
+		"file":              "validate_relationship_file.json",
+		"attack_techniques": "validate_relationship_attack_techniques.json",
+	}
+
+	for relationship, mockFile := range relationships {
+		mockData, err := loadMockResponse(mockFile)
+		if err != nil {
+			panic(fmt.Sprintf("Failed to load mock %s: %v", mockFile, err))
+		}
+
+		url := fmt.Sprintf("%s/file_behaviours/%s/%s", baseURL, sandboxID, relationship)
+		httpmock.RegisterResponder(
+			"GET",
+			url,
+			httpmock.NewStringResponder(200, mockData).HeaderSet(http.Header{
+				"Content-Type": []string{"application/json"},
+			}),
+		)
+		m.mockState = append(m.mockState, "GET:"+url)
+	}
+}
+
 // RegisterGetObjectDescriptorsForFileBehaviourMock registers mock for GET /file_behaviours/{sandbox_id}/relationships/{relationship}
 func (m *FileBehavioursMock) RegisterGetObjectDescriptorsForFileBehaviourMock(baseURL string) {
 	mockData, err := loadMockResponse("validate_get_object_descriptors.json")

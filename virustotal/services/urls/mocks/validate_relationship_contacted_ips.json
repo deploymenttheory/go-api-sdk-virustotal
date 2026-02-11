@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "type": "ip_address",
+      "id": "93.184.216.34",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/ip_addresses/93.184.216.34"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/contacted_ips"
+  },
+  "meta": {
+    "count": 1
+  }
+}

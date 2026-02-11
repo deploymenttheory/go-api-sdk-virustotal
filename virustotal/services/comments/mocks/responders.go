@@ -138,6 +138,35 @@ func (m *CommentsMock) RegisterAddVoteToCommentMock() {
 	)
 }
 
+// RegisterRelationshipMocks registers all relationship endpoint mocks
+func (m *CommentsMock) RegisterRelationshipMocks() {
+	baseURL := "https://www.virustotal.com/api/v3/comments/u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
+	
+	// Register author relationship mock
+	httpmock.RegisterResponder(
+		"GET",
+		baseURL+"/author",
+		func(req *http.Request) (*http.Response, error) {
+			mockData := m.loadMockData("validate_get_related_objects.json")
+			resp := httpmock.NewBytesResponse(200, mockData)
+			resp.Header.Set("Content-Type", "application/json")
+			return resp, nil
+		},
+	)
+	
+	// Register author relationship descriptor mock
+	httpmock.RegisterResponder(
+		"GET",
+		baseURL+"/relationships/author",
+		func(req *http.Request) (*http.Response, error) {
+			mockData := m.loadMockData("validate_get_object_descriptors.json")
+			resp := httpmock.NewBytesResponse(200, mockData)
+			resp.Header.Set("Content-Type", "application/json")
+			return resp, nil
+		},
+	)
+}
+
 // RegisterErrorMocks registers all error response mocks
 func (m *CommentsMock) RegisterErrorMocks() {
 	m.RegisterUnauthorizedErrorMock()

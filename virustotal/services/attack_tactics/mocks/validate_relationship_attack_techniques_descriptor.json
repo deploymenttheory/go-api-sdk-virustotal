@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1134"
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/attack_tactics/TA0004/relationships/attack_techniques"
+  },
+  "meta": {
+    "count": 1
+  }
+}

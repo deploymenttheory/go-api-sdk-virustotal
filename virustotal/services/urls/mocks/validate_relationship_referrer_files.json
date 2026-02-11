@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "ref1234567890abcdefref1234567890abcdefref1234567890abcdefref12345",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/ref1234567890abcdefref1234567890abcdefref1234567890abcdefref12345"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/referrer_files"
+  },
+  "meta": {
+    "count": 1
+  }
+}

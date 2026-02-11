@@ -395,28 +395,6 @@ func TestUnitGetObjectsRelatedToFileBehaviour_ManualPagination(t *testing.T) {
 	assert.NotEmpty(t, result.Data)
 }
 
-func TestUnitGetObjectsRelatedToFileBehaviour_EmptySandboxID(t *testing.T) {
-	service, _ := setupMockClient(t)
-
-	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "", "attack_techniques", nil)
-
-	require.Error(t, err)
-	require.Nil(t, result)
-	assert.Contains(t, err.Error(), "sandbox ID is required")
-}
-
-func TestUnitGetObjectsRelatedToFileBehaviour_EmptyRelationship(t *testing.T) {
-	service, _ := setupMockClient(t)
-
-	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "", nil)
-
-	require.Error(t, err)
-	require.Nil(t, result)
-	assert.Contains(t, err.Error(), "relationship is required")
-}
-
 // =============================================================================
 // GetObjectDescriptorsForFileBehaviour Tests
 // =============================================================================
@@ -590,4 +568,81 @@ func TestUnitGetFileBehaviourMemdump_EmptySandboxID(t *testing.T) {
 	require.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "sandbox ID is required")
+}
+
+// =============================================================================
+// File Behaviour Relationship Tests
+// https://docs.virustotal.com/reference/file-behaviour-summary#relationships
+// =============================================================================
+
+// TestUnitGetObjectsRelatedToFileBehaviour_File tests the file relationship
+// Returns the file for a given behaviour report
+// https://docs.virustotal.com/reference/file-behaviour-object-file
+func TestUnitGetObjectsRelatedToFileBehaviour_File(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.FileBehavioursMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", RelationshipFile, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+
+	// Verify the file object structure
+	file := result.Data[0]
+	assert.Equal(t, "file", file.Type)
+	assert.NotEmpty(t, file.ID)
+	assert.NotEmpty(t, file.Attributes)
+}
+
+// TestUnitGetObjectsRelatedToFileBehaviour_AttackTechniques tests the attack_techniques relationship
+// Returns the attack techniques observed in the behaviour report with signature context
+// https://docs.virustotal.com/reference/file-behaviour-object-attack-techniques
+func TestUnitGetObjectsRelatedToFileBehaviour_AttackTechniques(t *testing.T) {
+	service, baseURL := setupMockClient(t)
+	mockHandler := &mocks.FileBehavioursMock{}
+	mockHandler.RegisterRelationshipMocks(baseURL)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", RelationshipAttackTechniques, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.NotEmpty(t, result.Data)
+
+	// Verify the attack technique object structure
+	technique := result.Data[0]
+	assert.Equal(t, "attack_technique", technique.Type)
+	assert.NotEmpty(t, technique.ID)
+	assert.NotEmpty(t, technique.Attributes)
+
+	// Verify context attributes exist (signatures)
+	// Note: context_attributes are parsed as map[string]any in the generic RelatedObject
+	// For type-safe access, users would cast to AttackTechniqueContextAttributes
+}
+
+// TestUnitGetObjectsRelatedToFileBehaviour_EmptySandboxID validates error handling for empty sandbox ID
+func TestUnitGetObjectsRelatedToFileBehaviour_ValidationEmptySandboxID(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "", RelationshipFile, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "sandbox ID is required")
+}
+
+// TestUnitGetObjectsRelatedToFileBehaviour_EmptyRelationship validates error handling for empty relationship
+func TestUnitGetObjectsRelatedToFileBehaviour_ValidationEmptyRelationship(t *testing.T) {
+	service, _ := setupMockClient(t)
+
+	ctx := context.Background()
+	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "", nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "relationship is required")
 }

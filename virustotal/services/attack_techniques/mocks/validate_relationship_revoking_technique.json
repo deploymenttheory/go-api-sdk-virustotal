@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1546.004",
+      "attributes": {
+        "info": {
+          "x_mitre_platforms": [
+            "Linux",
+            "macOS"
+          ],
+          "x_mitre_is_subtechnique": true,
+          "x_mitre_permissions_required": [
+            "User",
+            "Administrator"
+          ],
+          "x_mitre_version": "1.0"
+        },
+        "revoked": false,
+        "name": ".bash_profile and .bashrc",
+        "creation_date": 1579875225,
+        "link": "https://attack.mitre.org/techniques/T1546/004/",
+        "stix_id": "attack-pattern--b63a34e8-0a61-4c97-a23b-bf8a2ed812e2",
+        "last_modification_date": 1585067284,
+        "description": "Adversaries may establish persistence by executing malicious content triggered by a user's shell."
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1546.004"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/attack_techniques/T1156/revoking_technique"
+  },
+  "meta": {
+    "count": 1
+  }
+}

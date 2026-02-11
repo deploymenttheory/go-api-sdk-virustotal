@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "type": "attack_tactic",
+      "id": "TA0004",
+      "attributes": {
+        "creation_date": 1539735260,
+        "description": "The adversary is trying to gain higher-level permissions.",
+        "last_modification_date": 1580133829,
+        "link": "https://attack.mitre.org/tactics/TA0004/",
+        "name": "Privilege Escalation",
+        "stix_id": "x-mitre-tactic--3e962de5-3280-43b7-bc10-334fbc1d6fa8"
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_tactics/TA0004"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548/attack_tactics"
+  },
+  "meta": {
+    "count": 1
+  }
+}

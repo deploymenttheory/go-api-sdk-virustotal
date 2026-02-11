@@ -1,0 +1,17 @@
+{
+  "data": [
+    {
+      "type": "url",
+      "id": "aHR0cHM6Ly93d3cucmVkaXJlY3RlZC5leGFtcGxlLmNvbQ",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cucmVkaXJlY3RlZC5leGFtcGxlLmNvbQ"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/redirects_to"
+  },
+  "meta": {
+    "count": 1
+  }
+}

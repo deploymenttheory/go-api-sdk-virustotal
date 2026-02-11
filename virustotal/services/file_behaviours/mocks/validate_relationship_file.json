@@ -1,0 +1,35 @@
+{
+  "data": [
+    {
+      "type": "file",
+      "id": "44d88612fea8a8f36de82e1278abb02f",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f"
+      },
+      "attributes": {
+        "type_description": "Win32 EXE",
+        "tlsh": "T1EF861292F3CCF916D577C03396A30627698A4C488B06E7561B18F37C9AF7AD04E46BC9",
+        "vhash": "9f5dce0c8a94230798f5316d2b949c63",
+        "type_tag": "peexe",
+        "size": 7927753,
+        "sha256": "44d88612fea8a8f36de82e1278abb02f9f86d081884c7d659a2feaa0c55ad015",
+        "type_extension": "exe",
+        "tags": [
+          "peexe",
+          "runtime-modules",
+          "signed"
+        ],
+        "sha1": "9733cd39998576ef4f4a4c342f21b0542b578f25",
+        "ssdeep": "196608:rhhZd9eKsLCxPX+oJi5M2wD6rqztYN6Cjr8fok+",
+        "md5": "44d88612fea8a8f36de82e1278abb02f",
+        "magic": "PE32 executable"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/file_behaviours/sandbox123/file"
+  },
+  "meta": {
+    "count": 1
+  }
+}

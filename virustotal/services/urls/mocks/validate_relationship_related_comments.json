@@ -1,0 +1,23 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "related-comment-123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/related-comment-123"
+      },
+      "context_attributes": {
+        "posted_in": {
+          "id": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20",
+          "type": "url"
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/urls/aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20/related_comments"
+  },
+  "meta": {
+    "count": 1
+  }
+}

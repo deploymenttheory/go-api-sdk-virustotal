@@ -1,5 +1,9 @@
 package analyses
 
+import (
+	analyses_relationships "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/shared_models/relationships/analyses"
+)
+
 // =============================================================================
 // Analysis Models
 // =============================================================================
@@ -158,3 +162,10 @@ type ObjectDescriptor struct {
 	ID                string         `json:"id"`                           // Object ID
 	ContextAttributes map[string]any `json:"context_attributes,omitempty"` // Context-specific attributes
 }
+
+// =============================================================================
+// Relationship Response Types
+// =============================================================================
+
+// ItemResponse represents the response for the item relationship
+type ItemResponse = analyses_relationships.ItemResponse

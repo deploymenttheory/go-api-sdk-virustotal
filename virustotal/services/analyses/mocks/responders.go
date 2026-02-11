@@ -135,6 +135,40 @@ func (m *AnalysesMock) RegisterGetObjectDescriptorsRelatedToAnalysisMock(baseURL
 	m.mockState = append(m.mockState, "GET:"+baseURL+"/analyses/test-analysis-id/relationships/item")
 }
 
+// RegisterRelationshipMocks registers all relationship endpoint mocks
+func (m *AnalysesMock) RegisterRelationshipMocks() {
+	baseURL := "https://www.virustotal.com/api/v3"
+	analysisID := "f-1d5156ab08b6a193b8326c246847dcf14f7afcdff560729bee11b682b748ba75-1621141292"
+	
+	// Register item relationship mock
+	mockData, err := loadMockResponse("validate_relationship_item.json")
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load mock: %v", err))
+	}
+	
+	httpmock.RegisterResponder(
+		"GET",
+		baseURL+"/analyses/"+analysisID+"/item",
+		httpmock.NewStringResponder(200, mockData).HeaderSet(http.Header{
+			"Content-Type": []string{"application/json"},
+		}),
+	)
+	
+	// Register item relationship descriptor mock
+	mockDescriptorData, err := loadMockResponse("validate_relationship_item_descriptor.json")
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load mock: %v", err))
+	}
+	
+	httpmock.RegisterResponder(
+		"GET",
+		baseURL+"/analyses/"+analysisID+"/relationships/item",
+		httpmock.NewStringResponder(200, mockDescriptorData).HeaderSet(http.Header{
+			"Content-Type": []string{"application/json"},
+		}),
+	)
+}
+
 // RegisterErrorMocks registers all error mock responses
 func (m *AnalysesMock) RegisterErrorMocks(baseURL string) {
 	m.RegisterUnauthorizedErrorMock(baseURL)

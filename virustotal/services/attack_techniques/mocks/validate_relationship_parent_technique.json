@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "type": "attack_technique",
+      "id": "T1548",
+      "attributes": {
+        "info": {
+          "x_mitre_platforms": [
+            "Linux",
+            "macOS",
+            "Windows"
+          ],
+          "x_mitre_is_subtechnique": false,
+          "x_mitre_permissions_required": [
+            "Administrator",
+            "User"
+          ],
+          "x_mitre_version": "1.0"
+        },
+        "revoked": false,
+        "name": "Abuse Elevation Control Mechanism",
+        "creation_date": 1580392694,
+        "link": "https://attack.mitre.org/techniques/T1548/",
+        "stix_id": "attack-pattern--67720091-eee3-4d2d-ae16-8264567f6f5b",
+        "last_modification_date": 1595453812,
+        "description": "Adversaries may circumvent mechanisms designed to control elevate privileges to gain higher-level permissions."
+      },
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548"
+      }
+    }
+  ],
+  "links": {
+    "self": "https://www.virustotal.com/api/v3/attack_techniques/T1548.001/parent_technique"
+  },
+  "meta": {
+    "count": 1
+  }
+}
