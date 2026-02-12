@@ -147,7 +147,7 @@ func TestUnitGetFileBehaviourSummary_Success(t *testing.T) {
 
 	ctx := context.Background()
 	// Using a valid MD5 hash
-	result, err := service.GetFileBehaviourSummaryByHashId(ctx, "44d88612fea8a8f36de82e1278abb02f")
+	result, _, err := service.GetFileBehaviourSummaryByHashId(ctx, "44d88612fea8a8f36de82e1278abb02f")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -158,7 +158,7 @@ func TestUnitGetFileBehaviourSummary_EmptyFileID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourSummaryByHashId(ctx, "")
+	result, _, err := service.GetFileBehaviourSummaryByHashId(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -169,7 +169,7 @@ func TestUnitGetFileBehaviourSummary_InvalidFileID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourSummaryByHashId(ctx, "invalid-hash")
+	result, _, err := service.GetFileBehaviourSummaryByHashId(ctx, "invalid-hash")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -192,7 +192,7 @@ func TestUnitGetAllFileBehavioursSummary_Success(t *testing.T) {
 		"356a192b7913b04c54574d18c28d46e6395428ab",
 		"9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
 	}
-	result, err := service.GetAllFileBehavioursSummary(ctx, fileHashes)
+	result, _, err := service.GetAllFileBehavioursSummary(ctx, fileHashes)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -203,7 +203,7 @@ func TestUnitGetAllFileBehavioursSummary_EmptyHashes(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetAllFileBehavioursSummary(ctx, []string{})
+	result, _, err := service.GetAllFileBehavioursSummary(ctx, []string{})
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -214,7 +214,7 @@ func TestUnitGetAllFileBehavioursSummary_NilHashes(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetAllFileBehavioursSummary(ctx, nil)
+	result, _, err := service.GetAllFileBehavioursSummary(ctx, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -226,7 +226,7 @@ func TestUnitGetAllFileBehavioursSummary_InvalidHash(t *testing.T) {
 
 	ctx := context.Background()
 	fileHashes := []string{"44d88612fea8a8f36de82e1278abb02f", "invalid-hash", "356a192b7913b04c54574d18c28d46e6395428ab"}
-	result, err := service.GetAllFileBehavioursSummary(ctx, fileHashes)
+	result, _, err := service.GetAllFileBehavioursSummary(ctx, fileHashes)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -245,7 +245,7 @@ func TestUnitGetFileMitreAttackTrees_Success(t *testing.T) {
 
 	ctx := context.Background()
 	// Using a valid SHA-256 hash
-	result, err := service.GetFileMitreAttackTrees(ctx, "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+	result, _, err := service.GetFileMitreAttackTrees(ctx, "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -256,7 +256,7 @@ func TestUnitGetFileMitreAttackTrees_EmptyFileID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileMitreAttackTrees(ctx, "")
+	result, _, err := service.GetFileMitreAttackTrees(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -267,7 +267,7 @@ func TestUnitGetFileMitreAttackTrees_InvalidFileID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileMitreAttackTrees(ctx, "not-a-valid-hash")
+	result, _, err := service.GetFileMitreAttackTrees(ctx, "not-a-valid-hash")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -285,7 +285,7 @@ func TestUnitGetAllFileBehaviours_Success(t *testing.T) {
 
 	ctx := context.Background()
 	// Using a valid SHA-1 hash
-	result, err := service.GetAllFileBehaviours(ctx, "356a192b7913b04c54574d18c28d46e6395428ab", nil)
+	result, _, err := service.GetAllFileBehaviours(ctx, "356a192b7913b04c54574d18c28d46e6395428ab", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -303,7 +303,7 @@ func TestUnitGetAllFileBehaviours_ManualPagination(t *testing.T) {
 		Cursor: "abc123",
 	}
 	// Using a valid SHA-1 hash
-	result, err := service.GetAllFileBehaviours(ctx, "356a192b7913b04c54574d18c28d46e6395428ab", opts)
+	result, _, err := service.GetAllFileBehaviours(ctx, "356a192b7913b04c54574d18c28d46e6395428ab", opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -314,7 +314,7 @@ func TestUnitGetAllFileBehaviours_EmptyFileID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetAllFileBehaviours(ctx, "", nil)
+	result, _, err := service.GetAllFileBehaviours(ctx, "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -325,7 +325,7 @@ func TestUnitGetAllFileBehaviours_InvalidFileID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetAllFileBehaviours(ctx, "invalid", nil)
+	result, _, err := service.GetAllFileBehaviours(ctx, "invalid", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -342,7 +342,7 @@ func TestUnitGetFileBehaviour_Success(t *testing.T) {
 	mockHandler.RegisterGetFileBehaviourMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviour(ctx, "sandbox123")
+	result, _, err := service.GetFileBehaviour(ctx, "sandbox123")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -354,7 +354,7 @@ func TestUnitGetFileBehaviour_EmptySandboxID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviour(ctx, "")
+	result, _, err := service.GetFileBehaviour(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -371,7 +371,7 @@ func TestUnitGetObjectsRelatedToFileBehaviour_Success(t *testing.T) {
 	mockHandler.RegisterGetObjectsRelatedToFileBehaviourMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "attack_techniques", nil)
+	result, _, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "attack_techniques", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -388,7 +388,7 @@ func TestUnitGetObjectsRelatedToFileBehaviour_ManualPagination(t *testing.T) {
 		Limit:  10,
 		Cursor: "abc123",
 	}
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "attack_techniques", opts)
+	result, _, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "attack_techniques", opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -405,7 +405,7 @@ func TestUnitGetObjectDescriptorsForFileBehaviour_Success(t *testing.T) {
 	mockHandler.RegisterGetObjectDescriptorsForFileBehaviourMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "sandbox123", "attack_techniques", nil)
+	result, _, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "sandbox123", "attack_techniques", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -422,7 +422,7 @@ func TestUnitGetObjectDescriptorsForFileBehaviour_ManualPagination(t *testing.T)
 		Limit:  10,
 		Cursor: "abc123",
 	}
-	result, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "sandbox123", "attack_techniques", opts)
+	result, _, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "sandbox123", "attack_techniques", opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -433,7 +433,7 @@ func TestUnitGetObjectDescriptorsForFileBehaviour_EmptySandboxID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "", "attack_techniques", nil)
+	result, _, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "", "attack_techniques", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -444,7 +444,7 @@ func TestUnitGetObjectDescriptorsForFileBehaviour_EmptyRelationship(t *testing.T
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "sandbox123", "", nil)
+	result, _, err := service.GetObjectDescriptorsForFileBehaviour(ctx, "sandbox123", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -461,7 +461,7 @@ func TestUnitGetFileBehaviourHTML_Success(t *testing.T) {
 	mockHandler.RegisterGetFileBehaviourHTMLMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourHTML(ctx, "sandbox123")
+	result, _, err := service.GetFileBehaviourHTML(ctx, "sandbox123")
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -473,7 +473,7 @@ func TestUnitGetFileBehaviourHTML_EmptySandboxID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourHTML(ctx, "")
+	result, _, err := service.GetFileBehaviourHTML(ctx, "")
 
 	require.Error(t, err)
 	assert.Empty(t, result)
@@ -490,7 +490,7 @@ func TestUnitGetFileBehaviourEVTX_Success(t *testing.T) {
 	mockHandler.RegisterGetFileBehaviourEVTXMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourEVTX(ctx, "sandbox123")
+	result, _, err := service.GetFileBehaviourEVTX(ctx, "sandbox123")
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -501,7 +501,7 @@ func TestUnitGetFileBehaviourEVTX_EmptySandboxID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourEVTX(ctx, "")
+	result, _, err := service.GetFileBehaviourEVTX(ctx, "")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -518,7 +518,7 @@ func TestUnitGetFileBehaviourPCAP_Success(t *testing.T) {
 	mockHandler.RegisterGetFileBehaviourPCAPMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourPCAP(ctx, "sandbox123")
+	result, _, err := service.GetFileBehaviourPCAP(ctx, "sandbox123")
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -532,7 +532,7 @@ func TestUnitGetFileBehaviourPCAP_EmptySandboxID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourPCAP(ctx, "")
+	result, _, err := service.GetFileBehaviourPCAP(ctx, "")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -549,7 +549,7 @@ func TestUnitGetFileBehaviourMemdump_Success(t *testing.T) {
 	mockHandler.RegisterGetFileBehaviourMemdumpMock(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourMemdump(ctx, "sandbox123")
+	result, _, err := service.GetFileBehaviourMemdump(ctx, "sandbox123")
 
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -563,7 +563,7 @@ func TestUnitGetFileBehaviourMemdump_EmptySandboxID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetFileBehaviourMemdump(ctx, "")
+	result, _, err := service.GetFileBehaviourMemdump(ctx, "")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -584,7 +584,7 @@ func TestUnitGetObjectsRelatedToFileBehaviour_File(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", RelationshipFile, nil)
+	result, _, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", RelationshipFile, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -606,7 +606,7 @@ func TestUnitGetObjectsRelatedToFileBehaviour_AttackTechniques(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", RelationshipAttackTechniques, nil)
+	result, _, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", RelationshipAttackTechniques, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -628,7 +628,7 @@ func TestUnitGetObjectsRelatedToFileBehaviour_ValidationEmptySandboxID(t *testin
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "", RelationshipFile, nil)
+	result, _, err := service.GetObjectsRelatedToFileBehaviour(ctx, "", RelationshipFile, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -640,7 +640,7 @@ func TestUnitGetObjectsRelatedToFileBehaviour_ValidationEmptyRelationship(t *tes
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "", nil)
+	result, _, err := service.GetObjectsRelatedToFileBehaviour(ctx, "sandbox123", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)

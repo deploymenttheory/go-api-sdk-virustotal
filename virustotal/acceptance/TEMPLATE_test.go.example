@@ -20,9 +20,12 @@ func TestAcceptance_YourService_Operation(t *testing.T) {
 		LogResponse(t, "Testing YourService.Operation")
 
 		// Perform the operation
-		result, err := service.SomeOperation(ctx, "test-parameter")
+		result, resp, err := service.SomeOperation(ctx, "test-parameter")
 		AssertNoError(t, err, "Operation should not return an error")
 		AssertNotNil(t, result, "Result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
 
 		// Add specific assertions
 		assert.NotEmpty(t, result.Data, "Data should not be empty")
@@ -45,10 +48,12 @@ func TestAcceptance_YourService_Operation_ErrorCase(t *testing.T) {
 		LogResponse(t, "Testing YourService.Operation with invalid input")
 
 		// Perform operation with invalid input
-		result, err := service.SomeOperation(ctx, "invalid-parameter")
+		result, resp, err := service.SomeOperation(ctx, "invalid-parameter")
 
 		// Expect an error
 		assert.Error(t, err, "Should return error for invalid input")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid input")
 		assert.Nil(t, result, "Result should be nil on error")
 
 		LogResponse(t, "Error handling validated: %v", err)

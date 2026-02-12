@@ -19,9 +19,12 @@ func TestAcceptance_IPAddresses_GetIPAddressReport(t *testing.T) {
 
 		LogResponse(t, "Testing GetIPAddressReport with IP: %s", Config.KnownIPAddress)
 
-		result, err := service.GetIPAddressReport(ctx, Config.KnownIPAddress, nil)
+		result, resp, err := service.GetIPAddressReport(ctx, Config.KnownIPAddress, nil)
 		AssertNoError(t, err, "GetIPAddressReport should not return an error")
 		AssertNotNil(t, result, "GetIPAddressReport result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "IP address data should not be nil")
@@ -78,11 +81,13 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_InvalidIP(t *testing.T) {
 		LogResponse(t, "Testing GetIPAddressReport with invalid IP")
 
 		// Use an invalid IP address format
-		result, err := service.GetIPAddressReport(ctx, "999.999.999.999", nil)
+		result, resp, err := service.GetIPAddressReport(ctx, "999.999.999.999", nil)
 
 		// We expect an error for an invalid IP
 		assert.Error(t, err, "GetIPAddressReport should return an error for invalid IP")
 		assert.Nil(t, result, "GetIPAddressReport result should be nil for invalid IP")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid IP")
 
 		LogResponse(t, "Expected error received: %v", err)
 	})
@@ -100,11 +105,12 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_EmptyIP(t *testing.T) {
 
 		LogResponse(t, "Testing GetIPAddressReport with empty IP")
 
-		result, err := service.GetIPAddressReport(ctx, "", nil)
+		result, resp, err := service.GetIPAddressReport(ctx, "", nil)
 
 		// Should fail validation
 		assert.Error(t, err, "GetIPAddressReport should return an error for empty IP")
 		assert.Nil(t, result, "GetIPAddressReport result should be nil for empty IP")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
 		assert.Contains(t, err.Error(), "ip address is required", "Error should mention required IP")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
@@ -125,9 +131,11 @@ func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
 
 		// Get DNS resolutions with limit
 		opts := &ipaddresses.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectsRelatedToIPAddress(ctx, Config.KnownIPAddress, "resolutions", opts)
+		result, resp, err := service.GetObjectsRelatedToIPAddress(ctx, Config.KnownIPAddress, "resolutions", opts)
 		AssertNoError(t, err, "GetObjectsRelatedToIPAddress should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToIPAddress result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Resolutions data should not be nil")
@@ -164,9 +172,11 @@ func TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress(t *testin
 
 		// Get DNS resolution descriptors with limit
 		opts := &ipaddresses.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, Config.KnownIPAddress, "resolutions", opts)
+		result, resp, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, Config.KnownIPAddress, "resolutions", opts)
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToIPAddress should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToIPAddress result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -199,9 +209,11 @@ func TestAcceptance_IPAddresses_GetVotesOnIPAddress(t *testing.T) {
 
 		// Get votes with limit
 		opts := &ipaddresses.GetVotesOptions{Limit: 10}
-		result, err := service.GetVotesOnIPAddress(ctx, Config.KnownIPAddress, opts)
+		result, resp, err := service.GetVotesOnIPAddress(ctx, Config.KnownIPAddress, opts)
 		AssertNoError(t, err, "GetVotesOnIPAddress should not return an error")
 		AssertNotNil(t, result, "GetVotesOnIPAddress result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

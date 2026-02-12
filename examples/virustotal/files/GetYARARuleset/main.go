@@ -39,7 +39,7 @@ func main() {
 	// Example: get this ID from a file report's crowdsourced_yara_results
 	yaraRulesetID := "example-yara-ruleset-id"
 
-	result, err := vtClient.Files.GetYARARuleset(ctx, yaraRulesetID)
+	result, _, err := vtClient.Files.GetYARARuleset(ctx, yaraRulesetID)
 	if err != nil {
 		log.Fatalf("Failed to get YARA ruleset: %v", err)
 	}

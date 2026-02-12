@@ -40,7 +40,7 @@ func main() {
 	// Comment text with tags (words starting with # become tags)
 	commentText := "This is a legitimate example domain used for documentation #benign #example #documentation"
 
-	result, err := vtClient.Domains.AddCommentToDomain(ctx, domain, commentText)
+	result, _, err := vtClient.Domains.AddCommentToDomain(ctx, domain, commentText)
 	if err != nil {
 		log.Fatalf("Failed to add comment to domain: %v", err)
 	}

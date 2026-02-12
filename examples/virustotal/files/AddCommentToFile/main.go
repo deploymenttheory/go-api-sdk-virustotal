@@ -40,7 +40,7 @@ func main() {
 	// Comment text with tags (words starting with # become tags)
 	commentText := "This is the EICAR test file, used for testing antivirus software #benign #test #eicar"
 
-	result, err := vtClient.Files.AddCommentToFile(ctx, fileID, commentText)
+	result, _, err := vtClient.Files.AddCommentToFile(ctx, fileID, commentText)
 	if err != nil {
 		log.Fatalf("Failed to add comment to file: %v", err)
 	}

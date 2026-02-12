@@ -40,7 +40,7 @@ func main() {
 	fmt.Println("=== Get All Votes (Automatic Pagination) ===")
 	fmt.Printf("Fetching community votes for file: %s\n\n", fileID)
 
-	response, err := vtClient.Files.GetVotesOnFile(ctx, fileID, nil)
+	response, _, err := vtClient.Files.GetVotesOnFile(ctx, fileID, nil)
 	if err != nil {
 		log.Fatalf("Failed to get votes: %v", err)
 	}

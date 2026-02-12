@@ -36,7 +36,7 @@ func main() {
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
 	relationship := "comments" // Can be: comments, analyses, collections, etc.
 
-	result, err := vtClient.URLs.GetObjectsRelatedToURL(ctx, urlID, relationship, nil)
+	result, _, err := vtClient.URLs.GetObjectsRelatedToURL(ctx, urlID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get related objects: %v", err)
 	}

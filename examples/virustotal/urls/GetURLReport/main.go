@@ -37,7 +37,7 @@ func main() {
 	// URL ID can be SHA-256 hash or base64-encoded URL without padding
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20" // Base64 of https://www.example.com
 
-	report, err := vtClient.URLs.GetURLReport(ctx, urlID)
+	report, _, err := vtClient.URLs.GetURLReport(ctx, urlID)
 	if err != nil {
 		log.Fatalf("Failed to get URL report: %v", err)
 	}

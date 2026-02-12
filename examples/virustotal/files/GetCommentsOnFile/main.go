@@ -40,7 +40,7 @@ func main() {
 	fmt.Println("=== Get All Comments (Automatic Pagination) ===")
 	fmt.Printf("Fetching community comments for file: %s\n\n", fileID)
 
-	response, err := vtClient.Files.GetCommentsOnFile(ctx, fileID, nil)
+	response, _, err := vtClient.Files.GetCommentsOnFile(ctx, fileID, nil)
 	if err != nil {
 		log.Fatalf("Failed to get comments: %v", err)
 	}

@@ -43,7 +43,7 @@ func main() {
 	fmt.Println("=== Get All Related Objects (Automatic Pagination) ===")
 	fmt.Printf("Fetching all %s for domain: %s\n\n", relationship, domain)
 
-	response, err := vtClient.Domains.GetObjectsRelatedToDomain(ctx, domain, relationship, nil)
+	response, _, err := vtClient.Domains.GetObjectsRelatedToDomain(ctx, domain, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get related objects: %v", err)
 	}

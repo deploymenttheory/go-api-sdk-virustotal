@@ -36,7 +36,7 @@ func main() {
 	ctx := context.Background()
 	domain := "example.com" // Example domain
 
-	report, err := vtClient.Domains.GetDomainReport(ctx, domain)
+	report, _, err := vtClient.Domains.GetDomainReport(ctx, domain)
 	if err != nil {
 		log.Fatalf("Failed to get domain report: %v", err)
 	}

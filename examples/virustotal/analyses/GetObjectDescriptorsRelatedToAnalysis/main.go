@@ -26,7 +26,7 @@ func main() {
 
 	// Get related object descriptors (item - the file or URL that was analyzed)
 	ctx := context.Background()
-	descriptors, err := client.Analyses.GetObjectDescriptorsRelatedToAnalysis(
+	descriptors, _, err := client.Analyses.GetObjectDescriptorsRelatedToAnalysis(
 		ctx,
 		analysisID,
 		analyses.RelationshipItem,

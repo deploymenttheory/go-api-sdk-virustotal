@@ -40,7 +40,7 @@ func main() {
 	ctx := context.Background()
 	ip := "8.8.8.8" // Google DNS
 
-	result, err := vtClient.IPAddresses.RescanIPAddress(ctx, ip)
+	result, _, err := vtClient.IPAddresses.RescanIPAddress(ctx, ip)
 	if err != nil {
 		log.Fatalf("Failed to request IP address rescan: %v", err)
 	}

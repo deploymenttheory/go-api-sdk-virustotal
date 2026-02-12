@@ -36,7 +36,7 @@ func main() {
 	commentID := "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
 	relationship := "author" // Currently only "author" is supported
 
-	result, err := vtClient.Comments.GetObjectsRelatedToComment(ctx, commentID, relationship, nil)
+	result, _, err := vtClient.Comments.GetObjectsRelatedToComment(ctx, commentID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get related objects: %v", err)
 	}

@@ -21,7 +21,7 @@ type (
 		// resolutions, historical SSL certificates, and related threat actors.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/ip-info
-		GetIPAddressReport(ctx context.Context, ip string, opts *RequestQueryOptions) (*IPAddressResponse, error)
+		GetIPAddressReport(ctx context.Context, ip string, opts *RequestQueryOptions) (*IPAddressResponse, *interfaces.Response, error)
 
 		// RescanIPAddress requests a rescan/reanalysis of an IP address
 		//
@@ -30,7 +30,7 @@ type (
 		// the verdicts from the available vendors using the Analyses endpoint.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/rescan-ip
-		RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddressResponse, error)
+		RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddressResponse, *interfaces.Response, error)
 
 		// AddCommentToIPAddress adds a comment to an IP address
 		//
@@ -38,7 +38,7 @@ type (
 		// converted to tags. Returns the created comment object with its assigned ID, creation date, and extracted tags.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/ip-comments-post
-		AddCommentToIPAddress(ctx context.Context, ip string, commentText string) (*AddCommentResponse, error)
+		AddCommentToIPAddress(ctx context.Context, ip string, commentText string) (*AddCommentResponse, *interfaces.Response, error)
 
 		// GetObjectsRelatedToIPAddress retrieves objects related to an IP address
 		//
@@ -47,7 +47,7 @@ type (
 		// historical_ssl_certificates, historical_whois, and more. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/ip-relationships
-		GetObjectsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetObjectsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// GetObjectDescriptorsRelatedToIPAddress retrieves object descriptors (IDs only) related to an IP address
 		//
@@ -56,7 +56,7 @@ type (
 		// Supported relationships are the same as GetObjectsRelatedToIPAddress.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/ip-relationships-ids
-		GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, error)
+		GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error)
 
 		// GetVotesOnIPAddress retrieves votes on an IP address
 		//
@@ -64,7 +64,7 @@ type (
 		// Each vote includes the verdict, date, and value. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/ip-votes
-		GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetVotesOptions) (*VotesResponse, error)
+		GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error)
 
 		// AddVoteToIPAddress adds a vote to an IP address
 		//
@@ -72,7 +72,7 @@ type (
 		// Returns the created vote object with its assigned ID, creation date, and value.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/ip-votes-post
-		AddVoteToIPAddress(ctx context.Context, ip string, verdict string) (*AddVoteResponse, error)
+		AddVoteToIPAddress(ctx context.Context, ip string, verdict string) (*AddVoteResponse, *interfaces.Response, error)
 	}
 
 	// Service handles communication with the IP addresses
@@ -98,9 +98,9 @@ func NewService(client interfaces.HTTPClient) *Service {
 // URL: GET https://www.virustotal.com/api/v3/ip_addresses/{ip}
 // Query Params: relationships (optional)
 // https://docs.virustotal.com/reference/ip-info
-func (s *Service) GetIPAddressReport(ctx context.Context, ip string, opts *RequestQueryOptions) (*IPAddressResponse, error) {
+func (s *Service) GetIPAddressReport(ctx context.Context, ip string, opts *RequestQueryOptions) (*IPAddressResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointIPAddresses, ip)
@@ -116,20 +116,20 @@ func (s *Service) GetIPAddressReport(ctx context.Context, ip string, opts *Reque
 	}
 
 	var result IPAddressResponse
-	err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // RescanIPAddress requests a rescan/reanalysis of an IP address
 // URL: POST https://www.virustotal.com/api/v3/ip_addresses/{ip}/analyse
 // https://docs.virustotal.com/reference/rescan-ip
-func (s *Service) RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddressResponse, error) {
+func (s *Service) RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddressResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointIPAddresses, ip)
@@ -140,23 +140,23 @@ func (s *Service) RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddr
 	}
 
 	var result RescanIPAddressResponse
-	err := s.client.Post(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // AddCommentToIPAddress adds a comment to an IP address
 // URL: POST https://www.virustotal.com/api/v3/ip_addresses/{ip}/comments
 // https://docs.virustotal.com/reference/ip-comments-post
-func (s *Service) AddCommentToIPAddress(ctx context.Context, ip string, commentText string) (*AddCommentResponse, error) {
+func (s *Service) AddCommentToIPAddress(ctx context.Context, ip string, commentText string) (*AddCommentResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if commentText == "" {
-		return nil, fmt.Errorf("comment text is required")
+		return nil, nil, fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointIPAddresses, ip)
@@ -176,12 +176,12 @@ func (s *Service) AddCommentToIPAddress(ctx context.Context, ip string, commentT
 	}
 
 	var result AddCommentResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // GetObjectsRelatedToIPAddress retrieves objects related to an IP address
@@ -189,17 +189,17 @@ func (s *Service) AddCommentToIPAddress(ctx context.Context, ip string, commentT
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/ip-relationships
-func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointIPAddresses, ip, relationship, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -218,17 +218,17 @@ func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, r
 		}
 
 		var result RelatedObjectsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allObjects []RelatedObject
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -238,12 +238,12 @@ func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, r
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectsResponse{
 		Data: allObjects,
-	}, nil
+	}, resp, nil
 }
 
 // GetObjectDescriptorsRelatedToIPAddress retrieves object descriptors (IDs only) related to an IP address
@@ -251,17 +251,17 @@ func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, r
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/ip-relationships-ids
-func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, error) {
+func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointIPAddresses, ip, relationship, true)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -280,17 +280,17 @@ func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip
 		}
 
 		var result RelatedObjectDescriptorsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allDescriptors []ObjectDescriptor
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectDescriptorsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -300,12 +300,12 @@ func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectDescriptorsResponse{
 		Data: allDescriptors,
-	}, nil
+	}, resp, nil
 }
 
 // GetVotesOnIPAddress retrieves votes on an IP address
@@ -313,9 +313,9 @@ func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/ip-votes
-func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetVotesOptions) (*VotesResponse, error) {
+func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointIPAddresses, ip)
@@ -336,17 +336,17 @@ func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetV
 		}
 
 		var result VotesResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allVotes []Vote
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse VotesResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -356,26 +356,26 @@ func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetV
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &VotesResponse{
 		Data: allVotes,
-	}, nil
+	}, resp, nil
 }
 
 // AddVoteToIPAddress adds a vote to an IP address
 // URL: POST https://www.virustotal.com/api/v3/ip_addresses/{ip}/votes
 // https://docs.virustotal.com/reference/ip-votes-post
-func (s *Service) AddVoteToIPAddress(ctx context.Context, ip string, verdict string) (*AddVoteResponse, error) {
+func (s *Service) AddVoteToIPAddress(ctx context.Context, ip string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if verdict == "" {
-		return nil, fmt.Errorf("verdict is required")
+		return nil, nil, fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, fmt.Errorf("verdict must be either 'harmless' or 'malicious'")
+		return nil, nil, fmt.Errorf("verdict must be either 'harmless' or 'malicious'")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointIPAddresses, ip)
@@ -395,10 +395,10 @@ func (s *Service) AddVoteToIPAddress(ctx context.Context, ip string, verdict str
 	}
 
 	var result AddVoteResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }

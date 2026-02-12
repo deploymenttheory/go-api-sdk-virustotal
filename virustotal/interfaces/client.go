@@ -3,10 +3,20 @@ package interfaces
 import (
 	"context"
 	"io"
+	"net/http"
 	"time"
 
 	"go.uber.org/zap"
 )
+
+// Response represents HTTP response metadata that can be returned alongside errors
+// This allows callers to access response headers (rate limits, retry-after, etc.) even on errors
+type Response struct {
+	StatusCode int
+	Status     string
+	Headers    http.Header
+	Body       []byte
+}
 
 // MultipartProgressCallback is a callback function for multipart upload progress
 type MultipartProgressCallback func(fieldName string, fileName string, bytesWritten int64, totalBytes int64)
@@ -16,26 +26,29 @@ type MultipartProgressCallback func(fieldName string, fileName string, bytesWrit
 type HTTPClient interface {
 	// Get executes a GET request and unmarshals the JSON response into the result parameter.
 	// Query parameters and headers are applied if provided.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	Get(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		queryParams map[string]string, // URL query parameters
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// Post executes a POST request with a JSON body.
 	// The body is marshaled to JSON and the response is unmarshaled into the result parameter.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	Post(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		body any, // request body to marshal as JSON
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// PostWithQuery executes a POST request with both query parameters and a JSON body.
 	// The body is marshaled to JSON and the response is unmarshaled into the result parameter.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	PostWithQuery(
 		ctx context.Context, // request context
 		path string, // API endpoint path
@@ -43,21 +56,23 @@ type HTTPClient interface {
 		body any, // request body to marshal as JSON
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// PostForm executes a POST request with form-urlencoded data.
 	// The Content-Type header is automatically set to application/x-www-form-urlencoded.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	PostForm(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		formData map[string]string, // form fields as key-value pairs
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// PostMultipart executes a POST request with multipart/form-data encoding, typically for file uploads.
 	// The Content-Type header is automatically set to multipart/form-data with a boundary.
 	// Progress tracking is supported via the optional progressCallback parameter.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	PostMultipart(
 		ctx context.Context, // request context
 		path string, // API endpoint path
@@ -69,47 +84,51 @@ type HTTPClient interface {
 		headers map[string]string, // HTTP headers
 		progressCallback MultipartProgressCallback, // optional progress callback
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// Put executes a PUT request with a JSON body.
 	// The body is marshaled to JSON and the response is unmarshaled into the result parameter.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	Put(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		body any, // request body to marshal as JSON
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// Patch executes a PATCH request with a JSON body.
 	// The body is marshaled to JSON and the response is unmarshaled into the result parameter.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	Patch(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		body any, // request body to marshal as JSON
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// Delete executes a DELETE request and unmarshals the JSON response into the result parameter.
 	// Query parameters and headers are applied if provided.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	Delete(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		queryParams map[string]string, // URL query parameters
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// DeleteWithBody executes a DELETE request with a JSON body (for bulk operations).
 	// The body is marshaled to JSON and the response is unmarshaled into the result parameter.
+	// Returns response metadata and error. Response is non-nil even on error for accessing headers.
 	DeleteWithBody(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		body any, // request body to marshal as JSON
 		headers map[string]string, // HTTP headers
 		result any, // pointer to unmarshal response into
-	) error
+	) (*Response, error)
 
 	// GetBytes performs a GET request and returns raw bytes without unmarshaling.
 	// Use this for non-JSON responses like HTML, CSV, binary files (EVTX, PCAP, memdump), etc.
@@ -118,7 +137,7 @@ type HTTPClient interface {
 		path string, // API endpoint path
 		queryParams map[string]string, // URL query parameters
 		headers map[string]string, // HTTP headers
-	) ([]byte, error)
+	) (*Response, []byte, error)
 
 	// GetLogger returns the configured zap logger instance.
 	GetLogger() *zap.Logger
@@ -129,13 +148,14 @@ type HTTPClient interface {
 	// GetPaginated executes a paginated GET request, automatically looping through all pages.
 	// The mergePage callback receives raw JSON for each page and handles unmarshaling and merging.
 	// Pagination stops when no next page link is available.
+	// Returns response metadata from the last page and error. Response is non-nil even on error.
 	GetPaginated(
 		ctx context.Context, // request context
 		path string, // API endpoint path
 		queryParams map[string]string, // URL query parameters
 		headers map[string]string, // HTTP headers
 		mergePage func(pageData []byte) error, // callback to process each page
-	) error
+	) (*Response, error)
 }
 
 // ServiceQueryBuilder defines the query builder contract for services.

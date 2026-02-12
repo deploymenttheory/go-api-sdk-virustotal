@@ -19,7 +19,7 @@ type (
 		// Returns an analysis ID that can be used to retrieve the scan results from the Analyses endpoint.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/scan-url
-		ScanURL(ctx context.Context, url string) (*ScanURLResponse, error)
+		ScanURL(ctx context.Context, url string) (*ScanURLResponse, *interfaces.Response, error)
 
 		// GetURLReport retrieves information about a URL
 		//
@@ -28,7 +28,7 @@ type (
 		// canonized URL or the base64-encoded URL (without padding).
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/url-info
-		GetURLReport(ctx context.Context, urlID string) (*URLResponse, error)
+		GetURLReport(ctx context.Context, urlID string) (*URLResponse, *interfaces.Response, error)
 
 		// RescanURL requests a rescan/reanalysis of a URL
 		//
@@ -37,7 +37,7 @@ type (
 		// the available vendors using the Analyses endpoint.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-analyse
-		RescanURL(ctx context.Context, urlID string) (*RescanURLResponse, error)
+		RescanURL(ctx context.Context, urlID string) (*RescanURLResponse, *interfaces.Response, error)
 
 		// GetCommentsOnURL retrieves comments on a URL
 		//
@@ -45,7 +45,7 @@ type (
 		// Comments may include tags extracted from words starting with #. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-comments-get
-		GetCommentsOnURL(ctx context.Context, urlID string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetCommentsOnURL(ctx context.Context, urlID string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// AddCommentToURL adds a comment to a URL
 		//
@@ -53,7 +53,7 @@ type (
 		// converted to tags. Returns the created comment object with its assigned ID, creation date, and extracted tags.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-comments-post
-		AddCommentToURL(ctx context.Context, urlID string, comment string) (*AddCommentResponse, error)
+		AddCommentToURL(ctx context.Context, urlID string, comment string) (*AddCommentResponse, *interfaces.Response, error)
 
 		// GetObjectsRelatedToURL retrieves objects related to a URL
 		//
@@ -62,7 +62,7 @@ type (
 		// contacted_ips, downloaded_files, graphs, and more. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-relationships
-		GetObjectsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetObjectsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// GetObjectDescriptorsRelatedToURL retrieves object descriptors (IDs only) related to a URL
 		//
@@ -71,7 +71,7 @@ type (
 		// Supported relationships are the same as GetObjectsRelatedToURL.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-relationships-ids
-		GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, error)
+		GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error)
 
 		// GetVotesOnURL retrieves votes on a URL
 		//
@@ -79,7 +79,7 @@ type (
 		// Each vote includes the verdict, date, and value. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-votes-get
-		GetVotesOnURL(ctx context.Context, urlID string, opts *GetVotesOptions) (*VotesResponse, error)
+		GetVotesOnURL(ctx context.Context, urlID string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error)
 
 		// AddVoteToURL adds a vote to a URL
 		//
@@ -87,7 +87,7 @@ type (
 		// Returns the created vote object with its assigned ID, creation date, and value.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-votes-post
-		AddVoteToURL(ctx context.Context, urlID string, verdict string) (*AddVoteResponse, error)
+		AddVoteToURL(ctx context.Context, urlID string, verdict string) (*AddVoteResponse, *interfaces.Response, error)
 	}
 
 	// Service handles communication with the URLs
@@ -114,9 +114,9 @@ func NewService(client interfaces.HTTPClient) *Service {
 // ScanURL submits a URL for scanning
 // URL: POST https://www.virustotal.com/api/v3/urls
 // https://docs.virustotal.com/reference/scan-url
-func (s *Service) ScanURL(ctx context.Context, url string) (*ScanURLResponse, error) {
+func (s *Service) ScanURL(ctx context.Context, url string) (*ScanURLResponse, *interfaces.Response, error) {
 	if url == "" {
-		return nil, fmt.Errorf("URL is required")
+		return nil, nil, fmt.Errorf("URL is required")
 	}
 
 	endpoint := EndpointURLs
@@ -130,12 +130,12 @@ func (s *Service) ScanURL(ctx context.Context, url string) (*ScanURLResponse, er
 	}
 
 	var result ScanURLResponse
-	err := s.client.PostForm(ctx, endpoint, formData, headers, &result)
+	resp, err := s.client.PostForm(ctx, endpoint, formData, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -145,9 +145,9 @@ func (s *Service) ScanURL(ctx context.Context, url string) (*ScanURLResponse, er
 // GetURLReport retrieves information about a URL
 // URL: GET https://www.virustotal.com/api/v3/urls/{id}
 // https://docs.virustotal.com/reference/url-info
-func (s *Service) GetURLReport(ctx context.Context, urlID string) (*URLResponse, error) {
+func (s *Service) GetURLReport(ctx context.Context, urlID string) (*URLResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointURLs, urlID)
@@ -158,12 +158,12 @@ func (s *Service) GetURLReport(ctx context.Context, urlID string) (*URLResponse,
 	}
 
 	var result URLResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -173,9 +173,9 @@ func (s *Service) GetURLReport(ctx context.Context, urlID string) (*URLResponse,
 // RescanURL requests a new analysis for a URL
 // URL: POST https://www.virustotal.com/api/v3/urls/{id}/analyse
 // https://docs.virustotal.com/reference/urls-analyse
-func (s *Service) RescanURL(ctx context.Context, urlID string) (*RescanURLResponse, error) {
+func (s *Service) RescanURL(ctx context.Context, urlID string) (*RescanURLResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointURLs, urlID)
@@ -186,12 +186,12 @@ func (s *Service) RescanURL(ctx context.Context, urlID string) (*RescanURLRespon
 	}
 
 	var result RescanURLResponse
-	err := s.client.Post(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -203,9 +203,9 @@ func (s *Service) RescanURL(ctx context.Context, urlID string) (*RescanURLRespon
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/urls-comments-get
-func (s *Service) GetCommentsOnURL(ctx context.Context, urlID string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetCommentsOnURL(ctx context.Context, urlID string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointURLs, urlID)
@@ -226,17 +226,17 @@ func (s *Service) GetCommentsOnURL(ctx context.Context, urlID string, opts *GetR
 		}
 
 		var result RelatedObjectsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allObjects []RelatedObject
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -246,23 +246,23 @@ func (s *Service) GetCommentsOnURL(ctx context.Context, urlID string, opts *GetR
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectsResponse{
 		Data: allObjects,
-	}, nil
+	}, resp, nil
 }
 
 // AddCommentToURL adds a comment to a URL
 // URL: POST https://www.virustotal.com/api/v3/urls/{id}/comments
 // https://docs.virustotal.com/reference/urls-comments-post
-func (s *Service) AddCommentToURL(ctx context.Context, urlID string, comment string) (*AddCommentResponse, error) {
+func (s *Service) AddCommentToURL(ctx context.Context, urlID string, comment string) (*AddCommentResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if comment == "" {
-		return nil, fmt.Errorf("comment text is required")
+		return nil, nil, fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointURLs, urlID)
@@ -282,12 +282,12 @@ func (s *Service) AddCommentToURL(ctx context.Context, urlID string, comment str
 	}
 
 	var result AddCommentResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -299,17 +299,17 @@ func (s *Service) AddCommentToURL(ctx context.Context, urlID string, comment str
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/urls-relationships
-func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointURLs, urlID, relationship, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -328,17 +328,17 @@ func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, rela
 		}
 
 		var result RelatedObjectsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allObjects []RelatedObject
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -348,12 +348,12 @@ func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, rela
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectsResponse{
 		Data: allObjects,
-	}, nil
+	}, resp, nil
 }
 
 // GetObjectDescriptorsRelatedToURL retrieves lightweight object descriptors related to a URL
@@ -361,17 +361,17 @@ func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, rela
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/urls-relationships-ids
-func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, error) {
+func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointURLs, urlID, relationship, true)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -390,17 +390,17 @@ func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID st
 		}
 
 		var result ObjectDescriptorsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allDescriptors []ObjectDescriptor
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse ObjectDescriptorsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -410,12 +410,12 @@ func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID st
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &ObjectDescriptorsResponse{
 		Data: allDescriptors,
-	}, nil
+	}, resp, nil
 }
 
 // =============================================================================
@@ -427,9 +427,9 @@ func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID st
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/urls-votes-get
-func (s *Service) GetVotesOnURL(ctx context.Context, urlID string, opts *GetVotesOptions) (*VotesResponse, error) {
+func (s *Service) GetVotesOnURL(ctx context.Context, urlID string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointURLs, urlID)
@@ -450,17 +450,17 @@ func (s *Service) GetVotesOnURL(ctx context.Context, urlID string, opts *GetVote
 		}
 
 		var result VotesResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allVotes []Vote
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse VotesResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -470,26 +470,26 @@ func (s *Service) GetVotesOnURL(ctx context.Context, urlID string, opts *GetVote
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &VotesResponse{
 		Data: allVotes,
-	}, nil
+	}, resp, nil
 }
 
 // AddVoteToURL adds a vote (harmless or malicious) to a URL
 // URL: POST https://www.virustotal.com/api/v3/urls/{id}/votes
 // https://docs.virustotal.com/reference/urls-votes-post
-func (s *Service) AddVoteToURL(ctx context.Context, urlID string, verdict string) (*AddVoteResponse, error) {
+func (s *Service) AddVoteToURL(ctx context.Context, urlID string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if verdict == "" {
-		return nil, fmt.Errorf("verdict is required")
+		return nil, nil, fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
+		return nil, nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointURLs, urlID)
@@ -509,10 +509,10 @@ func (s *Service) AddVoteToURL(ctx context.Context, urlID string, verdict string
 	}
 
 	var result AddVoteResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }

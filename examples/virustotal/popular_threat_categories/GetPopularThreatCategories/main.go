@@ -18,7 +18,7 @@ func main() {
 
 	// Get popular threat categories
 	ctx := context.Background()
-	categories, err := client.PopularThreatCategories.GetPopularThreatCategories(ctx)
+	categories, _, err := client.PopularThreatCategories.GetPopularThreatCategories(ctx)
 	if err != nil {
 		log.Fatalf("Failed to get popular threat categories: %v", err)
 	}

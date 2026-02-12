@@ -49,7 +49,7 @@ func TestUnitScanURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.ScanURL(ctx, "https://www.example.com")
+	result, _, err := service.ScanURL(ctx, "https://www.example.com")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -64,7 +64,7 @@ func TestUnitScanURL_EmptyURL(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.ScanURL(ctx, "")
+	result, _, err := service.ScanURL(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -81,7 +81,7 @@ func TestUnitGetURLReport_Success_Base64ID(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetURLReport(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20")
+	result, _, err := service.GetURLReport(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -119,7 +119,7 @@ func TestUnitGetURLReport_Success_SHA256ID(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetURLReport(ctx, "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f")
+	result, _, err := service.GetURLReport(ctx, "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -132,7 +132,7 @@ func TestUnitGetURLReport_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetURLReport(ctx, "")
+	result, _, err := service.GetURLReport(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -143,7 +143,7 @@ func TestUnitGetURLReport_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetURLReport(ctx, "invalid+id")
+	result, _, err := service.GetURLReport(ctx, "invalid+id")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -154,7 +154,7 @@ func TestUnitGetURLReport_PaddedBase64(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetURLReport(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20=")
+	result, _, err := service.GetURLReport(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20=")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -167,7 +167,7 @@ func TestUnitGetURLReport_NotFound(t *testing.T) {
 	mockHandler.RegisterErrorMocks()
 
 	ctx := context.Background()
-	result, err := service.GetURLReport(ctx, "aHR0cHM6Ly9ub3Rmb3VuZC50ZXN0")
+	result, _, err := service.GetURLReport(ctx, "aHR0cHM6Ly9ub3Rmb3VuZC50ZXN0")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -183,7 +183,7 @@ func TestUnitRescanURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.RescanURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20")
+	result, _, err := service.RescanURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -197,7 +197,7 @@ func TestUnitRescanURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.RescanURL(ctx, "")
+	result, _, err := service.RescanURL(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -208,7 +208,7 @@ func TestUnitRescanURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.RescanURL(ctx, "invalid/id")
+	result, _, err := service.RescanURL(ctx, "invalid/id")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -225,7 +225,7 @@ func TestUnitGetCommentsOnURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetCommentsOnURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", nil)
+	result, _, err := service.GetCommentsOnURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -240,7 +240,7 @@ func TestUnitGetCommentsOnURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetCommentsOnURL(ctx, "", nil)
+	result, _, err := service.GetCommentsOnURL(ctx, "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -251,7 +251,7 @@ func TestUnitGetCommentsOnURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetCommentsOnURL(ctx, "invalid@id", nil)
+	result, _, err := service.GetCommentsOnURL(ctx, "invalid@id", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -268,7 +268,7 @@ func TestUnitAddCommentToURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddCommentToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "This is a test comment")
+	result, _, err := service.AddCommentToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "This is a test comment")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -283,7 +283,7 @@ func TestUnitAddCommentToURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToURL(ctx, "", "Test comment")
+	result, _, err := service.AddCommentToURL(ctx, "", "Test comment")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -294,7 +294,7 @@ func TestUnitAddCommentToURL_EmptyComment(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "")
+	result, _, err := service.AddCommentToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -305,7 +305,7 @@ func TestUnitAddCommentToURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToURL(ctx, "invalid!id", "Test comment")
+	result, _, err := service.AddCommentToURL(ctx, "invalid!id", "Test comment")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -322,7 +322,7 @@ func TestUnitGetObjectsRelatedToURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "comments", nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "comments", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -337,7 +337,7 @@ func TestUnitGetObjectsRelatedToURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", "comments", nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", "comments", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -348,7 +348,7 @@ func TestUnitGetObjectsRelatedToURL_EmptyRelationship(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "", nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -359,7 +359,7 @@ func TestUnitGetObjectsRelatedToURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "invalid#id", "comments", nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "invalid#id", "comments", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -376,7 +376,7 @@ func TestUnitGetObjectDescriptorsRelatedToURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "comments", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "comments", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -391,7 +391,7 @@ func TestUnitGetObjectDescriptorsRelatedToURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToURL(ctx, "", "comments", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToURL(ctx, "", "comments", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -402,7 +402,7 @@ func TestUnitGetObjectDescriptorsRelatedToURL_EmptyRelationship(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -413,7 +413,7 @@ func TestUnitGetObjectDescriptorsRelatedToURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToURL(ctx, "invalid$id", "comments", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToURL(ctx, "invalid$id", "comments", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -430,7 +430,7 @@ func TestUnitGetVotesOnURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetVotesOnURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", nil)
+	result, _, err := service.GetVotesOnURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -445,7 +445,7 @@ func TestUnitGetVotesOnURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetVotesOnURL(ctx, "", nil)
+	result, _, err := service.GetVotesOnURL(ctx, "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -456,7 +456,7 @@ func TestUnitGetVotesOnURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetVotesOnURL(ctx, "invalid%id", nil)
+	result, _, err := service.GetVotesOnURL(ctx, "invalid%id", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -473,7 +473,7 @@ func TestUnitAddVoteToURL_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddVoteToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "harmless")
+	result, _, err := service.AddVoteToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "harmless")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -488,7 +488,7 @@ func TestUnitAddVoteToURL_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToURL(ctx, "", "harmless")
+	result, _, err := service.AddVoteToURL(ctx, "", "harmless")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -499,7 +499,7 @@ func TestUnitAddVoteToURL_EmptyVerdict(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "")
+	result, _, err := service.AddVoteToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -510,7 +510,7 @@ func TestUnitAddVoteToURL_InvalidVerdict(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "invalid")
+	result, _, err := service.AddVoteToURL(ctx, "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20", "invalid")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -521,7 +521,7 @@ func TestUnitAddVoteToURL_InvalidURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToURL(ctx, "invalid&id", "harmless")
+	result, _, err := service.AddVoteToURL(ctx, "invalid&id", "harmless")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -540,7 +540,7 @@ func TestUnitGetURLAnalyses_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipAnalyses, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipAnalyses, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -553,7 +553,7 @@ func TestUnitGetURLAnalyses_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipAnalyses, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipAnalyses, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -570,7 +570,7 @@ func TestUnitGetURLCollections_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipCollections, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipCollections, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -583,7 +583,7 @@ func TestUnitGetURLCollections_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipCollections, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipCollections, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -600,7 +600,7 @@ func TestUnitGetURLComments_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipComments, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipComments, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -613,7 +613,7 @@ func TestUnitGetURLComments_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipComments, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipComments, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -630,7 +630,7 @@ func TestUnitGetURLCommunicatingFiles_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipCommunicatingFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipCommunicatingFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -643,7 +643,7 @@ func TestUnitGetURLCommunicatingFiles_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipCommunicatingFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipCommunicatingFiles, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -660,7 +660,7 @@ func TestUnitGetURLContactedDomains_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipContactedDomains, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipContactedDomains, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -673,7 +673,7 @@ func TestUnitGetURLContactedDomains_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipContactedDomains, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipContactedDomains, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -690,7 +690,7 @@ func TestUnitGetURLContactedIPs_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipContactedIPs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipContactedIPs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -703,7 +703,7 @@ func TestUnitGetURLContactedIPs_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipContactedIPs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipContactedIPs, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -720,7 +720,7 @@ func TestUnitGetURLDownloadedFiles_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipDownloadedFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipDownloadedFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -733,7 +733,7 @@ func TestUnitGetURLDownloadedFiles_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipDownloadedFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipDownloadedFiles, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -750,7 +750,7 @@ func TestUnitGetURLEmbeddedJSFiles_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipEmbeddedJSFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipEmbeddedJSFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -768,7 +768,7 @@ func TestUnitGetURLEmbeddedJSFiles_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipEmbeddedJSFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipEmbeddedJSFiles, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -785,7 +785,7 @@ func TestUnitGetURLGraphs_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipGraphs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipGraphs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -798,7 +798,7 @@ func TestUnitGetURLGraphs_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipGraphs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipGraphs, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -815,7 +815,7 @@ func TestUnitGetURLLastServingIPAddress_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipLastServingIPAddress, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipLastServingIPAddress, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -828,7 +828,7 @@ func TestUnitGetURLLastServingIPAddress_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipLastServingIPAddress, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipLastServingIPAddress, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -845,7 +845,7 @@ func TestUnitGetURLNetworkLocation_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipNetworkLocation, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipNetworkLocation, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -858,7 +858,7 @@ func TestUnitGetURLNetworkLocation_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipNetworkLocation, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipNetworkLocation, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -875,7 +875,7 @@ func TestUnitGetURLRedirectingURLs_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRedirectingURLs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRedirectingURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -888,7 +888,7 @@ func TestUnitGetURLRedirectingURLs_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRedirectingURLs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRedirectingURLs, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -905,7 +905,7 @@ func TestUnitGetURLRedirectsTo_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRedirectsTo, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRedirectsTo, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -918,7 +918,7 @@ func TestUnitGetURLRedirectsTo_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRedirectsTo, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRedirectsTo, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -935,7 +935,7 @@ func TestUnitGetURLReferrerFiles_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipReferrerFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipReferrerFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -948,7 +948,7 @@ func TestUnitGetURLReferrerFiles_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipReferrerFiles, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipReferrerFiles, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -965,7 +965,7 @@ func TestUnitGetURLReferrerURLs_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipReferrerURLs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipReferrerURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -983,7 +983,7 @@ func TestUnitGetURLReferrerURLs_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipReferrerURLs, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipReferrerURLs, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1000,7 +1000,7 @@ func TestUnitGetURLRelatedComments_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRelatedComments, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRelatedComments, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1018,7 +1018,7 @@ func TestUnitGetURLRelatedComments_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRelatedComments, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRelatedComments, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1035,7 +1035,7 @@ func TestUnitGetURLRelatedReferences_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRelatedReferences, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRelatedReferences, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1053,7 +1053,7 @@ func TestUnitGetURLRelatedReferences_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRelatedReferences, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRelatedReferences, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1070,7 +1070,7 @@ func TestUnitGetURLRelatedThreatActors_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRelatedThreatActors, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipRelatedThreatActors, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1088,7 +1088,7 @@ func TestUnitGetURLRelatedThreatActors_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRelatedThreatActors, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipRelatedThreatActors, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1105,7 +1105,7 @@ func TestUnitGetURLSubmissions_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipSubmissions, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipSubmissions, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1118,7 +1118,7 @@ func TestUnitGetURLSubmissions_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipSubmissions, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipSubmissions, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1135,7 +1135,7 @@ func TestUnitGetURLUserVotes_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipUserVotes, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipUserVotes, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1148,7 +1148,7 @@ func TestUnitGetURLUserVotes_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipUserVotes, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipUserVotes, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1165,7 +1165,7 @@ func TestUnitGetURLVotesRelationship_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipVotes, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipVotes, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1178,7 +1178,7 @@ func TestUnitGetURLVotesRelationship_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipVotes, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipVotes, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -1195,7 +1195,7 @@ func TestUnitGetURLsRelatedByTrackerID_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipURLsRelatedByTrackerID, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, testURLID, RelationshipURLsRelatedByTrackerID, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1213,7 +1213,7 @@ func TestUnitGetURLsRelatedByTrackerID_EmptyURLID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipURLsRelatedByTrackerID, nil)
+	result, _, err := service.GetObjectsRelatedToURL(ctx, "", RelationshipURLsRelatedByTrackerID, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)

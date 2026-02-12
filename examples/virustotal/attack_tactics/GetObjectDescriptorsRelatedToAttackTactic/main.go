@@ -23,7 +23,7 @@ func main() {
 	// Get attack technique descriptors (lightweight, just type and ID)
 	// This is more efficient when you only need the identifiers
 	ctx := context.Background()
-	descriptors, err := client.AttackTactics.GetObjectDescriptorsRelatedToAttackTactic(
+	descriptors, _, err := client.AttackTactics.GetObjectDescriptorsRelatedToAttackTactic(
 		ctx,
 		tacticID,
 		attack_tactics.RelationshipAttackTechniques,

@@ -42,7 +42,7 @@ func main() {
 	fmt.Printf("Adding vote to domain: %s\n", domain)
 	fmt.Printf("Verdict: %s\n\n", verdict)
 
-	result, err := vtClient.Domains.AddVoteToDomain(ctx, domain, verdict)
+	result, _, err := vtClient.Domains.AddVoteToDomain(ctx, domain, verdict)
 	if err != nil {
 		log.Fatalf("Failed to add vote: %v", err)
 	}

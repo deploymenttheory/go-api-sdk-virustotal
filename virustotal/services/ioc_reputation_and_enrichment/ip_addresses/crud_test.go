@@ -46,7 +46,7 @@ func TestUnitGetIPAddressReport_Success(t *testing.T) {
 	defer mockHandler.CleanupMockState()
 
 	ctx := context.Background()
-	result, err := service.GetIPAddressReport(ctx, "8.8.8.8", nil)
+	result, _, err := service.GetIPAddressReport(ctx, "8.8.8.8", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -90,7 +90,7 @@ func TestUnitGetIPAddressReport_WithRelationships(t *testing.T) {
 	opts := &RequestQueryOptions{
 		Relationships: "comments,resolutions",
 	}
-	result, err := service.GetIPAddressReport(ctx, "8.8.8.8", opts)
+	result, _, err := service.GetIPAddressReport(ctx, "8.8.8.8", opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -106,7 +106,7 @@ func TestUnitGetIPAddressReport_Unauthorized(t *testing.T) {
 	defer mockHandler.CleanupMockState()
 
 	ctx := context.Background()
-	result, err := service.GetIPAddressReport(ctx, "8.8.8.8", nil)
+	result, _, err := service.GetIPAddressReport(ctx, "8.8.8.8", nil)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -123,7 +123,7 @@ func TestUnitGetIPAddressReport_NotFound(t *testing.T) {
 	defer mockHandler.CleanupMockState()
 
 	ctx := context.Background()
-	result, err := service.GetIPAddressReport(ctx, "999.999.999.999", nil)
+	result, _, err := service.GetIPAddressReport(ctx, "999.999.999.999", nil)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -137,7 +137,7 @@ func TestUnitGetIPAddressReport_EmptyIP(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetIPAddressReport(ctx, "", nil)
+	result, _, err := service.GetIPAddressReport(ctx, "", nil)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -153,7 +153,7 @@ func TestUnitRescanIPAddress_Success(t *testing.T) {
 	defer mockHandler.CleanupMockState()
 
 	ctx := context.Background()
-	result, err := service.RescanIPAddress(ctx, "8.8.8.8")
+	result, _, err := service.RescanIPAddress(ctx, "8.8.8.8")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -168,7 +168,7 @@ func TestUnitRescanIPAddress_EmptyIP(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.RescanIPAddress(ctx, "")
+	result, _, err := service.RescanIPAddress(ctx, "")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -185,7 +185,7 @@ func TestUnitAddCommentToIPAddress_Success(t *testing.T) {
 
 	ctx := context.Background()
 	commentText := "This IP is used by Google DNS and is #benign #dns"
-	result, err := service.AddCommentToIPAddress(ctx, "8.8.8.8", commentText)
+	result, _, err := service.AddCommentToIPAddress(ctx, "8.8.8.8", commentText)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -203,7 +203,7 @@ func TestUnitAddCommentToIPAddress_EmptyIP(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToIPAddress(ctx, "", "Test comment")
+	result, _, err := service.AddCommentToIPAddress(ctx, "", "Test comment")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -216,7 +216,7 @@ func TestUnitAddCommentToIPAddress_EmptyComment(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToIPAddress(ctx, "8.8.8.8", "")
+	result, _, err := service.AddCommentToIPAddress(ctx, "8.8.8.8", "")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -239,7 +239,7 @@ func TestUnitGetObjectDescriptorsRelatedToIPAddress_Success(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, "8.8.8.8", "comments", opts)
+	result, _, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, "8.8.8.8", "comments", opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -265,7 +265,7 @@ func TestUnitGetObjectDescriptorsRelatedToIPAddress_EmptyIP(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, "", "comments", opts)
+	result, _, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, "", "comments", opts)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -281,7 +281,7 @@ func TestUnitGetObjectDescriptorsRelatedToIPAddress_EmptyRelationship(t *testing
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, "8.8.8.8", "", opts)
+	result, _, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, "8.8.8.8", "", opts)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -304,7 +304,7 @@ func TestUnitGetVotesOnIPAddress_Success(t *testing.T) {
 	opts := &GetVotesOptions{
 		Limit: 10,
 	}
-	result, err := service.GetVotesOnIPAddress(ctx, "8.8.8.8", opts)
+	result, _, err := service.GetVotesOnIPAddress(ctx, "8.8.8.8", opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -335,7 +335,7 @@ func TestUnitGetVotesOnIPAddress_EmptyIP(t *testing.T) {
 	opts := &GetVotesOptions{
 		Limit: 10,
 	}
-	result, err := service.GetVotesOnIPAddress(ctx, "", opts)
+	result, _, err := service.GetVotesOnIPAddress(ctx, "", opts)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -356,7 +356,7 @@ func TestUnitAddVoteToIPAddress_Success(t *testing.T) {
 
 	ctx := context.Background()
 	verdict := "harmless"
-	result, err := service.AddVoteToIPAddress(ctx, "8.8.8.8", verdict)
+	result, _, err := service.AddVoteToIPAddress(ctx, "8.8.8.8", verdict)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -373,7 +373,7 @@ func TestUnitAddVoteToIPAddress_EmptyIP(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToIPAddress(ctx, "", "harmless")
+	result, _, err := service.AddVoteToIPAddress(ctx, "", "harmless")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -386,7 +386,7 @@ func TestUnitAddVoteToIPAddress_EmptyVerdict(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToIPAddress(ctx, "8.8.8.8", "")
+	result, _, err := service.AddVoteToIPAddress(ctx, "8.8.8.8", "")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -399,7 +399,7 @@ func TestUnitAddVoteToIPAddress_InvalidVerdict(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToIPAddress(ctx, "8.8.8.8", "invalid")
+	result, _, err := service.AddVoteToIPAddress(ctx, "8.8.8.8", "invalid")
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -422,7 +422,7 @@ func TestUnitGetObjectsRelatedToIPAddress_Collections(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipCollections, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipCollections, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -443,7 +443,7 @@ func TestUnitGetObjectsRelatedToIPAddress_Comments(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipComments, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipComments, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -464,7 +464,7 @@ func TestUnitGetObjectsRelatedToIPAddress_CommunicatingFiles(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipCommunicatingFiles, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipCommunicatingFiles, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -485,7 +485,7 @@ func TestUnitGetObjectsRelatedToIPAddress_DownloadedFiles(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipDownloadedFiles, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipDownloadedFiles, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -506,7 +506,7 @@ func TestUnitGetObjectsRelatedToIPAddress_Graphs(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipGraphs, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipGraphs, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -527,7 +527,7 @@ func TestUnitGetObjectsRelatedToIPAddress_HistoricalSSLCertificates(t *testing.T
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipHistoricalSSLCertificates, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipHistoricalSSLCertificates, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -548,7 +548,7 @@ func TestUnitGetObjectsRelatedToIPAddress_HistoricalWhois(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipHistoricalWhois, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipHistoricalWhois, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -569,7 +569,7 @@ func TestUnitGetObjectsRelatedToIPAddress_RelatedComments(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedComments, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedComments, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -590,7 +590,7 @@ func TestUnitGetObjectsRelatedToIPAddress_RelatedReferences(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedReferences, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedReferences, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -611,7 +611,7 @@ func TestUnitGetObjectsRelatedToIPAddress_RelatedThreatActors(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedThreatActors, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipRelatedThreatActors, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -632,7 +632,7 @@ func TestUnitGetObjectsRelatedToIPAddress_ReferrerFiles(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipReferrerFiles, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipReferrerFiles, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -653,7 +653,7 @@ func TestUnitGetObjectsRelatedToIPAddress_Resolutions(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipResolutions, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipResolutions, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -674,7 +674,7 @@ func TestUnitGetObjectsRelatedToIPAddress_URLs(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipURLs, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipURLs, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -695,7 +695,7 @@ func TestUnitGetObjectsRelatedToIPAddress_UserVotes(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipUserVotes, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipUserVotes, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -716,7 +716,7 @@ func TestUnitGetObjectsRelatedToIPAddress_Votes(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipVotes, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", RelationshipVotes, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -734,7 +734,7 @@ func TestUnitGetObjectsRelatedToIPAddress_EmptyIP(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "", RelationshipComments, opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "", RelationshipComments, opts)
 
 	require.Error(t, err)
 	assert.Nil(t, result)
@@ -750,7 +750,7 @@ func TestUnitGetObjectsRelatedToIPAddress_EmptyRelationship(t *testing.T) {
 	opts := &GetRelatedObjectsOptions{
 		Limit: 10,
 	}
-	result, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", "", opts)
+	result, _, err := service.GetObjectsRelatedToIPAddress(ctx, "8.8.8.8", "", opts)
 
 	require.Error(t, err)
 	assert.Nil(t, result)

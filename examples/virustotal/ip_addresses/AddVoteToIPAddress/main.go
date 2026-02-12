@@ -40,7 +40,7 @@ func main() {
 	fmt.Printf("Adding vote to IP: %s\n", ip)
 	fmt.Printf("Verdict: %s\n\n", verdict)
 
-	result, err := vtClient.IPAddresses.AddVoteToIPAddress(ctx, ip, verdict)
+	result, _, err := vtClient.IPAddresses.AddVoteToIPAddress(ctx, ip, verdict)
 	if err != nil {
 		log.Fatalf("Failed to add vote: %v", err)
 	}

@@ -59,7 +59,7 @@ func TestUnitAnalyseCode_Success(t *testing.T) {
 		ret
 	`))
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, nil)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -94,7 +94,7 @@ func TestUnitAnalyseCode_WithHistory(t *testing.T) {
 		},
 	}
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDecompiled, history)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDecompiled, history)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -114,7 +114,7 @@ func TestUnitAnalyseCode_InvalidBase64(t *testing.T) {
 	// Use invalid base64 (contains invalid characters)
 	invalidCode := "This is not base64!"
 
-	result, err := service.AnalyseCode(context.Background(), invalidCode, CodeTypeDisassembled, nil)
+	result, _, err := service.AnalyseCode(context.Background(), invalidCode, CodeTypeDisassembled, nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "code validation failed")
@@ -124,7 +124,7 @@ func TestUnitAnalyseCode_InvalidBase64(t *testing.T) {
 func TestUnitAnalyseCode_EmptyCode(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.AnalyseCode(context.Background(), "", CodeTypeDisassembled, nil)
+	result, _, err := service.AnalyseCode(context.Background(), "", CodeTypeDisassembled, nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "code validation failed")
@@ -139,7 +139,7 @@ func TestUnitAnalyseCode_InvalidCodeType(t *testing.T) {
 
 	code := base64.StdEncoding.EncodeToString([]byte("test code"))
 
-	result, err := service.AnalyseCode(context.Background(), code, "invalid_type", nil)
+	result, _, err := service.AnalyseCode(context.Background(), code, "invalid_type", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "code type validation failed")
@@ -153,7 +153,7 @@ func TestUnitAnalyseCode_EmptyCodeType(t *testing.T) {
 
 	code := base64.StdEncoding.EncodeToString([]byte("test code"))
 
-	result, err := service.AnalyseCode(context.Background(), code, "", nil)
+	result, _, err := service.AnalyseCode(context.Background(), code, "", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "code type validation failed")
@@ -179,7 +179,7 @@ func TestUnitAnalyseCode_InvalidHistoryBase64(t *testing.T) {
 		},
 	}
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, history)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, history)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "history entry 0 request validation failed")
@@ -199,7 +199,7 @@ func TestUnitAnalyseCode_DisassembledCodeType(t *testing.T) {
 		ret
 	`))
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, nil)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.NotEmpty(t, result.Data)
@@ -218,7 +218,7 @@ func TestUnitAnalyseCode_DecompiledCodeType(t *testing.T) {
 		}
 	`))
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDecompiled, nil)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDecompiled, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.NotEmpty(t, result.Data)
@@ -257,7 +257,7 @@ func TestUnitAnalyseCode_MultipleHistoryEntries(t *testing.T) {
 		},
 	}
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, history)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDisassembled, history)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.NotEmpty(t, result.Data)
@@ -294,7 +294,7 @@ func TestUnitAnalyseCode_LargeCodeBlock(t *testing.T) {
 	
 	code := base64.StdEncoding.EncodeToString([]byte(largeCode))
 
-	result, err := service.AnalyseCode(context.Background(), code, CodeTypeDecompiled, nil)
+	result, _, err := service.AnalyseCode(context.Background(), code, CodeTypeDecompiled, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.NotEmpty(t, result.Data)

@@ -22,7 +22,7 @@ func main() {
 
 	// Get attack techniques related to this tactic
 	ctx := context.Background()
-	relatedObjects, err := client.AttackTactics.GetObjectsRelatedToAttackTactic(
+	relatedObjects, _, err := client.AttackTactics.GetObjectsRelatedToAttackTactic(
 		ctx,
 		tacticID,
 		attack_tactics.RelationshipAttackTechniques,

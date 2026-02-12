@@ -36,7 +36,7 @@ func main() {
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
 	relationship := "comments"
 
-	result, err := vtClient.URLs.GetObjectDescriptorsRelatedToURL(ctx, urlID, relationship, nil)
+	result, _, err := vtClient.URLs.GetObjectDescriptorsRelatedToURL(ctx, urlID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}

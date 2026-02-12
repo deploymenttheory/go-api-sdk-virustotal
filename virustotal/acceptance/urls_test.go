@@ -19,9 +19,12 @@ func TestAcceptance_URLs_GetURLReport(t *testing.T) {
 
 		LogResponse(t, "Testing GetURLReport with URL ID: %s", Config.KnownURLID)
 
-		result, err := service.GetURLReport(ctx, Config.KnownURLID)
+		result, resp, err := service.GetURLReport(ctx, Config.KnownURLID)
 		AssertNoError(t, err, "GetURLReport should not return an error")
 		AssertNotNil(t, result, "GetURLReport result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "URL data should not be nil")
@@ -83,11 +86,13 @@ func TestAcceptance_URLs_GetURLReport_InvalidURLID(t *testing.T) {
 		LogResponse(t, "Testing GetURLReport with invalid URL ID")
 
 		// Use invalid URL ID (contains invalid characters)
-		result, err := service.GetURLReport(ctx, "invalid@#$%url-id")
+		result, resp, err := service.GetURLReport(ctx, "invalid@#$%url-id")
 
 		// We expect an error for an invalid URL ID
 		assert.Error(t, err, "GetURLReport should return an error for invalid URL ID")
 		assert.Nil(t, result, "GetURLReport result should be nil for invalid URL ID")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 
 		LogResponse(t, "Expected error received: %v", err)
 	})
@@ -105,11 +110,12 @@ func TestAcceptance_URLs_GetURLReport_EmptyURLID(t *testing.T) {
 
 		LogResponse(t, "Testing GetURLReport with empty URL ID")
 
-		result, err := service.GetURLReport(ctx, "")
+		result, resp, err := service.GetURLReport(ctx, "")
 
 		// Should fail validation
 		assert.Error(t, err, "GetURLReport should return an error for empty URL ID")
 		assert.Nil(t, result, "GetURLReport result should be nil for empty URL ID")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
 		assert.Contains(t, err.Error(), "URL ID cannot be empty", "Error should mention empty URL ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
@@ -130,9 +136,11 @@ func TestAcceptance_URLs_GetCommentsOnURL(t *testing.T) {
 
 		// Get comments with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetCommentsOnURL(ctx, Config.KnownURLID, opts)
+		result, resp, err := service.GetCommentsOnURL(ctx, Config.KnownURLID, opts)
 		AssertNoError(t, err, "GetCommentsOnURL should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnURL result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
@@ -164,9 +172,11 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 
 		// Get contacted domains with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
+		result, resp, err := service.GetObjectsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
 		AssertNoError(t, err, "GetObjectsRelatedToURL should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToURL result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -199,9 +209,11 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 
 		// Get contacted domain descriptors with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectDescriptorsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
+		result, resp, err := service.GetObjectDescriptorsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToURL should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToURL result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -234,9 +246,11 @@ func TestAcceptance_URLs_GetVotesOnURL(t *testing.T) {
 
 		// Get votes with limit
 		opts := &urls.GetVotesOptions{Limit: 10}
-		result, err := service.GetVotesOnURL(ctx, Config.KnownURLID, opts)
+		result, resp, err := service.GetVotesOnURL(ctx, Config.KnownURLID, opts)
 		AssertNoError(t, err, "GetVotesOnURL should not return an error")
 		AssertNotNil(t, result, "GetVotesOnURL result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

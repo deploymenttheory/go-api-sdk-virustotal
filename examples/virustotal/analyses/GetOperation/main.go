@@ -26,7 +26,7 @@ func main() {
 
 	// Get the operation status
 	ctx := context.Background()
-	operation, err := client.Analyses.GetOperation(ctx, operationID)
+	operation, _, err := client.Analyses.GetOperation(ctx, operationID)
 	if err != nil {
 		log.Fatalf("Failed to get operation: %v", err)
 	}
@@ -56,7 +56,7 @@ func main() {
 			fmt.Printf("  Attempt %d/%d...\n", attempt, maxAttempts)
 			time.Sleep(pollInterval)
 
-			operation, err = client.Analyses.GetOperation(ctx, operationID)
+			operation, _, err = client.Analyses.GetOperation(ctx, operationID)
 			if err != nil {
 				log.Fatalf("Failed to poll operation: %v", err)
 			}

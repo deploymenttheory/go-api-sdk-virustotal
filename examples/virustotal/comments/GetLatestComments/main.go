@@ -42,7 +42,7 @@ func main() {
 		Limit:  10,
 	}
 
-	result, err := vtClient.Comments.GetLatestComments(ctx, opts)
+	result, _, err := vtClient.Comments.GetLatestComments(ctx, opts)
 	if err != nil {
 		log.Fatalf("Failed to get latest comments: %v", err)
 	}

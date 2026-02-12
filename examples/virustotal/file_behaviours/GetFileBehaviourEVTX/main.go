@@ -37,7 +37,7 @@ func main() {
 	// Sandbox ID format: {file_sha256}_{sandbox_name}
 	sandboxID := "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f_VirusTotal Jujubox"
 
-	evtxData, err := vtClient.FileBehaviours.GetFileBehaviourEVTX(ctx, sandboxID)
+	evtxData, _, err := vtClient.FileBehaviours.GetFileBehaviourEVTX(ctx, sandboxID)
 	if err != nil {
 		log.Fatalf("Failed to get EVTX file: %v", err)
 	}

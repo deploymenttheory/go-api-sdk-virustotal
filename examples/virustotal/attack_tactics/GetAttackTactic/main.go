@@ -23,7 +23,7 @@ func main() {
 
 	// Get the attack tactic
 	ctx := context.Background()
-	tactic, err := client.AttackTactics.GetAttackTactic(ctx, tacticID)
+	tactic, _, err := client.AttackTactics.GetAttackTactic(ctx, tacticID)
 	if err != nil {
 		log.Fatalf("Failed to get attack tactic: %v", err)
 	}

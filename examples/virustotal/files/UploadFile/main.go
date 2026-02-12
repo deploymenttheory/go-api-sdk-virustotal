@@ -66,7 +66,7 @@ func main() {
 	fmt.Printf("File: %s\n", filePath)
 	fmt.Printf("Size: %d bytes\n\n", fileInfo.Size())
 
-	result, err := vtClient.Files.UploadFile(ctx, request)
+	result, _, err := vtClient.Files.UploadFile(ctx, request)
 	if err != nil {
 		log.Fatalf("Failed to upload file: %v", err)
 	}

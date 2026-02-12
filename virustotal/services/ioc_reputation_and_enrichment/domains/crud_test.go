@@ -49,7 +49,7 @@ func TestUnitGetDomainReport_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetDomainReport(ctx, "example.com")
+	result, _, err := service.GetDomainReport(ctx, "example.com")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -88,7 +88,7 @@ func TestUnitGetDomainReport_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetDomainReport(ctx, "")
+	result, _, err := service.GetDomainReport(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -101,7 +101,7 @@ func TestUnitGetDomainReport_NotFound(t *testing.T) {
 	mockHandler.RegisterErrorMocks()
 
 	ctx := context.Background()
-	result, err := service.GetDomainReport(ctx, "notfound.test")
+	result, _, err := service.GetDomainReport(ctx, "notfound.test")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -117,7 +117,7 @@ func TestUnitRescanDomain_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.RescanDomain(ctx, "example.com")
+	result, _, err := service.RescanDomain(ctx, "example.com")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -138,7 +138,7 @@ func TestUnitRescanDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.RescanDomain(ctx, "")
+	result, _, err := service.RescanDomain(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -155,7 +155,7 @@ func TestUnitGetCommentsOnDomain_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetCommentsOnDomain(ctx, "example.com", nil)
+	result, _, err := service.GetCommentsOnDomain(ctx, "example.com", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -170,7 +170,7 @@ func TestUnitGetCommentsOnDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetCommentsOnDomain(ctx, "", nil)
+	result, _, err := service.GetCommentsOnDomain(ctx, "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -187,7 +187,7 @@ func TestUnitAddCommentToDomain_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddCommentToDomain(ctx, "example.com", "This is a test comment")
+	result, _, err := service.AddCommentToDomain(ctx, "example.com", "This is a test comment")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -202,7 +202,7 @@ func TestUnitAddCommentToDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToDomain(ctx, "", "Test comment")
+	result, _, err := service.AddCommentToDomain(ctx, "", "Test comment")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -213,7 +213,7 @@ func TestUnitAddCommentToDomain_EmptyComment(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddCommentToDomain(ctx, "example.com", "")
+	result, _, err := service.AddCommentToDomain(ctx, "example.com", "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -230,7 +230,7 @@ func TestUnitGetObjectDescriptorsRelatedToDomain_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToDomain(ctx, "example.com", "comments", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToDomain(ctx, "example.com", "comments", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -245,7 +245,7 @@ func TestUnitGetObjectDescriptorsRelatedToDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToDomain(ctx, "", "comments", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToDomain(ctx, "", "comments", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -256,7 +256,7 @@ func TestUnitGetObjectDescriptorsRelatedToDomain_EmptyRelationship(t *testing.T)
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToDomain(ctx, "example.com", "", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToDomain(ctx, "example.com", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -273,7 +273,7 @@ func TestUnitGetDNSResolutionObject_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetDNSResolutionObject(ctx, "93.184.216.34-example.com")
+	result, _, err := service.GetDNSResolutionObject(ctx, "93.184.216.34-example.com")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -289,7 +289,7 @@ func TestUnitGetDNSResolutionObject_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetDNSResolutionObject(ctx, "")
+	result, _, err := service.GetDNSResolutionObject(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -306,7 +306,7 @@ func TestUnitGetVotesOnDomain_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetVotesOnDomain(ctx, "example.com", nil)
+	result, _, err := service.GetVotesOnDomain(ctx, "example.com", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -321,7 +321,7 @@ func TestUnitGetVotesOnDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetVotesOnDomain(ctx, "", nil)
+	result, _, err := service.GetVotesOnDomain(ctx, "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -338,7 +338,7 @@ func TestUnitAddVoteToDomain_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddVoteToDomain(ctx, "example.com", "harmless")
+	result, _, err := service.AddVoteToDomain(ctx, "example.com", "harmless")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -353,7 +353,7 @@ func TestUnitAddVoteToDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToDomain(ctx, "", "harmless")
+	result, _, err := service.AddVoteToDomain(ctx, "", "harmless")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -364,7 +364,7 @@ func TestUnitAddVoteToDomain_EmptyVerdict(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToDomain(ctx, "example.com", "")
+	result, _, err := service.AddVoteToDomain(ctx, "example.com", "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -375,7 +375,7 @@ func TestUnitAddVoteToDomain_InvalidVerdict(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToDomain(ctx, "example.com", "invalid")
+	result, _, err := service.AddVoteToDomain(ctx, "example.com", "invalid")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -393,7 +393,7 @@ func TestUnitGetObjectsRelatedToDomain_CAARecords(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCAARecords, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCAARecords, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -409,7 +409,7 @@ func TestUnitGetObjectsRelatedToDomain_CNAMERecords(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCNAMERecords, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCNAMERecords, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -425,7 +425,7 @@ func TestUnitGetObjectsRelatedToDomain_Collections(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCollections, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCollections, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -441,7 +441,7 @@ func TestUnitGetObjectsRelatedToDomain_CommunicatingFiles(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCommunicatingFiles, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipCommunicatingFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -457,7 +457,7 @@ func TestUnitGetObjectsRelatedToDomain_DownloadedFiles(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipDownloadedFiles, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipDownloadedFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -473,7 +473,7 @@ func TestUnitGetObjectsRelatedToDomain_Graphs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipGraphs, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipGraphs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -489,7 +489,7 @@ func TestUnitGetObjectsRelatedToDomain_HistoricalSSLCertificates(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipHistoricalSSLCertificates, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipHistoricalSSLCertificates, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -510,7 +510,7 @@ func TestUnitGetObjectsRelatedToDomain_HistoricalWhois(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipHistoricalWhois, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipHistoricalWhois, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -526,7 +526,7 @@ func TestUnitGetObjectsRelatedToDomain_MXRecords(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipMXRecords, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipMXRecords, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -542,7 +542,7 @@ func TestUnitGetObjectsRelatedToDomain_NSRecords(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipNSRecords, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipNSRecords, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -558,7 +558,7 @@ func TestUnitGetObjectsRelatedToDomain_ReferrerFiles(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipReferrerFiles, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipReferrerFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -574,7 +574,7 @@ func TestUnitGetObjectsRelatedToDomain_RelatedComments(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedComments, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedComments, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -595,7 +595,7 @@ func TestUnitGetObjectsRelatedToDomain_RelatedReferences(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedReferences, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedReferences, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -616,7 +616,7 @@ func TestUnitGetObjectsRelatedToDomain_RelatedThreatActors(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedThreatActors, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipRelatedThreatActors, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -637,7 +637,7 @@ func TestUnitGetObjectsRelatedToDomain_Resolutions(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipResolutions, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipResolutions, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -653,7 +653,7 @@ func TestUnitGetObjectsRelatedToDomain_Siblings(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSiblings, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSiblings, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -669,7 +669,7 @@ func TestUnitGetObjectsRelatedToDomain_SOARecords(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSOARecords, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSOARecords, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -685,7 +685,7 @@ func TestUnitGetObjectsRelatedToDomain_Subdomains(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSubdomains, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipSubdomains, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -701,7 +701,7 @@ func TestUnitGetObjectsRelatedToDomain_URLs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipURLs, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", RelationshipURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -714,7 +714,7 @@ func TestUnitGetObjectsRelatedToDomain_EmptyDomain(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "", RelationshipCollections, nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "", RelationshipCollections, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -725,7 +725,7 @@ func TestUnitGetObjectsRelatedToDomain_EmptyRelationship(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToDomain(ctx, "example.com", "", nil)
+	result, _, err := service.GetObjectsRelatedToDomain(ctx, "example.com", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)

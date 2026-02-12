@@ -19,14 +19,14 @@ type (
 		// Supports filtering, ordering, and pagination through options.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/list-saved-searches
-		ListSavedSearches(ctx context.Context, opts *ListSavedSearchesOptions) (*ListSavedSearchesResponse, error)
+		ListSavedSearches(ctx context.Context, opts *ListSavedSearchesOptions) (*ListSavedSearchesResponse, *interfaces.Response, error)
 
 		// GetSavedSearch retrieves a saved search by its ID
 		//
 		// Returns the full details of a saved search object identified by its ID.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-saved-searches
-		GetSavedSearch(ctx context.Context, searchID string, opts *GetSavedSearchOptions) (*GetSavedSearchResponse, error)
+		GetSavedSearch(ctx context.Context, searchID string, opts *GetSavedSearchOptions) (*GetSavedSearchResponse, *interfaces.Response, error)
 
 		// CreateSavedSearch creates a new saved search
 		//
@@ -34,7 +34,7 @@ type (
 		// becomes the owner of the saved search. The private field determines accessibility.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/create-saved-searches
-		CreateSavedSearch(ctx context.Context, attributes SavedSearchAttributes) (*CreateSavedSearchResponse, error)
+		CreateSavedSearch(ctx context.Context, attributes SavedSearchAttributes) (*CreateSavedSearchResponse, *interfaces.Response, error)
 
 		// UpdateSavedSearch updates an existing saved search
 		//
@@ -42,7 +42,7 @@ type (
 		// and editors of the saved search.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/update-saved-searches
-		UpdateSavedSearch(ctx context.Context, searchID string, attributes SavedSearchAttributes) (*UpdateSavedSearchResponse, error)
+		UpdateSavedSearch(ctx context.Context, searchID string, attributes SavedSearchAttributes) (*UpdateSavedSearchResponse, *interfaces.Response, error)
 
 		// DeleteSavedSearch deletes a saved search
 		//
@@ -50,7 +50,7 @@ type (
 		// Upon deletion, the search is no longer accessible to any users.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/delete-saved-searches
-		DeleteSavedSearch(ctx context.Context, searchID string) error
+		DeleteSavedSearch(ctx context.Context, searchID string) (*interfaces.Response, error)
 
 		// ShareSavedSearch grants access to a saved search
 		//
@@ -59,7 +59,7 @@ type (
 		// Editor privileges can only be granted to members of the same group as the owner.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/share-saved-searches
-		ShareSavedSearch(ctx context.Context, searchID string, accessType string, entities []AccessEntity) error
+		ShareSavedSearch(ctx context.Context, searchID string, accessType string, entities []AccessEntity) (*interfaces.Response, error)
 
 		// RevokeSavedSearchAccess revokes access to a saved search
 		//
@@ -67,7 +67,7 @@ type (
 		// the owner and editors of the saved search.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/revoke-saved-searches-access
-		RevokeSavedSearchAccess(ctx context.Context, searchID string, accessType string, entities []AccessEntity) error
+		RevokeSavedSearchAccess(ctx context.Context, searchID string, accessType string, entities []AccessEntity) (*interfaces.Response, error)
 
 		// GetObjectsRelatedToSavedSearch retrieves objects related to a saved search
 		//
@@ -75,7 +75,7 @@ type (
 		// Supported relationships include: owner, editors, viewers. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-saved-searches-relationships
-		GetObjectsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetObjectsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// GetObjectDescriptorsRelatedToSavedSearch retrieves object descriptors related to a saved search
 		//
@@ -84,7 +84,7 @@ type (
 		// Supported relationships are the same as GetObjectsRelatedToSavedSearch.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-saved-searches-related-descriptors
-		GetObjectDescriptorsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, error)
+		GetObjectDescriptorsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error)
 	}
 
 	// Service implements the SavedSearchesServiceInterface
@@ -108,7 +108,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // ListSavedSearches retrieves a list of saved searches
 // URL: GET https://www.virustotal.com/api/v3/saved_searches
 // https://docs.virustotal.com/reference/list-saved-searches
-func (s *Service) ListSavedSearches(ctx context.Context, opts *ListSavedSearchesOptions) (*ListSavedSearchesResponse, error) {
+func (s *Service) ListSavedSearches(ctx context.Context, opts *ListSavedSearchesOptions) (*ListSavedSearchesResponse, *interfaces.Response, error) {
 	endpoint := EndpointSavedSearches
 
 	queryParams := make(map[string]string)
@@ -138,12 +138,12 @@ func (s *Service) ListSavedSearches(ctx context.Context, opts *ListSavedSearches
 	}
 
 	var result ListSavedSearchesResponse
-	err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -153,9 +153,9 @@ func (s *Service) ListSavedSearches(ctx context.Context, opts *ListSavedSearches
 // GetSavedSearch retrieves a saved search by its ID
 // URL: GET https://www.virustotal.com/api/v3/saved_searches/{id}
 // https://docs.virustotal.com/reference/get-saved-searches
-func (s *Service) GetSavedSearch(ctx context.Context, searchID string, opts *GetSavedSearchOptions) (*GetSavedSearchResponse, error) {
+func (s *Service) GetSavedSearch(ctx context.Context, searchID string, opts *GetSavedSearchOptions) (*GetSavedSearchResponse, *interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSavedSearches, searchID)
@@ -175,12 +175,12 @@ func (s *Service) GetSavedSearch(ctx context.Context, searchID string, opts *Get
 	}
 
 	var result GetSavedSearchResponse
-	err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -190,7 +190,7 @@ func (s *Service) GetSavedSearch(ctx context.Context, searchID string, opts *Get
 // CreateSavedSearch creates a new saved search
 // URL: POST https://www.virustotal.com/api/v3/saved_searches
 // https://docs.virustotal.com/reference/create-saved-searches
-func (s *Service) CreateSavedSearch(ctx context.Context, attributes SavedSearchAttributes) (*CreateSavedSearchResponse, error) {
+func (s *Service) CreateSavedSearch(ctx context.Context, attributes SavedSearchAttributes) (*CreateSavedSearchResponse, *interfaces.Response, error) {
 	endpoint := EndpointSavedSearches
 
 	requestBody := CreateSavedSearchRequest{
@@ -206,12 +206,12 @@ func (s *Service) CreateSavedSearch(ctx context.Context, attributes SavedSearchA
 	}
 
 	var result CreateSavedSearchResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -221,9 +221,9 @@ func (s *Service) CreateSavedSearch(ctx context.Context, attributes SavedSearchA
 // UpdateSavedSearch updates an existing saved search
 // URL: PATCH https://www.virustotal.com/api/v3/saved_searches/{id}
 // https://docs.virustotal.com/reference/update-saved-searches
-func (s *Service) UpdateSavedSearch(ctx context.Context, searchID string, attributes SavedSearchAttributes) (*UpdateSavedSearchResponse, error) {
+func (s *Service) UpdateSavedSearch(ctx context.Context, searchID string, attributes SavedSearchAttributes) (*UpdateSavedSearchResponse, *interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSavedSearches, searchID)
@@ -241,12 +241,12 @@ func (s *Service) UpdateSavedSearch(ctx context.Context, searchID string, attrib
 	}
 
 	var result UpdateSavedSearchResponse
-	err := s.client.Patch(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Patch(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -256,9 +256,9 @@ func (s *Service) UpdateSavedSearch(ctx context.Context, searchID string, attrib
 // DeleteSavedSearch deletes a saved search
 // URL: DELETE https://www.virustotal.com/api/v3/saved_searches/{id}
 // https://docs.virustotal.com/reference/delete-saved-searches
-func (s *Service) DeleteSavedSearch(ctx context.Context, searchID string) error {
+func (s *Service) DeleteSavedSearch(ctx context.Context, searchID string) (*interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return err
+		return nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSavedSearches, searchID)
@@ -267,12 +267,12 @@ func (s *Service) DeleteSavedSearch(ctx context.Context, searchID string) error 
 		"Accept": "application/json",
 	}
 
-	err := s.client.Delete(ctx, endpoint, nil, headers, nil)
+	resp, err := s.client.Delete(ctx, endpoint, nil, headers, nil)
 	if err != nil {
-		return err
+		return resp, err
 	}
 
-	return nil
+	return resp, nil
 }
 
 // =============================================================================
@@ -282,26 +282,26 @@ func (s *Service) DeleteSavedSearch(ctx context.Context, searchID string) error 
 // ShareSavedSearch grants access to a saved search
 // URL: POST https://www.virustotal.com/api/v3/saved_searches/{id}/relationship/{access}
 // https://docs.virustotal.com/reference/share-saved-searches
-func (s *Service) ShareSavedSearch(ctx context.Context, searchID string, accessType string, entities []AccessEntity) error {
+func (s *Service) ShareSavedSearch(ctx context.Context, searchID string, accessType string, entities []AccessEntity) (*interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := ValidateAccessType(accessType); err != nil {
-		return err
+		return nil, err
 	}
 
 	if len(entities) == 0 {
-		return fmt.Errorf("at least one entity is required")
+		return nil, fmt.Errorf("at least one entity is required")
 	}
 
 	// Validate all entities
 	for i, entity := range entities {
 		if err := ValidateObjectType(entity.Type); err != nil {
-			return fmt.Errorf("entity %d: %w", i, err)
+			return nil, fmt.Errorf("entity %d: %w", i, err)
 		}
 		if entity.ID == "" {
-			return fmt.Errorf("entity %d: ID cannot be empty", i)
+			return nil, fmt.Errorf("entity %d: ID cannot be empty", i)
 		}
 	}
 
@@ -316,12 +316,12 @@ func (s *Service) ShareSavedSearch(ctx context.Context, searchID string, accessT
 		"Content-Type": "application/json",
 	}
 
-	err := s.client.Post(ctx, endpoint, requestBody, headers, nil)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, nil)
 	if err != nil {
-		return err
+		return resp, err
 	}
 
-	return nil
+	return resp, nil
 }
 
 // =============================================================================
@@ -331,26 +331,26 @@ func (s *Service) ShareSavedSearch(ctx context.Context, searchID string, accessT
 // RevokeSavedSearchAccess revokes access to a saved search
 // URL: DELETE https://www.virustotal.com/api/v3/saved_searches/{id}/relationship/{access}
 // https://docs.virustotal.com/reference/revoke-saved-searches-access
-func (s *Service) RevokeSavedSearchAccess(ctx context.Context, searchID string, accessType string, entities []AccessEntity) error {
+func (s *Service) RevokeSavedSearchAccess(ctx context.Context, searchID string, accessType string, entities []AccessEntity) (*interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := ValidateAccessType(accessType); err != nil {
-		return err
+		return nil, err
 	}
 
 	if len(entities) == 0 {
-		return fmt.Errorf("at least one entity is required")
+		return nil, fmt.Errorf("at least one entity is required")
 	}
 
 	// Validate all entities
 	for i, entity := range entities {
 		if err := ValidateObjectType(entity.Type); err != nil {
-			return fmt.Errorf("entity %d: %w", i, err)
+			return nil, fmt.Errorf("entity %d: %w", i, err)
 		}
 		if entity.ID == "" {
-			return fmt.Errorf("entity %d: ID cannot be empty", i)
+			return nil, fmt.Errorf("entity %d: ID cannot be empty", i)
 		}
 	}
 
@@ -365,12 +365,12 @@ func (s *Service) RevokeSavedSearchAccess(ctx context.Context, searchID string, 
 		"Content-Type": "application/json",
 	}
 
-	err := s.client.DeleteWithBody(ctx, endpoint, requestBody, headers, nil)
+	resp, err := s.client.DeleteWithBody(ctx, endpoint, requestBody, headers, nil)
 	if err != nil {
-		return err
+		return resp, err
 	}
 
-	return nil
+	return resp, nil
 }
 
 // =============================================================================
@@ -380,18 +380,18 @@ func (s *Service) RevokeSavedSearchAccess(ctx context.Context, searchID string, 
 // GetObjectsRelatedToSavedSearch retrieves objects related to a saved search
 // URL: GET https://www.virustotal.com/api/v3/saved_searches/{id}/{relationship}
 // https://docs.virustotal.com/reference/get-saved-searches-relationships
-func (s *Service) GetObjectsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetObjectsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointSavedSearches, searchID, relationship, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	queryParams := make(map[string]string)
@@ -409,29 +409,29 @@ func (s *Service) GetObjectsRelatedToSavedSearch(ctx context.Context, searchID s
 	}
 
 	var result RelatedObjectsResponse
-	err = s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // GetObjectDescriptorsRelatedToSavedSearch retrieves object descriptors related to a saved search
 // URL: GET https://www.virustotal.com/api/v3/saved_searches/{id}/relationships/{relationship}
 // https://docs.virustotal.com/reference/get-saved-searches-related-descriptors
-func (s *Service) GetObjectDescriptorsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, error) {
+func (s *Service) GetObjectDescriptorsRelatedToSavedSearch(ctx context.Context, searchID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
 	if err := ValidateSavedSearchID(searchID); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointSavedSearches, searchID, relationship, true)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	queryParams := make(map[string]string)
@@ -449,10 +449,10 @@ func (s *Service) GetObjectDescriptorsRelatedToSavedSearch(ctx context.Context, 
 	}
 
 	var result ObjectDescriptorsResponse
-	err = s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }

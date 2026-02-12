@@ -36,7 +36,7 @@ func main() {
 	ctx := context.Background()
 	domain := "example.com" // Example domain
 
-	result, err := vtClient.Domains.RescanDomain(ctx, domain)
+	result, _, err := vtClient.Domains.RescanDomain(ctx, domain)
 	if err != nil {
 		log.Fatalf("Failed to request domain rescan: %v", err)
 	}

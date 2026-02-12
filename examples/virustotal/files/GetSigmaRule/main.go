@@ -39,7 +39,7 @@ func main() {
 	// Example: get this ID from a file report's crowdsourced_sigma_analysis_results
 	sigmaRuleID := "example-sigma-rule-id"
 
-	result, err := vtClient.Files.GetSigmaRule(ctx, sigmaRuleID)
+	result, _, err := vtClient.Files.GetSigmaRule(ctx, sigmaRuleID)
 	if err != nil {
 		log.Fatalf("Failed to get Sigma rule: %v", err)
 	}

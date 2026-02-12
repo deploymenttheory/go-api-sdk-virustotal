@@ -38,7 +38,7 @@ func main() {
 	relationship := "attack_techniques" // Supported: file, attack_techniques
 
 	// Get object descriptors with automatic pagination (pass nil)
-	descriptors, err := vtClient.FileBehaviours.GetObjectDescriptorsForFileBehaviour(ctx, sandboxID, relationship, nil)
+	descriptors, _, err := vtClient.FileBehaviours.GetObjectDescriptorsForFileBehaviour(ctx, sandboxID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}

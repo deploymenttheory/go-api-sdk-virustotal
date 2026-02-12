@@ -39,7 +39,7 @@ func main() {
 	// Example: "93.184.216.34-example.com"
 	resolutionID := "93.184.216.34-example.com"
 
-	result, err := vtClient.Domains.GetDNSResolutionObject(ctx, resolutionID)
+	result, _, err := vtClient.Domains.GetDNSResolutionObject(ctx, resolutionID)
 	if err != nil {
 		log.Fatalf("Failed to get DNS resolution: %v", err)
 	}
