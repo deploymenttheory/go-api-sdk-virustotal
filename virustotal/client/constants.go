@@ -10,8 +10,8 @@ const (
 	// APIKeyHeader is the header name for the API key
 	APIKeyHeader = "x-apikey"
 
-	// UserAgent is the user agent string for API requests
-	UserAgent = "go-api-sdk-virustotal/1.0.0"
+	// UserAgentBase is the base user agent string prefix
+	UserAgentBase = "go-api-sdk-virustotal"
 
 	// DefaultTimeout is the default HTTP client timeout in seconds
 	DefaultTimeout = 120

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 	"go.uber.org/zap"
@@ -11,6 +12,7 @@ import (
 )
 
 // Get executes a GET request
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) Get(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -22,16 +24,13 @@ func (c *Client) Get(ctx context.Context, path string, queryParams map[string]st
 		}
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "GET", path)
 }
 
 // Post executes a POST request with JSON body
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) Post(ctx context.Context, path string, body any, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -41,16 +40,13 @@ func (c *Client) Post(ctx context.Context, path string, body any, headers map[st
 		req.SetBody(body)
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "POST", path)
 }
 
 // PostWithQuery executes a POST request with both body and query parameters
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) PostWithQuery(ctx context.Context, path string, queryParams map[string]string, body any, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -66,11 +62,7 @@ func (c *Client) PostWithQuery(ctx context.Context, path string, queryParams map
 		req.SetBody(body)
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "POST", path)
 }
@@ -85,8 +77,15 @@ func (c *Client) PostForm(ctx context.Context, path string, formData map[string]
 		req.SetFormData(formData)
 	}
 
+	// Apply headers with precedence (global first, then per-request)
+	// Note: Content-Type is handled automatically by resty for form data
+	for k, v := range c.globalHeaders {
+		if v != "" && k != "Content-Type" {
+			req.SetHeader(k, v)
+		}
+	}
 	for k, v := range headers {
-		if v != "" && k != "Content-Type" { // Skip Content-Type as resty handles it automatically for form data
+		if v != "" && k != "Content-Type" {
 			req.SetHeader(k, v)
 		}
 	}
@@ -124,7 +123,13 @@ func (c *Client) PostMultipart(ctx context.Context, path string, fileField strin
 		req.SetMultipartFormData(formFields)
 	}
 
-	// Set headers (excluding Content-Type as resty automatically handles it for multipart)
+	// Apply headers with precedence (global first, then per-request)
+	// Note: Content-Type is handled automatically by resty for multipart
+	for k, v := range c.globalHeaders {
+		if v != "" && k != "Content-Type" {
+			req.SetHeader(k, v)
+		}
+	}
 	for k, v := range headers {
 		if v != "" && k != "Content-Type" {
 			req.SetHeader(k, v)
@@ -135,6 +140,7 @@ func (c *Client) PostMultipart(ctx context.Context, path string, fileField strin
 }
 
 // Put executes a PUT request
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) Put(ctx context.Context, path string, body any, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -144,16 +150,13 @@ func (c *Client) Put(ctx context.Context, path string, body any, headers map[str
 		req.SetBody(body)
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "PUT", path)
 }
 
 // Patch executes a PATCH request
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) Patch(ctx context.Context, path string, body any, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -163,16 +166,13 @@ func (c *Client) Patch(ctx context.Context, path string, body any, headers map[s
 		req.SetBody(body)
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "PATCH", path)
 }
 
-// Delete executes a DELETE request
+// Delete executes a DELETE requestv
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) Delete(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -184,16 +184,13 @@ func (c *Client) Delete(ctx context.Context, path string, queryParams map[string
 		}
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "DELETE", path)
 }
 
 // DeleteWithBody executes a DELETE request with body (for bulk operations)
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) DeleteWithBody(ctx context.Context, path string, body any, headers map[string]string, result any) error {
 	req := c.client.R().
 		SetContext(ctx).
@@ -203,17 +200,14 @@ func (c *Client) DeleteWithBody(ctx context.Context, path string, body any, head
 		req.SetBody(body)
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	return c.executeRequest(req, "DELETE", path)
 }
 
 // GetBytes performs a GET request and returns raw bytes without unmarshaling
 // Use this for non-JSON responses like HTML, CSV, binary files (EVTX, PCAP, memdump), etc.
+// Apply headers with precedence (global first, then per-request)
 func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) ([]byte, error) {
 	req := c.client.R().
 		SetContext(ctx)
@@ -224,11 +218,7 @@ func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[stri
 		}
 	}
 
-	for k, v := range headers {
-		if v != "" {
-			req.SetHeader(k, v)
-		}
-	}
+	c.applyHeaders(req, headers)
 
 	c.logger.Debug("Executing bytes request",
 		zap.String("method", "GET"),
@@ -294,7 +284,11 @@ func (c *Client) executeRequest(req *resty.Request, method, path string) error {
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	// Handle API errors
+	// Validate response before processing
+	if err := c.validateResponse(resp, method, path); err != nil {
+		return err
+	}
+
 	if resp.IsError() {
 		return ParseErrorResponse(
 			[]byte(resp.String()),
@@ -310,6 +304,42 @@ func (c *Client) executeRequest(req *resty.Request, method, path string) error {
 		zap.String("method", method),
 		zap.String("path", path),
 		zap.Int("status_code", resp.StatusCode()))
+
+	return nil
+}
+
+// validateResponse validates the HTTP response before processing
+// This includes checking for empty responses and validating Content-Type for JSON endpoints
+func (c *Client) validateResponse(resp *resty.Response, method, path string) error {
+	// Handle empty responses (204 No Content, etc.)
+	bodyLen := len(resp.String())
+	if resp.Header().Get("Content-Length") == "0" || bodyLen == 0 {
+		c.logger.Debug("Empty response received",
+			zap.String("method", method),
+			zap.String("path", path),
+			zap.Int("status_code", resp.StatusCode()))
+		return nil
+	}
+
+	// For non-error responses with content, validate Content-Type is JSON
+	// Skip validation for:
+	// - Error responses (handled by error parser)
+	// - Endpoints that explicitly return non-JSON (download endpoints, etc.)
+	if !resp.IsError() && bodyLen > 0 {
+		contentType := resp.Header().Get("Content-Type")
+		
+		// Allow responses without Content-Type header (some endpoints don't set it)
+		if contentType != "" && !strings.HasPrefix(contentType, "application/json") {
+			c.logger.Warn("Unexpected Content-Type in response",
+				zap.String("method", method),
+				zap.String("path", path),
+				zap.String("content_type", contentType),
+				zap.String("expected", "application/json"))
+			
+			return fmt.Errorf("unexpected response Content-Type from %s %s: got %q, expected application/json",
+				method, path, contentType)
+		}
+	}
 
 	return nil
 }

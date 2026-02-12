@@ -11,15 +11,17 @@ import (
 
 // Client represents the HTTP client for VirusTotal API
 type Client struct {
-	client     *resty.Client
-	logger     *zap.Logger
-	authConfig *AuthConfig
-	BaseURL    string
+	client        *resty.Client
+	logger        *zap.Logger
+	authConfig    *AuthConfig
+	BaseURL       string
+	globalHeaders map[string]string
+	userAgent     string
 }
 
 // NewClient creates a new VirusTotal API client
 func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
-	// Create default logger
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		return nil, fmt.Errorf("failed to create logger: %w", err)
@@ -30,20 +32,27 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 		APIVersion: DefaultAPIVersion,
 	}
 
+	// Format: "go-api-sdk-virustotal/1.0.0; gzip"
+	// The "gzip" keyword helps with AppEngine content serving
+	userAgent := fmt.Sprintf("%s/%s; gzip", UserAgentBase, Version)
+
 	// Create resty client
 	restyClient := resty.New()
 	restyClient.SetTimeout(DefaultTimeout * time.Second)
 	restyClient.SetRetryCount(MaxRetries)
 	restyClient.SetRetryWaitTime(RetryWaitTime * time.Second)
 	restyClient.SetRetryMaxWaitTime(RetryMaxWaitTime * time.Second)
-	restyClient.SetHeader("User-Agent", UserAgent)
+	restyClient.SetHeader("User-Agent", userAgent)
+	restyClient.SetHeader("Accept-Encoding", "gzip")
 
 	// Create client instance
 	client := &Client{
-		client:     restyClient,
-		logger:     logger,
-		authConfig: authConfig,
-		BaseURL:    DefaultBaseURL,
+		client:        restyClient,
+		logger:        logger,
+		authConfig:    authConfig,
+		BaseURL:       DefaultBaseURL,
+		globalHeaders: make(map[string]string),
+		userAgent:     userAgent,
 	}
 
 	// Apply any additional options
