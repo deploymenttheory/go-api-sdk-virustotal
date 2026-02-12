@@ -130,7 +130,7 @@ type AuthorityKeyIdentifier struct {
 
 // CAInformationAccess represents CA information access extension
 type CAInformationAccess struct {
-	OCSP   []string `json:"ocsp,omitempty"`
+	OCSP   any      `json:"ocsp,omitempty"` // Can be string or []string
 	Issuer []string `json:"ca_issuers,omitempty"`
 }
 

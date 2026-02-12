@@ -79,7 +79,7 @@ func TestAcceptance_Files_GetFileReport_EmptyHash(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetFileReport should return an error for empty hash")
 		assert.Nil(t, result, "GetFileReport result should be nil for empty hash")
-		assert.Contains(t, err.Error(), "file hash is required", "Error should mention required hash")
+		assert.Contains(t, err.Error(), "file ID is required", "Error should mention required file ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
 	})

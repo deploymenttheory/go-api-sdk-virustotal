@@ -71,7 +71,7 @@ type FileAttributes struct {
 	Size           int64    `json:"size,omitempty"`
 	Names          []string `json:"names,omitempty"`
 	MeaningfulName string   `json:"meaningful_name,omitempty"`
-	TrID           []string `json:"trid,omitempty"`
+	TrID           any      `json:"trid,omitempty"` // Can be object or array
 	Magic          string   `json:"magic,omitempty"`
 	Tags           []string `json:"tags,omitempty"`
 

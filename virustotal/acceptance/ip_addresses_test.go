@@ -84,7 +84,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_EmptyIP(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetIPAddressReport should return an error for empty IP")
 		assert.Nil(t, result, "GetIPAddressReport result should be nil for empty IP")
-		assert.Contains(t, err.Error(), "IP address is required", "Error should mention required IP")
+		assert.Contains(t, err.Error(), "ip address is required", "Error should mention required IP")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
 	})
