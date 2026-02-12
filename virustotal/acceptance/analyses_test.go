@@ -29,11 +29,30 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 		assert.NotEmpty(t, result.Data.ID, "Analysis ID should not be empty")
 		assert.NotNil(t, result.Data.Attributes, "Analysis attributes should not be nil")
 
-		LogResponse(t, "Analysis Status: %s", result.Data.Attributes.Status)
-		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d",
-			result.Data.Attributes.Stats.Malicious,
-			result.Data.Attributes.Stats.Suspicious,
-			result.Data.Attributes.Stats.Harmless)
+		// Validate analysis attributes
+		attrs := result.Data.Attributes
+		assert.NotEmpty(t, attrs.Status, "Analysis status should not be empty")
+		assert.Contains(t, []string{"queued", "in-progress", "completed"}, attrs.Status, "Status should be valid")
+		
+		// Validate stats structure
+		assert.NotNil(t, attrs.Stats, "Analysis stats should not be nil")
+		assert.GreaterOrEqual(t, attrs.Stats.Harmless, 0, "Harmless count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.Stats.Malicious, 0, "Malicious count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.Stats.Suspicious, 0, "Suspicious count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.Stats.Undetected, 0, "Undetected count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.Stats.Timeout, 0, "Timeout count should be >= 0")
+		
+		// Validate date field
+		assert.Greater(t, attrs.Date, int64(0), "Analysis date should be a valid timestamp")
+
+		LogResponse(t, "Analysis Status: %s", attrs.Status)
+		LogResponse(t, "Analysis Date: %d", attrs.Date)
+		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d, Timeout: %d",
+			attrs.Stats.Malicious,
+			attrs.Stats.Suspicious,
+			attrs.Stats.Harmless,
+			attrs.Stats.Undetected,
+			attrs.Stats.Timeout)
 	})
 }
 

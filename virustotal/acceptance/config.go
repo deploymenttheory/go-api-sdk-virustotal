@@ -23,6 +23,7 @@ type TestConfig struct {
 	KnownDomain     string
 	KnownIPAddress  string
 	KnownURL        string
+	KnownURLID      string
 }
 
 var (
@@ -46,6 +47,7 @@ func init() {
 		KnownDomain:     getEnv("VT_TEST_DOMAIN", "google.com"),
 		KnownIPAddress:  getEnv("VT_TEST_IP", "8.8.8.8"),
 		KnownURL:        getEnv("VT_TEST_URL", "https://www.google.com"),
+		KnownURLID:      getEnv("VT_TEST_URL_ID", "aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ"), // base64 of https://www.google.com (no padding)
 	}
 }
 

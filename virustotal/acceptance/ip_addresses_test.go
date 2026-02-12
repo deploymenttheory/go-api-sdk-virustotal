@@ -29,18 +29,39 @@ func TestAcceptance_IPAddresses_GetIPAddressReport(t *testing.T) {
 		assert.Equal(t, Config.KnownIPAddress, result.Data.ID, "IP address should match requested IP")
 		assert.NotNil(t, result.Data.Attributes, "IP address attributes should not be nil")
 
-		LogResponse(t, "IP reputation: Malicious: %d, Suspicious: %d, Harmless: %d",
-			result.Data.Attributes.LastAnalysisStats.Malicious,
-			result.Data.Attributes.LastAnalysisStats.Suspicious,
-			result.Data.Attributes.LastAnalysisStats.Harmless)
-
+		// Validate IP attributes
+		attrs := result.Data.Attributes
+		assert.NotNil(t, attrs.LastAnalysisStats, "Last analysis stats should not be nil")
+		assert.GreaterOrEqual(t, attrs.LastAnalysisStats.Harmless, 0, "Harmless count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.LastAnalysisStats.Malicious, 0, "Malicious count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.LastAnalysisStats.Suspicious, 0, "Suspicious count should be >= 0")
+		assert.GreaterOrEqual(t, attrs.LastAnalysisStats.Undetected, 0, "Undetected count should be >= 0")
+		
+		// Validate timestamps
+		assert.Greater(t, attrs.LastAnalysisDate, int64(0), "Last analysis date should be valid")
+		assert.Greater(t, attrs.LastModificationDate, int64(0), "Last modification date should be valid")
+		
+		// Validate reputation
+		assert.NotEqual(t, 0, attrs.Reputation, "Reputation should be set")
+		
 		// Google DNS (8.8.8.8) should have network and country info
-		if result.Data.Attributes.Network != "" {
-			LogResponse(t, "Network: %s", result.Data.Attributes.Network)
-		}
-		if result.Data.Attributes.Country != "" {
-			LogResponse(t, "Country: %s", result.Data.Attributes.Country)
-		}
+		assert.NotEmpty(t, attrs.Network, "Network should not be empty for known IP")
+		assert.NotEmpty(t, attrs.Country, "Country should not be empty for known IP")
+		assert.NotEmpty(t, attrs.ASOwner, "AS owner should not be empty for known IP")
+		assert.Greater(t, attrs.ASN, 0, "ASN should be greater than 0")
+
+		LogResponse(t, "IP Address: %s", Config.KnownIPAddress)
+		LogResponse(t, "Reputation: %d", attrs.Reputation)
+		LogResponse(t, "Network: %s", attrs.Network)
+		LogResponse(t, "Country: %s", attrs.Country)
+		LogResponse(t, "AS Owner: %s", attrs.ASOwner)
+		LogResponse(t, "ASN: %d", attrs.ASN)
+		LogResponse(t, "Last Analysis Date: %d", attrs.LastAnalysisDate)
+		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
+			attrs.LastAnalysisStats.Malicious,
+			attrs.LastAnalysisStats.Suspicious,
+			attrs.LastAnalysisStats.Harmless,
+			attrs.LastAnalysisStats.Undetected)
 	})
 }
 
@@ -87,5 +108,44 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_EmptyIP(t *testing.T) {
 		assert.Contains(t, err.Error(), "ip address is required", "Error should mention required IP")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
+	})
+}
+
+// TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress tests retrieving related objects (resolutions)
+func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := ipaddresses.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectsRelatedToIPAddress (resolutions) with IP: %s", Config.KnownIPAddress)
+
+		// Get DNS resolutions with limit
+		opts := &ipaddresses.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectsRelatedToIPAddress(ctx, Config.KnownIPAddress, "resolutions", opts)
+		AssertNoError(t, err, "GetObjectsRelatedToIPAddress should not return an error")
+		AssertNotNil(t, result, "GetObjectsRelatedToIPAddress result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Resolutions data should not be nil")
+		assert.IsType(t, []ipaddresses.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
+		
+		resolutionCount := len(result.Data)
+		LogResponse(t, "Retrieved %d DNS resolutions", resolutionCount)
+		
+		// For Google DNS (8.8.8.8), expect DNS resolutions to exist
+		if Config.KnownIPAddress == "8.8.8.8" {
+			assert.Greater(t, resolutionCount, 0, "Well-known IP should have DNS resolutions")
+			
+			if resolutionCount > 0 {
+				resolution := result.Data[0]
+				assert.NotEmpty(t, resolution.ID, "Resolution ID should not be empty")
+				assert.Equal(t, "resolution", resolution.Type, "Resolution type should be 'resolution'")
+				LogResponse(t, "First resolution ID: %s", resolution.ID)
+			}
+		}
 	})
 }
