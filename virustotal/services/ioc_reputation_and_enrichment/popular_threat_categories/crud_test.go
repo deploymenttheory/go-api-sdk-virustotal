@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/popular_threat_categories/mocks"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/popular_threat_categories/mocks"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

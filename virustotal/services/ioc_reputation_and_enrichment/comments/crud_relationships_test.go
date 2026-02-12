@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/comments/mocks"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/comments/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
