@@ -185,3 +185,77 @@ func TestAcceptance_Domains_GetObjectsRelatedToDomain(t *testing.T) {
 		}
 	})
 }
+
+// TestAcceptance_Domains_GetObjectDescriptorsRelatedToDomain tests retrieving related object descriptors
+func TestAcceptance_Domains_GetObjectDescriptorsRelatedToDomain(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := domains.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectDescriptorsRelatedToDomain (resolutions) with domain: %s", Config.KnownDomain)
+
+		// Get DNS resolution descriptors with limit
+		opts := &domains.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectDescriptorsRelatedToDomain(ctx, Config.KnownDomain, "resolutions", opts)
+		AssertNoError(t, err, "GetObjectDescriptorsRelatedToDomain should not return an error")
+		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToDomain result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
+		assert.IsType(t, []domains.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
+		
+		descriptorCount := len(result.Data)
+		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		
+		// For google.com, expect descriptors to exist
+		if Config.KnownDomain == "google.com" && descriptorCount > 0 {
+			descriptor := result.Data[0]
+			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
+			assert.Equal(t, "resolution", descriptor.Type, "Descriptor type should be 'resolution'")
+			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+		}
+	})
+}
+
+// TestAcceptance_Domains_GetVotesOnDomain tests retrieving votes on a domain
+func TestAcceptance_Domains_GetVotesOnDomain(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := domains.NewService(Client)
+
+		LogResponse(t, "Testing GetVotesOnDomain with domain: %s", Config.KnownDomain)
+
+		// Get votes with limit
+		opts := &domains.GetVotesOptions{Limit: 10}
+		result, err := service.GetVotesOnDomain(ctx, Config.KnownDomain, opts)
+		AssertNoError(t, err, "GetVotesOnDomain should not return an error")
+		AssertNotNil(t, result, "GetVotesOnDomain result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Votes data should not be nil")
+		assert.IsType(t, []domains.Vote{}, result.Data, "Data should be slice of Vote")
+		
+		voteCount := len(result.Data)
+		LogResponse(t, "Retrieved %d votes", voteCount)
+		
+		// If votes exist, validate structure
+		if voteCount > 0 {
+			vote := result.Data[0]
+			assert.NotEmpty(t, vote.ID, "Vote ID should not be empty")
+			assert.Equal(t, "vote", vote.Type, "Vote type should be 'vote'")
+			assert.NotNil(t, vote.Attributes, "Vote attributes should not be nil")
+			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
+			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
+			
+			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+		}
+	})
+}

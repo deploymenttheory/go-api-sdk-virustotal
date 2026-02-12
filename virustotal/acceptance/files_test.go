@@ -156,3 +156,153 @@ func TestAcceptance_Files_GetFileDownloadURL(t *testing.T) {
 		LogResponse(t, "Download URL retrieved successfully")
 	})
 }
+
+// TestAcceptance_Files_GetCommentsOnFile tests retrieving comments on a file
+func TestAcceptance_Files_GetCommentsOnFile(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := files.NewService(Client)
+
+		LogResponse(t, "Testing GetCommentsOnFile with hash: %s", Config.KnownFileHash)
+
+		// Get comments with limit
+		opts := &files.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetCommentsOnFile(ctx, Config.KnownFileHash, opts)
+		AssertNoError(t, err, "GetCommentsOnFile should not return an error")
+		AssertNotNil(t, result, "GetCommentsOnFile result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Comments data should not be nil")
+		assert.IsType(t, []files.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
+		
+		commentCount := len(result.Data)
+		LogResponse(t, "Retrieved %d comments", commentCount)
+		
+		// If comments exist, validate structure
+		if commentCount > 0 {
+			comment := result.Data[0]
+			assert.NotEmpty(t, comment.ID, "Comment ID should not be empty")
+			assert.Equal(t, "comment", comment.Type, "Comment type should be 'comment'")
+			assert.NotNil(t, comment.Attributes, "Comment attributes should not be nil")
+			
+			// Access attributes from map
+			if date, ok := comment.Attributes["date"].(float64); ok {
+				assert.Greater(t, date, float64(0), "Comment date should be valid")
+				LogResponse(t, "First comment - Date: %.0f", date)
+			}
+		}
+	})
+}
+
+// TestAcceptance_Files_GetObjectsRelatedToFile tests retrieving related objects
+func TestAcceptance_Files_GetObjectsRelatedToFile(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := files.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectsRelatedToFile (execution_parents) with hash: %s", Config.KnownFileHash)
+
+		// Get execution parents with limit
+		opts := &files.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectsRelatedToFile(ctx, Config.KnownFileHash, "execution_parents", opts)
+		AssertNoError(t, err, "GetObjectsRelatedToFile should not return an error")
+		AssertNotNil(t, result, "GetObjectsRelatedToFile result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Related objects data should not be nil")
+		assert.IsType(t, []files.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
+		
+		objectCount := len(result.Data)
+		LogResponse(t, "Retrieved %d related objects", objectCount)
+		
+		// If related objects exist, validate structure
+		if objectCount > 0 {
+			obj := result.Data[0]
+			assert.NotEmpty(t, obj.ID, "Object ID should not be empty")
+			assert.NotEmpty(t, obj.Type, "Object type should not be empty")
+			LogResponse(t, "First related object - Type: %s, ID: %s", obj.Type, obj.ID)
+		}
+	})
+}
+
+// TestAcceptance_Files_GetObjectDescriptorsRelatedToFile tests retrieving related object descriptors
+func TestAcceptance_Files_GetObjectDescriptorsRelatedToFile(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := files.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectDescriptorsRelatedToFile (execution_parents) with hash: %s", Config.KnownFileHash)
+
+		// Get execution parent descriptors with limit
+		opts := &files.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectDescriptorsRelatedToFile(ctx, Config.KnownFileHash, "execution_parents", opts)
+		AssertNoError(t, err, "GetObjectDescriptorsRelatedToFile should not return an error")
+		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToFile result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
+		assert.IsType(t, []files.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
+		
+		descriptorCount := len(result.Data)
+		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		
+		// If descriptors exist, validate structure
+		if descriptorCount > 0 {
+			descriptor := result.Data[0]
+			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
+			assert.NotEmpty(t, descriptor.Type, "Descriptor type should not be empty")
+			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+		}
+	})
+}
+
+// TestAcceptance_Files_GetVotesOnFile tests retrieving votes on a file
+func TestAcceptance_Files_GetVotesOnFile(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := files.NewService(Client)
+
+		LogResponse(t, "Testing GetVotesOnFile with hash: %s", Config.KnownFileHash)
+
+		// Get votes with limit
+		opts := &files.GetVotesOptions{Limit: 10}
+		result, err := service.GetVotesOnFile(ctx, Config.KnownFileHash, opts)
+		AssertNoError(t, err, "GetVotesOnFile should not return an error")
+		AssertNotNil(t, result, "GetVotesOnFile result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Votes data should not be nil")
+		assert.IsType(t, []files.Vote{}, result.Data, "Data should be slice of Vote")
+		
+		voteCount := len(result.Data)
+		LogResponse(t, "Retrieved %d votes", voteCount)
+		
+		// If votes exist, validate structure
+		if voteCount > 0 {
+			vote := result.Data[0]
+			assert.NotEmpty(t, vote.ID, "Vote ID should not be empty")
+			assert.Equal(t, "vote", vote.Type, "Vote type should be 'vote'")
+			assert.NotNil(t, vote.Attributes, "Vote attributes should not be nil")
+			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
+			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
+			
+			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+		}
+	})
+}

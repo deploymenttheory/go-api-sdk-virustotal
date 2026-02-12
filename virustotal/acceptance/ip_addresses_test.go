@@ -149,3 +149,77 @@ func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
 		}
 	})
 }
+
+// TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress tests retrieving related object descriptors
+func TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := ipaddresses.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectDescriptorsRelatedToIPAddress (resolutions) with IP: %s", Config.KnownIPAddress)
+
+		// Get DNS resolution descriptors with limit
+		opts := &ipaddresses.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectDescriptorsRelatedToIPAddress(ctx, Config.KnownIPAddress, "resolutions", opts)
+		AssertNoError(t, err, "GetObjectDescriptorsRelatedToIPAddress should not return an error")
+		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToIPAddress result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
+		assert.IsType(t, []ipaddresses.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
+		
+		descriptorCount := len(result.Data)
+		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		
+		// For Google DNS (8.8.8.8), expect descriptors to exist
+		if Config.KnownIPAddress == "8.8.8.8" && descriptorCount > 0 {
+			descriptor := result.Data[0]
+			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
+			assert.Equal(t, "resolution", descriptor.Type, "Descriptor type should be 'resolution'")
+			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+		}
+	})
+}
+
+// TestAcceptance_IPAddresses_GetVotesOnIPAddress tests retrieving votes on an IP address
+func TestAcceptance_IPAddresses_GetVotesOnIPAddress(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := ipaddresses.NewService(Client)
+
+		LogResponse(t, "Testing GetVotesOnIPAddress with IP: %s", Config.KnownIPAddress)
+
+		// Get votes with limit
+		opts := &ipaddresses.GetVotesOptions{Limit: 10}
+		result, err := service.GetVotesOnIPAddress(ctx, Config.KnownIPAddress, opts)
+		AssertNoError(t, err, "GetVotesOnIPAddress should not return an error")
+		AssertNotNil(t, result, "GetVotesOnIPAddress result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Votes data should not be nil")
+		assert.IsType(t, []ipaddresses.Vote{}, result.Data, "Data should be slice of Vote")
+		
+		voteCount := len(result.Data)
+		LogResponse(t, "Retrieved %d votes", voteCount)
+		
+		// If votes exist, validate structure
+		if voteCount > 0 {
+			vote := result.Data[0]
+			assert.NotEmpty(t, vote.ID, "Vote ID should not be empty")
+			assert.Equal(t, "vote", vote.Type, "Vote type should be 'vote'")
+			assert.NotNil(t, vote.Attributes, "Vote attributes should not be nil")
+			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
+			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
+			
+			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+		}
+	})
+}

@@ -100,3 +100,140 @@ func TestAcceptance_Analyses_GetAnalysis_EmptyID(t *testing.T) {
 		LogResponse(t, "Validation error received as expected: %v", err)
 	})
 }
+
+// TestAcceptance_Analyses_GetObjectsRelatedToAnalysis tests retrieving related objects (item relationship)
+func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := analyses.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectsRelatedToAnalysis (item) with analysis ID: %s", Config.KnownAnalysisID)
+
+		// Get related item (file or URL that was analyzed)
+		opts := &analyses.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectsRelatedToAnalysis(ctx, Config.KnownAnalysisID, "item", opts)
+		AssertNoError(t, err, "GetObjectsRelatedToAnalysis should not return an error")
+		AssertNotNil(t, result, "GetObjectsRelatedToAnalysis result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Related objects data should not be nil")
+		assert.IsType(t, []analyses.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
+		
+		objectCount := len(result.Data)
+		LogResponse(t, "Retrieved %d related objects", objectCount)
+		
+		// Should have at least one item (the analyzed file/URL)
+		if objectCount > 0 {
+			item := result.Data[0]
+			assert.NotEmpty(t, item.ID, "Item ID should not be empty")
+			assert.NotEmpty(t, item.Type, "Item type should not be empty")
+			assert.Contains(t, []string{"file", "url"}, item.Type, "Item type should be file or url")
+			
+			LogResponse(t, "Related item - Type: %s, ID: %s", item.Type, item.ID)
+		}
+	})
+}
+
+// TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis tests retrieving related object descriptors
+func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := analyses.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectDescriptorsRelatedToAnalysis (item) with analysis ID: %s", Config.KnownAnalysisID)
+
+		// Get related item descriptors (lightweight IDs only)
+		opts := &analyses.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, Config.KnownAnalysisID, "item", opts)
+		AssertNoError(t, err, "GetObjectDescriptorsRelatedToAnalysis should not return an error")
+		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToAnalysis result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Related descriptors data should not be nil")
+		assert.IsType(t, []analyses.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
+		
+		descriptorCount := len(result.Data)
+		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		
+		// Should have at least one descriptor
+		if descriptorCount > 0 {
+			descriptor := result.Data[0]
+			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
+			assert.NotEmpty(t, descriptor.Type, "Descriptor type should not be empty")
+			
+			LogResponse(t, "Related descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+		}
+	})
+}
+
+// TestAcceptance_Analyses_GetSubmission tests retrieving a submission object
+func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := analyses.NewService(Client)
+
+		// Use analysis ID as submission ID (they share same ID space)
+		submissionID := Config.KnownAnalysisID
+		LogResponse(t, "Testing GetSubmission with submission ID: %s", submissionID)
+
+		result, err := service.GetSubmission(ctx, submissionID)
+		AssertNoError(t, err, "GetSubmission should not return an error")
+		AssertNotNil(t, result, "GetSubmission result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Submission data should not be nil")
+		assert.Equal(t, "submission", result.Data.Type, "Response type should be 'submission'")
+		assert.NotEmpty(t, result.Data.ID, "Submission ID should not be empty")
+		assert.NotNil(t, result.Data.Attributes, "Submission attributes should not be nil")
+
+		// Validate submission attributes
+		attrs := result.Data.Attributes
+		assert.Greater(t, attrs.Date, int64(0), "Submission date should be valid timestamp")
+
+		LogResponse(t, "Submission ID: %s", result.Data.ID)
+		LogResponse(t, "Submission Date: %d", attrs.Date)
+		
+		// Premium API fields (may be empty for free tier)
+		if attrs.Interface != "" {
+			LogResponse(t, "Submission Interface: %s", attrs.Interface)
+		}
+		if attrs.Country != "" {
+			LogResponse(t, "Submission Country: %s", attrs.Country)
+		}
+	})
+}
+
+// TestAcceptance_Analyses_GetSubmission_EmptyID tests validation for empty submission ID
+func TestAcceptance_Analyses_GetSubmission_EmptyID(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := analyses.NewService(Client)
+
+		LogResponse(t, "Testing GetSubmission with empty ID")
+
+		result, err := service.GetSubmission(ctx, "")
+
+		// Should fail validation
+		assert.Error(t, err, "GetSubmission should return an error for empty ID")
+		assert.Nil(t, result, "GetSubmission result should be nil for empty ID")
+		assert.Contains(t, err.Error(), "submission ID is required", "Error should mention required submission ID")
+
+		LogResponse(t, "Validation error received as expected: %v", err)
+	})
+}

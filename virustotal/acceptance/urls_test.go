@@ -149,3 +149,112 @@ func TestAcceptance_URLs_GetCommentsOnURL(t *testing.T) {
 		}
 	})
 }
+
+// TestAcceptance_URLs_GetObjectsRelatedToURL tests retrieving related objects
+func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := urls.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectsRelatedToURL (contacted_domains) with URL ID: %s", Config.KnownURLID)
+
+		// Get contacted domains with limit
+		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
+		AssertNoError(t, err, "GetObjectsRelatedToURL should not return an error")
+		AssertNotNil(t, result, "GetObjectsRelatedToURL result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Related objects data should not be nil")
+		assert.IsType(t, []urls.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
+		
+		objectCount := len(result.Data)
+		LogResponse(t, "Retrieved %d related objects", objectCount)
+		
+		// If related objects exist, validate structure
+		if objectCount > 0 {
+			obj := result.Data[0]
+			assert.NotEmpty(t, obj.ID, "Object ID should not be empty")
+			assert.Equal(t, "domain", obj.Type, "Object type should be 'domain'")
+			LogResponse(t, "First related domain - ID: %s", obj.ID)
+		}
+	})
+}
+
+// TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL tests retrieving related object descriptors
+func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := urls.NewService(Client)
+
+		LogResponse(t, "Testing GetObjectDescriptorsRelatedToURL (contacted_domains) with URL ID: %s", Config.KnownURLID)
+
+		// Get contacted domain descriptors with limit
+		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
+		result, err := service.GetObjectDescriptorsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
+		AssertNoError(t, err, "GetObjectDescriptorsRelatedToURL should not return an error")
+		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToURL result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
+		assert.IsType(t, []urls.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
+		
+		descriptorCount := len(result.Data)
+		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		
+		// If descriptors exist, validate structure
+		if descriptorCount > 0 {
+			descriptor := result.Data[0]
+			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
+			assert.Equal(t, "domain", descriptor.Type, "Descriptor type should be 'domain'")
+			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+		}
+	})
+}
+
+// TestAcceptance_URLs_GetVotesOnURL tests retrieving votes on a URL
+func TestAcceptance_URLs_GetVotesOnURL(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := urls.NewService(Client)
+
+		LogResponse(t, "Testing GetVotesOnURL with URL ID: %s", Config.KnownURLID)
+
+		// Get votes with limit
+		opts := &urls.GetVotesOptions{Limit: 10}
+		result, err := service.GetVotesOnURL(ctx, Config.KnownURLID, opts)
+		AssertNoError(t, err, "GetVotesOnURL should not return an error")
+		AssertNotNil(t, result, "GetVotesOnURL result should not be nil")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Votes data should not be nil")
+		assert.IsType(t, []urls.Vote{}, result.Data, "Data should be slice of Vote")
+		
+		voteCount := len(result.Data)
+		LogResponse(t, "Retrieved %d votes", voteCount)
+		
+		// If votes exist, validate structure
+		if voteCount > 0 {
+			vote := result.Data[0]
+			assert.NotEmpty(t, vote.ID, "Vote ID should not be empty")
+			assert.Equal(t, "vote", vote.Type, "Vote type should be 'vote'")
+			assert.NotNil(t, vote.Attributes, "Vote attributes should not be nil")
+			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
+			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
+			
+			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+		}
+	})
+}
