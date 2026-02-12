@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("=== Get All Related Objects (Automatic Pagination) ===")
 	fmt.Printf("Fetching all %s for IP: %s\n\n", relationship, ip)
 
-	response, err := vtClient.IPAddresses.GetObjectsRelatedToIPAddress(ctx, ip, relationship, nil)
+	response, _, err := vtClient.IPAddresses.GetObjectsRelatedToIPAddress(ctx, ip, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get related objects: %v", err)
 	}

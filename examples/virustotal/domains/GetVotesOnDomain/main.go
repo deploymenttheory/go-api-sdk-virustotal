@@ -40,7 +40,7 @@ func main() {
 	fmt.Println("=== Get All Votes (Automatic Pagination) ===")
 	fmt.Printf("Fetching community votes for domain: %s\n\n", domain)
 
-	response, err := vtClient.Domains.GetVotesOnDomain(ctx, domain, nil)
+	response, _, err := vtClient.Domains.GetVotesOnDomain(ctx, domain, nil)
 	if err != nil {
 		log.Fatalf("Failed to get votes: %v", err)
 	}

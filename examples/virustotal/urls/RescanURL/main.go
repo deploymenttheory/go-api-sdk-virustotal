@@ -36,7 +36,7 @@ func main() {
 	// URL ID can be SHA-256 hash or base64-encoded URL without padding
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
 
-	result, err := vtClient.URLs.RescanURL(ctx, urlID)
+	result, _, err := vtClient.URLs.RescanURL(ctx, urlID)
 	if err != nil {
 		log.Fatalf("Failed to rescan URL: %v", err)
 	}

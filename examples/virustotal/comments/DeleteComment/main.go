@@ -36,7 +36,7 @@ func main() {
 	// Comment ID format: {prefix}-{item_id}-{random}
 	commentID := "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
 
-	err = vtClient.Comments.DeleteComment(ctx, commentID)
+	_, err = vtClient.Comments.DeleteComment(ctx, commentID)
 	if err != nil {
 		log.Fatalf("Failed to delete comment: %v", err)
 	}

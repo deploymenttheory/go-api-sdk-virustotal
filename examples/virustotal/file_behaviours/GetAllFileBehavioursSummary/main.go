@@ -38,7 +38,7 @@ func main() {
 		"275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f", // EICAR test file SHA-256
 	}
 
-	summary, err := vtClient.FileBehaviours.GetAllFileBehavioursSummary(ctx, fileHashes)
+	summary, _, err := vtClient.FileBehaviours.GetAllFileBehavioursSummary(ctx, fileHashes)
 	if err != nil {
 		log.Fatalf("Failed to get file behaviours summary: %v", err)
 	}

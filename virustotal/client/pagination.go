@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"maps"
 	"net/url"
+
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 )
 
 // PaginationMeta contains pagination metadata for VirusTotal cursor-based pagination
@@ -28,20 +30,24 @@ type PaginationOptions struct {
 
 // GetPaginated executes a paginated GET request, automatically looping through all pages.
 // The mergePage callback receives raw JSON for each page and handles unmarshaling and merging.
-func (c *Client) GetPaginated(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, mergePage func(pageData []byte) error) error {
+// Returns response metadata from the last page and error.
+func (c *Client) GetPaginated(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, mergePage func(pageData []byte) error) (*interfaces.Response, error) {
 	currentParams := make(map[string]string)
 	maps.Copy(currentParams, queryParams)
 
+	var lastResp *interfaces.Response
+
 	for {
 		var rawResponse json.RawMessage
-		err := c.Get(ctx, path, currentParams, headers, &rawResponse)
+		resp, err := c.Get(ctx, path, currentParams, headers, &rawResponse)
+		lastResp = resp
 		if err != nil {
-			return err
+			return lastResp, err
 		}
 
 		// CRUD function handles unmarshaling and merging
 		if err := mergePage(rawResponse); err != nil {
-			return err
+			return lastResp, err
 		}
 
 		// Extract pagination info to check for next page
@@ -49,7 +55,7 @@ func (c *Client) GetPaginated(ctx context.Context, path string, queryParams map[
 			Links *PaginationLinks `json:"links,omitempty"`
 		}
 		if err := json.Unmarshal(rawResponse, &pageInfo); err != nil {
-			return fmt.Errorf("failed to parse pagination info: %w", err)
+			return lastResp, fmt.Errorf("failed to parse pagination info: %w", err)
 		}
 
 		// No more pages available
@@ -60,13 +66,13 @@ func (c *Client) GetPaginated(ctx context.Context, path string, queryParams map[
 		// Extract parameters from next page URL
 		nextParams, err := extractParamsFromURL(pageInfo.Links.Next)
 		if err != nil {
-			return fmt.Errorf("failed to parse next URL: %w", err)
+			return lastResp, fmt.Errorf("failed to parse next URL: %w", err)
 		}
 
 		maps.Copy(currentParams, nextParams)
 	}
 
-	return nil
+	return lastResp, nil
 }
 
 // HasNextPage checks if there is a next page available

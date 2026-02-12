@@ -38,7 +38,7 @@ func main() {
 
 	// Option 1: Get all behaviours with automatic pagination (pass nil)
 	fmt.Println("\n=== Getting All Behaviour Reports (Automatic Pagination) ===")
-	allBehaviours, err := vtClient.FileBehaviours.GetAllFileBehaviours(ctx, fileID, nil)
+	allBehaviours, _, err := vtClient.FileBehaviours.GetAllFileBehaviours(ctx, fileID, nil)
 	if err != nil {
 		log.Fatalf("Failed to get all file behaviours: %v", err)
 	}
@@ -67,7 +67,7 @@ func main() {
 		Limit: 10,
 	}
 
-	pageResult, err := vtClient.FileBehaviours.GetAllFileBehaviours(ctx, fileID, options)
+		pageResult, _, err := vtClient.FileBehaviours.GetAllFileBehaviours(ctx, fileID, options)
 	if err != nil {
 		log.Fatalf("Failed to get paginated behaviours: %v", err)
 	}

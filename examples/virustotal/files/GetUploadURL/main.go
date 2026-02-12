@@ -35,7 +35,7 @@ func main() {
 	// Get upload URL for large files (>32MB)
 	ctx := context.Background()
 
-	result, err := vtClient.Files.GetUploadURL(ctx)
+	result, _, err := vtClient.Files.GetUploadURL(ctx)
 	if err != nil {
 		log.Fatalf("Failed to get upload URL: %v", err)
 	}

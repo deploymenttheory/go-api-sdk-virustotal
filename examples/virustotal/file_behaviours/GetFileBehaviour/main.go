@@ -38,7 +38,7 @@ func main() {
 	// Example: replace with an actual sandbox ID from your GetAllFileBehaviours results
 	sandboxID := "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f_VirusTotal Jujubox"
 
-	behaviour, err := vtClient.FileBehaviours.GetFileBehaviour(ctx, sandboxID)
+	behaviour, _, err := vtClient.FileBehaviours.GetFileBehaviour(ctx, sandboxID)
 	if err != nil {
 		log.Fatalf("Failed to get file behaviour: %v", err)
 	}

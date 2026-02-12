@@ -36,7 +36,7 @@ func main() {
 	ctx := context.Background()
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
 
-	result, err := vtClient.URLs.GetCommentsOnURL(ctx, urlID, nil)
+	result, _, err := vtClient.URLs.GetCommentsOnURL(ctx, urlID, nil)
 	if err != nil {
 		log.Fatalf("Failed to get comments: %v", err)
 	}

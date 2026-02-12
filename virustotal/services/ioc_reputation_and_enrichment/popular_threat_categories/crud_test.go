@@ -51,7 +51,7 @@ func TestUnitGetPopularThreatCategories_Success(t *testing.T) {
 	mockHandler := mocks.NewPopularThreatCategoriesMock()
 	mockHandler.RegisterGetPopularThreatCategoriesMock(baseURL)
 
-	result, err := service.GetPopularThreatCategories(context.Background())
+	result, _, err := service.GetPopularThreatCategories(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, result)
 

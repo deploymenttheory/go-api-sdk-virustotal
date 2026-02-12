@@ -35,7 +35,7 @@ func main() {
 	ctx := context.Background()
 	fileID := "44d88612fea8a8f36de82e1278abb02f" // Example MD5 hash (EICAR test file)
 
-	mitreData, err := vtClient.FileBehaviours.GetFileMitreAttackTrees(ctx, fileID)
+	mitreData, _, err := vtClient.FileBehaviours.GetFileMitreAttackTrees(ctx, fileID)
 	if err != nil {
 		log.Fatalf("Failed to get MITRE ATT&CK trees: %v", err)
 	}

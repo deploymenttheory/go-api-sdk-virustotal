@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("=== Get All Object Descriptors (Automatic Pagination) ===")
 	fmt.Printf("Fetching object descriptors for %s related to file: %s\n\n", relationship, fileID)
 
-	response, err := vtClient.Files.GetObjectDescriptorsRelatedToFile(ctx, fileID, relationship, nil)
+	response, _, err := vtClient.Files.GetObjectDescriptorsRelatedToFile(ctx, fileID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}

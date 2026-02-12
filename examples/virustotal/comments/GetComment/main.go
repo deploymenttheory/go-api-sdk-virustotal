@@ -38,7 +38,7 @@ func main() {
 	// Prefixes: d=domain, f=file, g=graph, i=IP, u=URL
 	commentID := "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
 
-	result, err := vtClient.Comments.GetComment(ctx, commentID)
+	result, _, err := vtClient.Comments.GetComment(ctx, commentID)
 	if err != nil {
 		log.Fatalf("Failed to get comment: %v", err)
 	}

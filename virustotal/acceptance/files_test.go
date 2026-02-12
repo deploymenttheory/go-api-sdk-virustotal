@@ -19,9 +19,12 @@ func TestAcceptance_Files_GetFileReport(t *testing.T) {
 
 		LogResponse(t, "Testing GetFileReport with hash: %s", Config.KnownFileHash)
 
-		result, err := service.GetFileReport(ctx, Config.KnownFileHash)
+		result, resp, err := service.GetFileReport(ctx, Config.KnownFileHash)
 		AssertNoError(t, err, "GetFileReport should not return an error")
 		AssertNotNil(t, result, "GetFileReport result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "File data should not be nil")
@@ -75,11 +78,13 @@ func TestAcceptance_Files_GetFileReport_InvalidHash(t *testing.T) {
 		LogResponse(t, "Testing GetFileReport with invalid hash")
 
 		// Use a non-existent hash
-		result, err := service.GetFileReport(ctx, "0000000000000000000000000000000000000000000000000000000000000000")
+		result, resp, err := service.GetFileReport(ctx, "0000000000000000000000000000000000000000000000000000000000000000")
 
 		// We expect an error (404 Not Found)
 		assert.Error(t, err, "GetFileReport should return an error for non-existent hash")
 		assert.Nil(t, result, "GetFileReport result should be nil for non-existent hash")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for non-existent hash")
 
 		LogResponse(t, "Expected error received: %v", err)
 	})
@@ -97,11 +102,12 @@ func TestAcceptance_Files_GetFileReport_EmptyHash(t *testing.T) {
 
 		LogResponse(t, "Testing GetFileReport with empty hash")
 
-		result, err := service.GetFileReport(ctx, "")
+		result, resp, err := service.GetFileReport(ctx, "")
 
 		// Should fail validation
 		assert.Error(t, err, "GetFileReport should return an error for empty hash")
 		assert.Nil(t, result, "GetFileReport result should be nil for empty hash")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
 		assert.Contains(t, err.Error(), "file ID is required", "Error should mention required file ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
@@ -120,9 +126,11 @@ func TestAcceptance_Files_GetUploadURL(t *testing.T) {
 
 		LogResponse(t, "Testing GetUploadURL")
 
-		result, err := service.GetUploadURL(ctx)
+		result, resp, err := service.GetUploadURL(ctx)
 		AssertNoError(t, err, "GetUploadURL should not return an error")
 		AssertNotNil(t, result, "GetUploadURL result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate upload URL
 		assert.NotEmpty(t, result.Data, "Upload URL should not be empty")
@@ -145,9 +153,11 @@ func TestAcceptance_Files_GetFileDownloadURL(t *testing.T) {
 
 		LogResponse(t, "Testing GetFileDownloadURL with hash: %s", Config.KnownFileHash)
 
-		result, err := service.GetFileDownloadURL(ctx, Config.KnownFileHash)
+		result, resp, err := service.GetFileDownloadURL(ctx, Config.KnownFileHash)
 		AssertNoError(t, err, "GetFileDownloadURL should not return an error")
 		AssertNotNil(t, result, "GetFileDownloadURL result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate download URL
 		assert.NotEmpty(t, result.Data, "Download URL should not be empty")
@@ -171,9 +181,11 @@ func TestAcceptance_Files_GetCommentsOnFile(t *testing.T) {
 
 		// Get comments with limit
 		opts := &files.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetCommentsOnFile(ctx, Config.KnownFileHash, opts)
+		result, resp, err := service.GetCommentsOnFile(ctx, Config.KnownFileHash, opts)
 		AssertNoError(t, err, "GetCommentsOnFile should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnFile result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
@@ -212,9 +224,11 @@ func TestAcceptance_Files_GetObjectsRelatedToFile(t *testing.T) {
 
 		// Get execution parents with limit
 		opts := &files.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectsRelatedToFile(ctx, Config.KnownFileHash, "execution_parents", opts)
+		result, resp, err := service.GetObjectsRelatedToFile(ctx, Config.KnownFileHash, "execution_parents", opts)
 		AssertNoError(t, err, "GetObjectsRelatedToFile should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToFile result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -247,9 +261,11 @@ func TestAcceptance_Files_GetObjectDescriptorsRelatedToFile(t *testing.T) {
 
 		// Get execution parent descriptors with limit
 		opts := &files.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectDescriptorsRelatedToFile(ctx, Config.KnownFileHash, "execution_parents", opts)
+		result, resp, err := service.GetObjectDescriptorsRelatedToFile(ctx, Config.KnownFileHash, "execution_parents", opts)
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToFile should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToFile result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -282,9 +298,11 @@ func TestAcceptance_Files_GetVotesOnFile(t *testing.T) {
 
 		// Get votes with limit
 		opts := &files.GetVotesOptions{Limit: 10}
-		result, err := service.GetVotesOnFile(ctx, Config.KnownFileHash, opts)
+		result, resp, err := service.GetVotesOnFile(ctx, Config.KnownFileHash, opts)
 		AssertNoError(t, err, "GetVotesOnFile should not return an error")
 		AssertNotNil(t, result, "GetVotesOnFile result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

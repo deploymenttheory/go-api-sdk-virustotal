@@ -26,7 +26,7 @@ func main() {
 
 	// Get related objects (item - the file or URL that was analyzed)
 	ctx := context.Background()
-	relatedObjects, err := client.Analyses.GetObjectsRelatedToAnalysis(
+	relatedObjects, _, err := client.Analyses.GetObjectsRelatedToAnalysis(
 		ctx,
 		analysisID,
 		analyses.RelationshipItem,

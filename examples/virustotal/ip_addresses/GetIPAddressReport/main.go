@@ -43,7 +43,7 @@ func main() {
 		// Relationships: "comments,resolutions",
 	}
 
-	report, err := vtClient.IPAddresses.GetIPAddressReport(ctx, ip, opts)
+	report, _, err := vtClient.IPAddresses.GetIPAddressReport(ctx, ip, opts)
 	if err != nil {
 		log.Fatalf("Failed to get IP address report: %v", err)
 	}

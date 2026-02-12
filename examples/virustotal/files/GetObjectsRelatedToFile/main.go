@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("=== Get All Related Objects (Automatic Pagination) ===")
 	fmt.Printf("Fetching all %s for file: %s\n\n", relationship, fileID)
 
-	response, err := vtClient.Files.GetObjectsRelatedToFile(ctx, fileID, relationship, nil)
+	response, _, err := vtClient.Files.GetObjectsRelatedToFile(ctx, fileID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get related objects: %v", err)
 	}

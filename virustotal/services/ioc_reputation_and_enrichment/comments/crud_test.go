@@ -49,7 +49,7 @@ func TestUnitGetLatestComments_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetLatestComments(ctx, nil)
+	result, _, err := service.GetLatestComments(ctx, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -70,7 +70,7 @@ func TestUnitGetLatestComments_WithFilter(t *testing.T) {
 		Filter: "tag:malware",
 		Limit:  10,
 	}
-	result, err := service.GetLatestComments(ctx, opts)
+	result, _, err := service.GetLatestComments(ctx, opts)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -89,7 +89,7 @@ func TestUnitGetComment_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345")
+	result, _, err := service.GetComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345")
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -112,7 +112,7 @@ func TestUnitGetComment_EmptyCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetComment(ctx, "")
+	result, _, err := service.GetComment(ctx, "")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -123,7 +123,7 @@ func TestUnitGetComment_InvalidCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetComment(ctx, "invalid-id")
+	result, _, err := service.GetComment(ctx, "invalid-id")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -134,7 +134,7 @@ func TestUnitGetComment_InvalidPrefix(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetComment(ctx, "x-example.com-abc123")
+	result, _, err := service.GetComment(ctx, "x-example.com-abc123")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -147,7 +147,7 @@ func TestUnitGetComment_NotFound(t *testing.T) {
 	mockHandler.RegisterErrorMocks()
 
 	ctx := context.Background()
-	result, err := service.GetComment(ctx, "d-notfound.test-abc123")
+	result, _, err := service.GetComment(ctx, "d-notfound.test-abc123")
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -163,7 +163,7 @@ func TestUnitDeleteComment_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	err := service.DeleteComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345")
+	_, err := service.DeleteComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345")
 
 	require.NoError(t, err)
 
@@ -174,7 +174,7 @@ func TestUnitDeleteComment_EmptyCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	err := service.DeleteComment(ctx, "")
+	_, err := service.DeleteComment(ctx, "")
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "comment ID cannot be empty")
@@ -184,7 +184,7 @@ func TestUnitDeleteComment_InvalidCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	err := service.DeleteComment(ctx, "invalid@id")
+	_, err := service.DeleteComment(ctx, "invalid@id")
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "comment ID must be in format")
@@ -200,7 +200,7 @@ func TestUnitGetObjectsRelatedToComment_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "author", nil)
+	result, _, err := service.GetObjectsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "author", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -214,7 +214,7 @@ func TestUnitGetObjectsRelatedToComment_EmptyCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToComment(ctx, "", "author", nil)
+	result, _, err := service.GetObjectsRelatedToComment(ctx, "", "author", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -225,7 +225,7 @@ func TestUnitGetObjectsRelatedToComment_EmptyRelationship(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "", nil)
+	result, _, err := service.GetObjectsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -236,7 +236,7 @@ func TestUnitGetObjectsRelatedToComment_InvalidCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToComment(ctx, "invalid#id", "author", nil)
+	result, _, err := service.GetObjectsRelatedToComment(ctx, "invalid#id", "author", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -253,7 +253,7 @@ func TestUnitGetObjectDescriptorsRelatedToComment_Success(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "author", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "author", nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -268,7 +268,7 @@ func TestUnitGetObjectDescriptorsRelatedToComment_EmptyCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToComment(ctx, "", "author", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, "", "author", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -279,7 +279,7 @@ func TestUnitGetObjectDescriptorsRelatedToComment_EmptyRelationship(t *testing.T
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", "", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -290,7 +290,7 @@ func TestUnitGetObjectDescriptorsRelatedToComment_InvalidCommentID(t *testing.T)
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToComment(ctx, "invalid$id", "author", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, "invalid$id", "author", nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -307,7 +307,7 @@ func TestUnitAddVoteToComment_Success_Positive(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", 1, 0, 0)
+	result, _, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", 1, 0, 0)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -324,7 +324,7 @@ func TestUnitAddVoteToComment_Success_Negative(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", 0, 1, 0)
+	result, _, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", 0, 1, 0)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -338,7 +338,7 @@ func TestUnitAddVoteToComment_Success_Abuse(t *testing.T) {
 	mockHandler.RegisterMocks()
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", 0, 0, 1)
+	result, _, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", 0, 0, 1)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -350,7 +350,7 @@ func TestUnitAddVoteToComment_EmptyCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "", 1, 0, 0)
+	result, _, err := service.AddVoteToComment(ctx, "", 1, 0, 0)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -361,7 +361,7 @@ func TestUnitAddVoteToComment_InvalidCommentID(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "invalid&id", 1, 0, 0)
+	result, _, err := service.AddVoteToComment(ctx, "invalid&id", 1, 0, 0)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -372,7 +372,7 @@ func TestUnitAddVoteToComment_NegativeValues(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", -1, 0, 0)
+	result, _, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", -1, 0, 0)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -383,9 +383,93 @@ func TestUnitAddVoteToComment_AllNegativeValues(t *testing.T) {
 	service := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", -1, -1, -1)
+	result, _, err := service.AddVoteToComment(ctx, "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345", -1, -1, -1)
 
 	require.Error(t, err)
 	require.Nil(t, result)
 	assert.Contains(t, err.Error(), "vote values cannot be negative")
+}
+
+const testCommentID = "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
+
+// =============================================================================
+// Author Relationship Tests
+// =============================================================================
+
+func TestUnitGetCommentAuthor_Success(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewCommentsMock()
+	mockHandler.RegisterRelationshipMocks()
+
+	ctx := context.Background()
+	result, _, err := service.GetObjectsRelatedToComment(ctx, testCommentID, RelationshipAuthor, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "user", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetCommentAuthor_EmptyCommentID(t *testing.T) {
+	service := setupMockClient(t)
+
+	ctx := context.Background()
+	result, _, err := service.GetObjectsRelatedToComment(ctx, "", RelationshipAuthor, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "comment ID cannot be empty")
+}
+
+func TestUnitGetCommentAuthor_InvalidCommentID(t *testing.T) {
+	service := setupMockClient(t)
+
+	ctx := context.Background()
+	result, _, err := service.GetObjectsRelatedToComment(ctx, "invalid-id", RelationshipAuthor, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "comment ID must be in format")
+}
+
+// =============================================================================
+// Author Relationship Descriptor Tests
+// =============================================================================
+
+func TestUnitGetCommentAuthorDescriptor_Success(t *testing.T) {
+	service := setupMockClient(t)
+	mockHandler := mocks.NewCommentsMock()
+	mockHandler.RegisterRelationshipMocks()
+
+	ctx := context.Background()
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, testCommentID, RelationshipAuthor, nil)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Greater(t, len(result.Data), 0)
+	assert.Equal(t, "user", result.Data[0].Type)
+	assert.NotEmpty(t, result.Data[0].ID)
+}
+
+func TestUnitGetCommentAuthorDescriptor_EmptyCommentID(t *testing.T) {
+	service := setupMockClient(t)
+
+	ctx := context.Background()
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, "", RelationshipAuthor, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "comment ID cannot be empty")
+}
+
+func TestUnitGetCommentAuthorDescriptor_InvalidCommentID(t *testing.T) {
+	service := setupMockClient(t)
+
+	ctx := context.Background()
+	result, _, err := service.GetObjectDescriptorsRelatedToComment(ctx, "invalid-id", RelationshipAuthor, nil)
+
+	require.Error(t, err)
+	require.Nil(t, result)
+	assert.Contains(t, err.Error(), "comment ID must be in format")
 }

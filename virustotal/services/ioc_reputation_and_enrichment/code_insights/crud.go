@@ -21,7 +21,7 @@ type (
 		// Note: This endpoint is limited to 50 requests per day.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/analyse-binary
-		AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, error)
+		AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, *interfaces.Response, error)
 	}
 
 	// Service implements the CodeInsightsServiceInterface
@@ -45,18 +45,18 @@ func NewService(client interfaces.HTTPClient) *Service {
 // AnalyseCode analyses disassembled or decompiled code
 // URL: POST https://www.virustotal.com/api/v3/codeinsights/analyse-binary
 // https://docs.virustotal.com/reference/analyse-binary
-func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, error) {
+func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, *interfaces.Response, error) {
 	if err := ValidateBase64(code); err != nil {
-		return nil, fmt.Errorf("code validation failed: %w", err)
+		return nil, nil, fmt.Errorf("code validation failed: %w", err)
 	}
 
 	if err := ValidateCodeType(codeType); err != nil {
-		return nil, fmt.Errorf("code type validation failed: %w", err)
+		return nil, nil, fmt.Errorf("code type validation failed: %w", err)
 	}
 
 	for i, entry := range history {
 		if err := ValidateBase64(entry.Request); err != nil {
-			return nil, fmt.Errorf("history entry %d request validation failed: %w", i, err)
+			return nil, nil, fmt.Errorf("history entry %d request validation failed: %w", i, err)
 		}
 	}
 
@@ -76,10 +76,10 @@ func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string,
 	}
 
 	var result AnalyseCodeResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }

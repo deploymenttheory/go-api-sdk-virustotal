@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("=== Get All Votes (Automatic Pagination) ===")
 	fmt.Printf("Fetching community votes for IP: %s\n\n", ip)
 
-	response, err := vtClient.IPAddresses.GetVotesOnIPAddress(ctx, ip, nil)
+	response, _, err := vtClient.IPAddresses.GetVotesOnIPAddress(ctx, ip, nil)
 	if err != nil {
 		log.Fatalf("Failed to get votes: %v", err)
 	}

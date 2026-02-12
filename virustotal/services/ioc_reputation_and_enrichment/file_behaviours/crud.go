@@ -22,14 +22,14 @@ type (
 		// file operations, network activity, registry modifications, and MITRE ATT&CK techniques.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/file-all-behaviours-summary
-		GetFileBehaviourSummaryByHashId(ctx context.Context, fileID string) (*BehaviourSummaryResponse, error)
+		GetFileBehaviourSummaryByHashId(ctx context.Context, fileID string) (*BehaviourSummaryResponse, *interfaces.Response, error)
 
 		// GetAllFileBehavioursSummary retrieves behaviour summaries for multiple files
 		//
 		// Returns aggregated behavioural information for multiple files specified by their hashes.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/file-all-behaviours-summary
-		GetAllFileBehavioursSummary(ctx context.Context, fileHashes []string) (*BehaviourSummaryResponse, error)
+		GetAllFileBehavioursSummary(ctx context.Context, fileHashes []string) (*BehaviourSummaryResponse, *interfaces.Response, error)
 
 		// GetFileMitreAttackTrees retrieves a summary of all MITRE ATT&CK techniques observed in a file
 		//
@@ -37,7 +37,7 @@ type (
 		// organized by sandbox name.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-a-summary-of-all-mitre-attck-techniques-observed-in-a-file
-		GetFileMitreAttackTrees(ctx context.Context, fileID string) (*MitreTreesResponse, error)
+		GetFileMitreAttackTrees(ctx context.Context, fileID string) (*MitreTreesResponse, *interfaces.Response, error)
 
 		// GetAllFileBehaviours retrieves all behavior reports for a file
 		//
@@ -45,7 +45,7 @@ type (
 		// Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-all-behavior-reports-for-a-file
-		GetAllFileBehaviours(ctx context.Context, fileID string, options *GetRelatedObjectsOptions) (*AllBehavioursResponse, error)
+		GetAllFileBehaviours(ctx context.Context, fileID string, options *GetRelatedObjectsOptions) (*AllBehavioursResponse, *interfaces.Response, error)
 
 		// GetFileBehaviour retrieves a specific behaviour report by sandbox ID
 		//
@@ -53,7 +53,7 @@ type (
 		// Sandbox ID format: {file_sha256}_{sandbox_name}
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviour-id
-		GetFileBehaviour(ctx context.Context, sandboxID string) (*BehaviourReportResponse, error)
+		GetFileBehaviour(ctx context.Context, sandboxID string) (*BehaviourReportResponse, *interfaces.Response, error)
 
 		// GetObjectsRelatedToFileBehaviour retrieves objects related to a behaviour report
 		//
@@ -62,7 +62,7 @@ type (
 		// Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviours-relationship
-		GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// GetObjectDescriptorsForFileBehaviour retrieves object descriptors for a behaviour report relationship
 		//
@@ -70,35 +70,35 @@ type (
 		// This is more efficient when you only need to know which objects are related without fetching all attributes.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviours-relationship-descriptor
-		GetObjectDescriptorsForFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, error)
+		GetObjectDescriptorsForFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error)
 
 		// GetFileBehaviourHTML retrieves the HTML report for a behaviour
 		//
 		// Returns a detailed HTML behaviour report for a specific sandbox analysis.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviours-html
-		GetFileBehaviourHTML(ctx context.Context, sandboxID string) (string, error)
+		GetFileBehaviourHTML(ctx context.Context, sandboxID string) (string, *interfaces.Response, error)
 
 		// GetFileBehaviourEVTX retrieves the EVTX file for a behaviour
 		//
 		// Returns the Windows Event Log (EVTX) file from a sandbox analysis.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviours-evtx
-		GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([]byte, error)
+		GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error)
 
 		// GetFileBehaviourPCAP retrieves the PCAP file for a behaviour
 		//
 		// Returns the network traffic capture (PCAP) file from a sandbox analysis.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviours-pcap
-		GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([]byte, error)
+		GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error)
 
 		// GetFileBehaviourMemdump retrieves the memory dump for a behaviour
 		//
 		// Returns the memory dump file from a sandbox analysis.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-file-behaviours-memdump
-		GetFileBehaviourMemdump(ctx context.Context, sandboxID string) ([]byte, error)
+		GetFileBehaviourMemdump(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error)
 	}
 
 	// Service handles communication with the file behaviours
@@ -158,13 +158,13 @@ func isValidFileHash(hash string) bool {
 // GetFileBehaviourSummaryByHashId retrieves a summary of all behaviours for a file across all sandboxes
 // URL: GET https://www.virustotal.com/api/v3/files/{id}/behaviour_summary
 // https://docs.virustotal.com/reference/file-all-behaviours-summary
-func (s *Service) GetFileBehaviourSummaryByHashId(ctx context.Context, fileID string) (*BehaviourSummaryResponse, error) {
+func (s *Service) GetFileBehaviourSummaryByHashId(ctx context.Context, fileID string) (*BehaviourSummaryResponse, *interfaces.Response, error) {
 	if fileID == "" {
-		return nil, fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	if !isValidFileHash(fileID) {
-		return nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
+		return nil, nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/behaviour_summary", EndpointFiles, fileID)
@@ -175,25 +175,25 @@ func (s *Service) GetFileBehaviourSummaryByHashId(ctx context.Context, fileID st
 	}
 
 	var result BehaviourSummaryResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // GetAllFileBehavioursSummary retrieves behaviour summaries for multiple files
 // URL: GET https://www.virustotal.com/api/v3/files/behaviour_summary?hashes={hashes}
 // https://docs.virustotal.com/reference/file-all-behaviours-summary
-func (s *Service) GetAllFileBehavioursSummary(ctx context.Context, fileHashes []string) (*BehaviourSummaryResponse, error) {
+func (s *Service) GetAllFileBehavioursSummary(ctx context.Context, fileHashes []string) (*BehaviourSummaryResponse, *interfaces.Response, error) {
 	if len(fileHashes) == 0 {
-		return nil, fmt.Errorf("at least one file hash is required")
+		return nil, nil, fmt.Errorf("at least one file hash is required")
 	}
 
 	for i, hash := range fileHashes {
 		if !isValidFileHash(hash) {
-			return nil, fmt.Errorf("file hash at index %d must be a valid MD5, SHA-1, or SHA-256 hash", i)
+			return nil, nil, fmt.Errorf("file hash at index %d must be a valid MD5, SHA-1, or SHA-256 hash", i)
 		}
 	}
 
@@ -209,12 +209,12 @@ func (s *Service) GetAllFileBehavioursSummary(ctx context.Context, fileHashes []
 	}
 
 	var result BehaviourSummaryResponse
-	err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -224,13 +224,13 @@ func (s *Service) GetAllFileBehavioursSummary(ctx context.Context, fileHashes []
 // GetFileMitreAttackTrees retrieves a summary of all MITRE ATT&CK techniques observed in a file
 // URL: GET https://www.virustotal.com/api/v3/files/{id}/behaviour_mitre_trees
 // https://docs.virustotal.com/reference/get-a-summary-of-all-mitre-attck-techniques-observed-in-a-file
-func (s *Service) GetFileMitreAttackTrees(ctx context.Context, fileID string) (*MitreTreesResponse, error) {
+func (s *Service) GetFileMitreAttackTrees(ctx context.Context, fileID string) (*MitreTreesResponse, *interfaces.Response, error) {
 	if fileID == "" {
-		return nil, fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	if !isValidFileHash(fileID) {
-		return nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
+		return nil, nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/behaviour_mitre_trees", EndpointFiles, fileID)
@@ -241,12 +241,12 @@ func (s *Service) GetFileMitreAttackTrees(ctx context.Context, fileID string) (*
 	}
 
 	var result MitreTreesResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -258,13 +258,13 @@ func (s *Service) GetFileMitreAttackTrees(ctx context.Context, fileID string) (*
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/get-all-behavior-reports-for-a-file
-func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, options *GetRelatedObjectsOptions) (*AllBehavioursResponse, error) {
+func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, options *GetRelatedObjectsOptions) (*AllBehavioursResponse, *interfaces.Response, error) {
 	if fileID == "" {
-		return nil, fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	if !isValidFileHash(fileID) {
-		return nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
+		return nil, nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/behaviours", EndpointFiles, fileID)
@@ -285,17 +285,17 @@ func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, optio
 		}
 
 		var result AllBehavioursResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allReports []BehaviourReport
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse AllBehavioursResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -305,12 +305,12 @@ func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, optio
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &AllBehavioursResponse{
 		Data: allReports,
-	}, nil
+	}, resp, nil
 }
 
 // =============================================================================
@@ -320,9 +320,9 @@ func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, optio
 // GetFileBehaviour retrieves a specific behaviour report by sandbox ID
 // URL: GET https://www.virustotal.com/api/v3/file_behaviours/{sandbox_id}
 // https://docs.virustotal.com/reference/get-file-behaviour-id
-func (s *Service) GetFileBehaviour(ctx context.Context, sandboxID string) (*BehaviourReportResponse, error) {
+func (s *Service) GetFileBehaviour(ctx context.Context, sandboxID string) (*BehaviourReportResponse, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, fmt.Errorf("sandbox ID is required")
+		return nil, nil, fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointFileBehaviours, sandboxID)
@@ -333,12 +333,12 @@ func (s *Service) GetFileBehaviour(ctx context.Context, sandboxID string) (*Beha
 	}
 
 	var result BehaviourReportResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // =============================================================================
@@ -350,17 +350,17 @@ func (s *Service) GetFileBehaviour(ctx context.Context, sandboxID string) (*Beha
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/get-file-behaviours-relationship
-func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, fmt.Errorf("sandbox ID is required")
+		return nil, nil, fmt.Errorf("sandbox ID is required")
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointFileBehaviours, sandboxID, relationship, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -379,17 +379,17 @@ func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxI
 		}
 
 		var result RelatedObjectsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allObjects []RelatedObject
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -399,12 +399,12 @@ func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxI
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectsResponse{
 		Data: allObjects,
-	}, nil
+	}, resp, nil
 }
 
 // =============================================================================
@@ -416,17 +416,17 @@ func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxI
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/get-file-behaviours-relationship-descriptor
-func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, error) {
+func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, fmt.Errorf("sandbox ID is required")
+		return nil, nil, fmt.Errorf("sandbox ID is required")
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointFileBehaviours, sandboxID, relationship, true)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -445,17 +445,17 @@ func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sand
 		}
 
 		var result ObjectDescriptorsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allDescriptors []ObjectDescriptor
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse ObjectDescriptorsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -465,12 +465,12 @@ func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sand
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &ObjectDescriptorsResponse{
 		Data: allDescriptors,
-	}, nil
+	}, resp, nil
 }
 
 // =============================================================================
@@ -480,9 +480,9 @@ func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sand
 // GetFileBehaviourHTML retrieves the HTML report for a behaviour
 // URL: GET https://www.virustotal.com/api/v3/file_behaviours/{sandbox_id}/html
 // https://docs.virustotal.com/reference/get-file-behaviours-html
-func (s *Service) GetFileBehaviourHTML(ctx context.Context, sandboxID string) (string, error) {
+func (s *Service) GetFileBehaviourHTML(ctx context.Context, sandboxID string) (string, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return "", fmt.Errorf("sandbox ID is required")
+		return "", nil, fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/html", EndpointFileBehaviours, sandboxID)
@@ -491,20 +491,20 @@ func (s *Service) GetFileBehaviourHTML(ctx context.Context, sandboxID string) (s
 		"Accept": "text/html",
 	}
 
-	body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
+	resp, body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
 	if err != nil {
-		return "", err
+		return "", resp, err
 	}
 
-	return string(body), nil
+	return string(body), resp, nil
 }
 
 // GetFileBehaviourEVTX retrieves the EVTX file for a behaviour
 // URL: GET https://www.virustotal.com/api/v3/file_behaviours/{sandbox_id}/evtx
 // https://docs.virustotal.com/reference/get-file-behaviours-evtx
-func (s *Service) GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([]byte, error) {
+func (s *Service) GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, fmt.Errorf("sandbox ID is required")
+		return nil, nil, fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/evtx", EndpointFileBehaviours, sandboxID)
@@ -513,20 +513,20 @@ func (s *Service) GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([
 		"Accept": "application/octet-stream",
 	}
 
-	body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
+	resp, body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return body, nil
+	return body, resp, nil
 }
 
 // GetFileBehaviourPCAP retrieves the PCAP file for a behaviour
 // URL: GET https://www.virustotal.com/api/v3/file_behaviours/{sandbox_id}/pcap
 // https://docs.virustotal.com/reference/get-file-behaviours-pcap
-func (s *Service) GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([]byte, error) {
+func (s *Service) GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, fmt.Errorf("sandbox ID is required")
+		return nil, nil, fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/pcap", EndpointFileBehaviours, sandboxID)
@@ -535,20 +535,20 @@ func (s *Service) GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([
 		"Accept": "application/vnd.tcpdump.pcap",
 	}
 
-	body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
+	resp, body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return body, nil
+	return body, resp, nil
 }
 
 // GetFileBehaviourMemdump retrieves the memory dump for a behaviour
 // URL: GET https://www.virustotal.com/api/v3/file_behaviours/{sandbox_id}/memdump
 // https://docs.virustotal.com/reference/get-file-behaviours-memdump
-func (s *Service) GetFileBehaviourMemdump(ctx context.Context, sandboxID string) ([]byte, error) {
+func (s *Service) GetFileBehaviourMemdump(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, fmt.Errorf("sandbox ID is required")
+		return nil, nil, fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/memdump", EndpointFileBehaviours, sandboxID)
@@ -557,10 +557,10 @@ func (s *Service) GetFileBehaviourMemdump(ctx context.Context, sandboxID string)
 		"Accept": "application/octet-stream",
 	}
 
-	body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
+	resp, body, err := s.client.GetBytes(ctx, endpoint, nil, headers)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return body, nil
+	return body, resp, nil
 }

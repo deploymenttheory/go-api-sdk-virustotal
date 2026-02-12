@@ -20,7 +20,7 @@ type (
 		// malware detection stats, popularity ranks, and community votes. Optionally include relationships.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domain-info
-		GetDomainReport(ctx context.Context, domain string) (*DomainResponse, error)
+		GetDomainReport(ctx context.Context, domain string) (*DomainResponse, *interfaces.Response, error)
 
 		// RescanDomain requests a rescan/reanalysis of a domain
 		//
@@ -29,7 +29,7 @@ type (
 		// the verdicts from the available vendors using the Analyses endpoint.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domains-rescan
-		RescanDomain(ctx context.Context, domain string) (*RescanResponse, error)
+		RescanDomain(ctx context.Context, domain string) (*RescanResponse, *interfaces.Response, error)
 
 		// GetCommentsOnDomain retrieves comments on a domain
 		//
@@ -37,7 +37,7 @@ type (
 		// Comments may include tags extracted from words starting with #. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domains-comments-get
-		GetCommentsOnDomain(ctx context.Context, domain string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetCommentsOnDomain(ctx context.Context, domain string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// AddCommentToDomain adds a comment to a domain
 		//
@@ -45,7 +45,7 @@ type (
 		// converted to tags. Returns the created comment object with its assigned ID, creation date, and extracted tags.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domains-comments-post
-		AddCommentToDomain(ctx context.Context, domain string, comment string) (*AddCommentResponse, error)
+		AddCommentToDomain(ctx context.Context, domain string, comment string) (*AddCommentResponse, *interfaces.Response, error)
 
 		// GetObjectsRelatedToDomain retrieves objects related to a domain
 		//
@@ -54,7 +54,7 @@ type (
 		// historical_whois, subdomains, resolutions, and more. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domains-relationships
-		GetObjectsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error)
+		GetObjectsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
 		// GetObjectDescriptorsRelatedToDomain retrieves object descriptors (IDs only) related to a domain
 		//
@@ -63,7 +63,7 @@ type (
 		// Supported relationships are the same as GetObjectsRelatedToDomain.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domains-relationships-ids
-		GetObjectDescriptorsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, error)
+		GetObjectDescriptorsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error)
 
 		// GetDNSResolutionObject retrieves a DNS resolution object by its ID
 		//
@@ -71,7 +71,7 @@ type (
 		// The resolution ID is formed by combining the IP address and domain (e.g., "93.184.216.34-example.com").
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/get-resolution-by-id
-		GetDNSResolutionObject(ctx context.Context, id string) (*ResolutionResponse, error)
+		GetDNSResolutionObject(ctx context.Context, id string) (*ResolutionResponse, *interfaces.Response, error)
 
 		// GetVotesOnDomain retrieves votes on a domain
 		//
@@ -79,7 +79,7 @@ type (
 		// Each vote includes the verdict, date, and value. Results are paginated.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domains-votes-get
-		GetVotesOnDomain(ctx context.Context, domain string, opts *GetVotesOptions) (*VotesResponse, error)
+		GetVotesOnDomain(ctx context.Context, domain string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error)
 
 		// AddVoteToDomain adds a vote to a domain
 		//
@@ -87,7 +87,7 @@ type (
 		// Returns the created vote object with its assigned ID, creation date, and value.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/domain-votes-post
-		AddVoteToDomain(ctx context.Context, domain string, verdict string) (*AddVoteResponse, error)
+		AddVoteToDomain(ctx context.Context, domain string, verdict string) (*AddVoteResponse, *interfaces.Response, error)
 	}
 
 	// Service handles communication with the domains
@@ -112,9 +112,9 @@ func NewService(client interfaces.HTTPClient) *Service {
 // GetDomainReport retrieves information about a domain
 // URL: GET https://www.virustotal.com/api/v3/domains/{domain}
 // https://docs.virustotal.com/reference/domain-info
-func (s *Service) GetDomainReport(ctx context.Context, domain string) (*DomainResponse, error) {
+func (s *Service) GetDomainReport(ctx context.Context, domain string) (*DomainResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointDomains, domain)
@@ -125,20 +125,20 @@ func (s *Service) GetDomainReport(ctx context.Context, domain string) (*DomainRe
 	}
 
 	var result DomainResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // RescanDomain requests a new analysis for a domain
 // URL: POST https://www.virustotal.com/api/v3/domains/{domain}/analyse
 // https://docs.virustotal.com/reference/domains-rescan
-func (s *Service) RescanDomain(ctx context.Context, domain string) (*RescanResponse, error) {
+func (s *Service) RescanDomain(ctx context.Context, domain string) (*RescanResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointDomains, domain)
@@ -149,12 +149,12 @@ func (s *Service) RescanDomain(ctx context.Context, domain string) (*RescanRespo
 	}
 
 	var result RescanResponse
-	err := s.client.Post(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // GetCommentsOnDomain retrieves comments on a domain
@@ -162,9 +162,9 @@ func (s *Service) RescanDomain(ctx context.Context, domain string) (*RescanRespo
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/domains-comments-get
-func (s *Service) GetCommentsOnDomain(ctx context.Context, domain string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetCommentsOnDomain(ctx context.Context, domain string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointDomains, domain)
@@ -185,17 +185,17 @@ func (s *Service) GetCommentsOnDomain(ctx context.Context, domain string, opts *
 		}
 
 		var result RelatedObjectsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allObjects []RelatedObject
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -205,23 +205,23 @@ func (s *Service) GetCommentsOnDomain(ctx context.Context, domain string, opts *
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectsResponse{
 		Data: allObjects,
-	}, nil
+	}, resp, nil
 }
 
 // AddCommentToDomain adds a comment to a domain
 // URL: POST https://www.virustotal.com/api/v3/domains/{domain}/comments
 // https://docs.virustotal.com/reference/domains-comments-post
-func (s *Service) AddCommentToDomain(ctx context.Context, domain string, comment string) (*AddCommentResponse, error) {
+func (s *Service) AddCommentToDomain(ctx context.Context, domain string, comment string) (*AddCommentResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 	if comment == "" {
-		return nil, fmt.Errorf("comment text is required")
+		return nil, nil, fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointDomains, domain)
@@ -241,12 +241,12 @@ func (s *Service) AddCommentToDomain(ctx context.Context, domain string, comment
 	}
 
 	var result AddCommentResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // GetObjectsRelatedToDomain retrieves objects related to a domain through a specified relationship
@@ -254,17 +254,17 @@ func (s *Service) AddCommentToDomain(ctx context.Context, domain string, comment
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/domains-relationships
-func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, error) {
+func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointDomains, domain, relationship, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -283,17 +283,17 @@ func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, 
 		}
 
 		var result RelatedObjectsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allObjects []RelatedObject
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -303,12 +303,12 @@ func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, 
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectsResponse{
 		Data: allObjects,
-	}, nil
+	}, resp, nil
 }
 
 // GetObjectDescriptorsRelatedToDomain retrieves lightweight object descriptors related to a domain
@@ -316,17 +316,17 @@ func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, 
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/domains-relationships-ids
-func (s *Service) GetObjectDescriptorsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, error) {
+func (s *Service) GetObjectDescriptorsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 	if relationship == "" {
-		return nil, fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointDomains, domain, relationship, true)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -345,17 +345,17 @@ func (s *Service) GetObjectDescriptorsRelatedToDomain(ctx context.Context, domai
 		}
 
 		var result RelatedObjectDescriptorsResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allDescriptors []ObjectDescriptor
 
-	err = s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse RelatedObjectDescriptorsResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -365,20 +365,20 @@ func (s *Service) GetObjectDescriptorsRelatedToDomain(ctx context.Context, domai
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &RelatedObjectDescriptorsResponse{
 		Data: allDescriptors,
-	}, nil
+	}, resp, nil
 }
 
 // GetDNSResolutionObject retrieves a DNS resolution object by its ID
 // URL: GET https://www.virustotal.com/api/v3/resolutions/{id}
 // https://docs.virustotal.com/reference/get-resolution-by-id
-func (s *Service) GetDNSResolutionObject(ctx context.Context, id string) (*ResolutionResponse, error) {
+func (s *Service) GetDNSResolutionObject(ctx context.Context, id string) (*ResolutionResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, fmt.Errorf("resolution ID is required")
+		return nil, nil, fmt.Errorf("resolution ID is required")
 	}
 
 	endpoint := fmt.Sprintf("/resolutions/%s", id)
@@ -389,12 +389,12 @@ func (s *Service) GetDNSResolutionObject(ctx context.Context, id string) (*Resol
 	}
 
 	var result ResolutionResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
 
 // GetVotesOnDomain retrieves community votes on a domain
@@ -402,9 +402,9 @@ func (s *Service) GetDNSResolutionObject(ctx context.Context, id string) (*Resol
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/domains-votes-get
-func (s *Service) GetVotesOnDomain(ctx context.Context, domain string, opts *GetVotesOptions) (*VotesResponse, error) {
+func (s *Service) GetVotesOnDomain(ctx context.Context, domain string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointDomains, domain)
@@ -425,17 +425,17 @@ func (s *Service) GetVotesOnDomain(ctx context.Context, domain string, opts *Get
 		}
 
 		var result VotesResponse
-		err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
 		if err != nil {
-			return nil, err
+			return nil, resp, err
 		}
 
-		return &result, nil
+		return &result, resp, nil
 	}
 
 	var allVotes []Vote
 
-	err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
+	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
 		var pageResponse VotesResponse
 		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
 			return fmt.Errorf("failed to unmarshal page: %w", err)
@@ -445,26 +445,26 @@ func (s *Service) GetVotesOnDomain(ctx context.Context, domain string, opts *Get
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
 	return &VotesResponse{
 		Data: allVotes,
-	}, nil
+	}, resp, nil
 }
 
 // AddVoteToDomain adds a vote (harmless or malicious) to a domain
 // URL: POST https://www.virustotal.com/api/v3/domains/{domain}/votes
 // https://docs.virustotal.com/reference/domain-votes-post
-func (s *Service) AddVoteToDomain(ctx context.Context, domain string, verdict string) (*AddVoteResponse, error) {
+func (s *Service) AddVoteToDomain(ctx context.Context, domain string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, fmt.Errorf("domain is required")
+		return nil, nil, fmt.Errorf("domain is required")
 	}
 	if verdict == "" {
-		return nil, fmt.Errorf("verdict is required")
+		return nil, nil, fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
+		return nil, nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointDomains, domain)
@@ -484,10 +484,10 @@ func (s *Service) AddVoteToDomain(ctx context.Context, domain string, verdict st
 	}
 
 	var result AddVoteResponse
-	err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }

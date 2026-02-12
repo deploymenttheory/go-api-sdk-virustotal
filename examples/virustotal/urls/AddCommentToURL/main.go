@@ -37,7 +37,7 @@ func main() {
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
 	commentText := "This URL appears to be safe. #safe #verified"
 
-	result, err := vtClient.URLs.AddCommentToURL(ctx, urlID, commentText)
+	result, _, err := vtClient.URLs.AddCommentToURL(ctx, urlID, commentText)
 	if err != nil {
 		log.Fatalf("Failed to add comment: %v", err)
 	}

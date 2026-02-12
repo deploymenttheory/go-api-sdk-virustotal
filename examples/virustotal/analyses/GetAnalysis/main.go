@@ -25,7 +25,7 @@ func main() {
 
 	// Get the analysis
 	ctx := context.Background()
-	analysis, err := client.Analyses.GetAnalysis(ctx, analysisID)
+	analysis, _, err := client.Analyses.GetAnalysis(ctx, analysisID)
 	if err != nil {
 		log.Fatalf("Failed to get analysis: %v", err)
 	}

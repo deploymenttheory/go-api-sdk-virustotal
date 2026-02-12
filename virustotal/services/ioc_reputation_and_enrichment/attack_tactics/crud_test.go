@@ -51,7 +51,7 @@ func TestUnitGetAttackTactic_Success(t *testing.T) {
 	mockHandler := mocks.NewAttackTacticsMock()
 	mockHandler.RegisterGetAttackTacticMock(baseURL)
 
-	result, err := service.GetAttackTactic(context.Background(), "TA0004")
+	result, _, err := service.GetAttackTactic(context.Background(), "TA0004")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -68,7 +68,7 @@ func TestUnitGetAttackTactic_Success(t *testing.T) {
 func TestUnitGetAttackTactic_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetAttackTactic(context.Background(), "")
+	result, _, err := service.GetAttackTactic(context.Background(), "")
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "attack tactic ID is required")
@@ -80,7 +80,7 @@ func TestUnitGetAttackTactic_NotFound(t *testing.T) {
 	mockHandler := mocks.NewAttackTacticsMock()
 	mockHandler.RegisterNotFoundErrorMock(baseURL)
 
-	result, err := service.GetAttackTactic(context.Background(), "nonexistent-id")
+	result, _, err := service.GetAttackTactic(context.Background(), "nonexistent-id")
 	assert.Error(t, err)
 	assert.Nil(t, result)
 }
@@ -95,7 +95,7 @@ func TestUnitGetObjectsRelatedToAttackTactic_Success(t *testing.T) {
 	mockHandler := mocks.NewAttackTacticsMock()
 	mockHandler.RegisterGetObjectsRelatedToAttackTacticMock(baseURL)
 
-	result, err := service.GetObjectsRelatedToAttackTactic(
+	result, _, err := service.GetObjectsRelatedToAttackTactic(
 		context.Background(),
 		"TA0004",
 		RelationshipAttackTechniques,
@@ -121,7 +121,7 @@ func TestUnitGetObjectsRelatedToAttackTactic_ManualPagination(t *testing.T) {
 		Cursor: "test-cursor",
 	}
 
-	result, err := service.GetObjectsRelatedToAttackTactic(
+	result, _, err := service.GetObjectsRelatedToAttackTactic(
 		context.Background(),
 		"TA0004",
 		RelationshipAttackTechniques,
@@ -135,7 +135,7 @@ func TestUnitGetObjectsRelatedToAttackTactic_ManualPagination(t *testing.T) {
 func TestUnitGetObjectsRelatedToAttackTactic_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToAttackTactic(
+	result, _, err := service.GetObjectsRelatedToAttackTactic(
 		context.Background(),
 		"",
 		RelationshipAttackTechniques,
@@ -150,7 +150,7 @@ func TestUnitGetObjectsRelatedToAttackTactic_EmptyID(t *testing.T) {
 func TestUnitGetObjectsRelatedToAttackTactic_EmptyRelationship(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToAttackTactic(
+	result, _, err := service.GetObjectsRelatedToAttackTactic(
 		context.Background(),
 		"TA0004",
 		"",
@@ -171,7 +171,7 @@ func TestUnitGetObjectDescriptorsRelatedToAttackTactic_Success(t *testing.T) {
 	mockHandler := mocks.NewAttackTacticsMock()
 	mockHandler.RegisterGetObjectDescriptorsRelatedToAttackTacticMock(baseURL)
 
-	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+	result, _, err := service.GetObjectDescriptorsRelatedToAttackTactic(
 		context.Background(),
 		"TA0004",
 		RelationshipAttackTechniques,
@@ -189,7 +189,7 @@ func TestUnitGetObjectDescriptorsRelatedToAttackTactic_Success(t *testing.T) {
 func TestUnitGetObjectDescriptorsRelatedToAttackTactic_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+	result, _, err := service.GetObjectDescriptorsRelatedToAttackTactic(
 		context.Background(),
 		"",
 		RelationshipAttackTechniques,
@@ -204,7 +204,7 @@ func TestUnitGetObjectDescriptorsRelatedToAttackTactic_EmptyID(t *testing.T) {
 func TestUnitGetObjectDescriptorsRelatedToAttackTactic_EmptyRelationship(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+	result, _, err := service.GetObjectDescriptorsRelatedToAttackTactic(
 		context.Background(),
 		"TA0004",
 		"",
@@ -227,7 +227,7 @@ func TestUnitGetAttackTacticAttackTechniques_Success(t *testing.T) {
 	mockHandler := mocks.NewAttackTacticsMock()
 	mockHandler.RegisterRelationshipMocks(baseURL)
 
-	result, err := service.GetObjectsRelatedToAttackTactic(
+	result, _, err := service.GetObjectsRelatedToAttackTactic(
 		context.Background(),
 		testAttackTacticID,
 		RelationshipAttackTechniques,
@@ -246,7 +246,7 @@ func TestUnitGetAttackTacticAttackTechniques_Success(t *testing.T) {
 func TestUnitGetAttackTacticAttackTechniques_EmptyTacticID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToAttackTactic(
+	result, _, err := service.GetObjectsRelatedToAttackTactic(
 		context.Background(),
 		"",
 		RelationshipAttackTechniques,
@@ -263,7 +263,7 @@ func TestUnitGetAttackTacticAttackTechniquesDescriptor_Success(t *testing.T) {
 	mockHandler := mocks.NewAttackTacticsMock()
 	mockHandler.RegisterRelationshipMocks(baseURL)
 
-	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+	result, _, err := service.GetObjectDescriptorsRelatedToAttackTactic(
 		context.Background(),
 		testAttackTacticID,
 		RelationshipAttackTechniques,
@@ -281,7 +281,7 @@ func TestUnitGetAttackTacticAttackTechniquesDescriptor_Success(t *testing.T) {
 func TestUnitGetAttackTacticAttackTechniquesDescriptor_EmptyTacticID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToAttackTactic(
+	result, _, err := service.GetObjectDescriptorsRelatedToAttackTactic(
 		context.Background(),
 		"",
 		RelationshipAttackTechniques,

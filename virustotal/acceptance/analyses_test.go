@@ -19,9 +19,12 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 
 		LogResponse(t, "Testing GetAnalysis with ID: %s", Config.KnownAnalysisID)
 
-		result, err := service.GetAnalysis(ctx, Config.KnownAnalysisID)
+		result, resp, err := service.GetAnalysis(ctx, Config.KnownAnalysisID)
 		AssertNoError(t, err, "GetAnalysis should not return an error")
 		AssertNotNil(t, result, "GetAnalysis result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Analysis data should not be nil")
@@ -68,11 +71,13 @@ func TestAcceptance_Analyses_GetAnalysis_InvalidID(t *testing.T) {
 
 		LogResponse(t, "Testing GetAnalysis with invalid ID")
 
-		result, err := service.GetAnalysis(ctx, "invalid-analysis-id-12345")
+		result, resp, err := service.GetAnalysis(ctx, "invalid-analysis-id-12345")
 
 		// We expect an error for an invalid ID
 		assert.Error(t, err, "GetAnalysis should return an error for invalid ID")
 		assert.Nil(t, result, "GetAnalysis result should be nil for invalid ID")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 
 		LogResponse(t, "Expected error received: %v", err)
 	})
@@ -90,11 +95,12 @@ func TestAcceptance_Analyses_GetAnalysis_EmptyID(t *testing.T) {
 
 		LogResponse(t, "Testing GetAnalysis with empty ID")
 
-		result, err := service.GetAnalysis(ctx, "")
+		result, resp, err := service.GetAnalysis(ctx, "")
 
 		// Should fail validation
 		assert.Error(t, err, "GetAnalysis should return an error for empty ID")
 		assert.Nil(t, result, "GetAnalysis result should be nil for empty ID")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
 		assert.Contains(t, err.Error(), "analysis ID is required", "Error should mention required ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
@@ -115,9 +121,11 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 
 		// Get related item (file or URL that was analyzed)
 		opts := &analyses.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectsRelatedToAnalysis(ctx, Config.KnownAnalysisID, "item", opts)
+		result, resp, err := service.GetObjectsRelatedToAnalysis(ctx, Config.KnownAnalysisID, "item", opts)
 		AssertNoError(t, err, "GetObjectsRelatedToAnalysis should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToAnalysis result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -152,9 +160,11 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 
 		// Get related item descriptors (lightweight IDs only)
 		opts := &analyses.GetRelatedObjectsOptions{Limit: 10}
-		result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, Config.KnownAnalysisID, "item", opts)
+		result, resp, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, Config.KnownAnalysisID, "item", opts)
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToAnalysis should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToAnalysis result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related descriptors data should not be nil")
@@ -188,9 +198,11 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		submissionID := Config.KnownAnalysisID
 		LogResponse(t, "Testing GetSubmission with submission ID: %s", submissionID)
 
-		result, err := service.GetSubmission(ctx, submissionID)
+		result, resp, err := service.GetSubmission(ctx, submissionID)
 		AssertNoError(t, err, "GetSubmission should not return an error")
 		AssertNotNil(t, result, "GetSubmission result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Submission data should not be nil")
@@ -227,11 +239,12 @@ func TestAcceptance_Analyses_GetSubmission_EmptyID(t *testing.T) {
 
 		LogResponse(t, "Testing GetSubmission with empty ID")
 
-		result, err := service.GetSubmission(ctx, "")
+		result, resp, err := service.GetSubmission(ctx, "")
 
 		// Should fail validation
 		assert.Error(t, err, "GetSubmission should return an error for empty ID")
 		assert.Nil(t, result, "GetSubmission result should be nil for empty ID")
+		AssertNotNil(t, resp, "Response should not be nil even on error")
 		assert.Contains(t, err.Error(), "submission ID is required", "Error should mention required submission ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)

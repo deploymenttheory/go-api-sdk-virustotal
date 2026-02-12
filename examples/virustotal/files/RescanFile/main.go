@@ -36,7 +36,7 @@ func main() {
 	ctx := context.Background()
 	fileID := "44d88612fea8a8f36de82e1278abb02f" // Example MD5 hash (EICAR test file)
 
-	result, err := vtClient.Files.RescanFile(ctx, fileID)
+	result, _, err := vtClient.Files.RescanFile(ctx, fileID)
 	if err != nil {
 		log.Fatalf("Failed to request file rescan: %v", err)
 	}

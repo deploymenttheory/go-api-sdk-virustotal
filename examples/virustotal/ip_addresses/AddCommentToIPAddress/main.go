@@ -46,7 +46,7 @@ func main() {
 	// Comment text with tags (words starting with # become tags)
 	commentText := "This IP is used by Google DNS and is #benign #dns #google"
 
-	result, err := vtClient.IPAddresses.AddCommentToIPAddress(ctx, ip, commentText)
+	result, _, err := vtClient.IPAddresses.AddCommentToIPAddress(ctx, ip, commentText)
 	if err != nil {
 		log.Fatalf("Failed to add comment to IP address: %v", err)
 	}

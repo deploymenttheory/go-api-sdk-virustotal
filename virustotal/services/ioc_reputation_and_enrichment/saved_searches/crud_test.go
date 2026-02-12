@@ -53,7 +53,7 @@ func TestUnitListSavedSearches_Success(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterMocks()
 
-	result, err := service.ListSavedSearches(context.Background(), nil)
+	result, _, err := service.ListSavedSearches(context.Background(), nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -76,7 +76,7 @@ func TestUnitListSavedSearches_WithOptions(t *testing.T) {
 		Order:  "last_modification_date-",
 	}
 
-	result, err := service.ListSavedSearches(context.Background(), opts)
+	result, _, err := service.ListSavedSearches(context.Background(), opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -93,7 +93,7 @@ func TestUnitGetSavedSearch_Success(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterMocks()
 
-	result, err := service.GetSavedSearch(context.Background(), testSavedSearchID, nil)
+	result, _, err := service.GetSavedSearch(context.Background(), testSavedSearchID, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -114,7 +114,7 @@ func TestUnitGetSavedSearch_WithOptions(t *testing.T) {
 		Attributes:    "name,search_query",
 	}
 
-	result, err := service.GetSavedSearch(context.Background(), testSavedSearchID, opts)
+	result, _, err := service.GetSavedSearch(context.Background(), testSavedSearchID, opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.Equal(t, testSavedSearchID, result.Data.ID)
@@ -124,7 +124,7 @@ func TestUnitGetSavedSearch_WithOptions(t *testing.T) {
 func TestUnitGetSavedSearch_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.GetSavedSearch(context.Background(), "", nil)
+	result, _, err := service.GetSavedSearch(context.Background(), "", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "cannot be empty")
@@ -134,7 +134,7 @@ func TestUnitGetSavedSearch_EmptyID(t *testing.T) {
 func TestUnitGetSavedSearch_InvalidID(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.GetSavedSearch(context.Background(), "invalid-id", nil)
+	result, _, err := service.GetSavedSearch(context.Background(), "invalid-id", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "32-character hexadecimal string")
@@ -146,7 +146,7 @@ func TestUnitGetSavedSearch_NotFound(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterErrorMocks()
 
-	result, err := service.GetSavedSearch(context.Background(), "00000000000000000000000000000000", nil)
+	result, _, err := service.GetSavedSearch(context.Background(), "00000000000000000000000000000000", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 }
@@ -169,7 +169,7 @@ func TestUnitCreateSavedSearch_Success(t *testing.T) {
 		Tags:        []string{"test", "malware"},
 	}
 
-	result, err := service.CreateSavedSearch(context.Background(), attributes)
+	result, _, err := service.CreateSavedSearch(context.Background(), attributes)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -191,7 +191,7 @@ func TestUnitCreateSavedSearch_MinimalAttributes(t *testing.T) {
 		Private:     false,
 	}
 
-	result, err := service.CreateSavedSearch(context.Background(), attributes)
+	result, _, err := service.CreateSavedSearch(context.Background(), attributes)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.Equal(t, "saved_search", result.Data.Type)
@@ -211,7 +211,7 @@ func TestUnitCreateSavedSearch_PublicSearch(t *testing.T) {
 		Tags:        []string{"public", "ip"},
 	}
 
-	result, err := service.CreateSavedSearch(context.Background(), attributes)
+	result, _, err := service.CreateSavedSearch(context.Background(), attributes)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	assert.Equal(t, "saved_search", result.Data.Type)
@@ -235,7 +235,7 @@ func TestUnitUpdateSavedSearch_Success(t *testing.T) {
 		Tags:        []string{"updated", "test"},
 	}
 
-	result, err := service.UpdateSavedSearch(context.Background(), testSavedSearchID, attributes)
+	result, _, err := service.UpdateSavedSearch(context.Background(), testSavedSearchID, attributes)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -252,7 +252,7 @@ func TestUnitUpdateSavedSearch_EmptyID(t *testing.T) {
 		SearchQuery: "type:file",
 	}
 
-	result, err := service.UpdateSavedSearch(context.Background(), "", attributes)
+	result, _, err := service.UpdateSavedSearch(context.Background(), "", attributes)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "cannot be empty")
@@ -267,7 +267,7 @@ func TestUnitUpdateSavedSearch_InvalidID(t *testing.T) {
 		SearchQuery: "type:file",
 	}
 
-	result, err := service.UpdateSavedSearch(context.Background(), "invalid-id", attributes)
+	result, _, err := service.UpdateSavedSearch(context.Background(), "invalid-id", attributes)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "32-character hexadecimal string")
@@ -541,7 +541,7 @@ func TestUnitGetObjectsRelatedToSavedSearch_Success(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterMocks()
 
-	result, err := service.GetObjectsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipOwner, nil)
+	result, _, err := service.GetObjectsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipOwner, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -561,7 +561,7 @@ func TestUnitGetObjectsRelatedToSavedSearch_WithOptions(t *testing.T) {
 		Cursor: "test-cursor",
 	}
 
-	result, err := service.GetObjectsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipOwner, opts)
+	result, _, err := service.GetObjectsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipOwner, opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 }
@@ -570,7 +570,7 @@ func TestUnitGetObjectsRelatedToSavedSearch_WithOptions(t *testing.T) {
 func TestUnitGetObjectsRelatedToSavedSearch_EmptySearchID(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToSavedSearch(context.Background(), "", RelationshipOwner, nil)
+	result, _, err := service.GetObjectsRelatedToSavedSearch(context.Background(), "", RelationshipOwner, nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "cannot be empty")
@@ -580,7 +580,7 @@ func TestUnitGetObjectsRelatedToSavedSearch_EmptySearchID(t *testing.T) {
 func TestUnitGetObjectsRelatedToSavedSearch_EmptyRelationship(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToSavedSearch(context.Background(), testSavedSearchID, "", nil)
+	result, _, err := service.GetObjectsRelatedToSavedSearch(context.Background(), testSavedSearchID, "", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "relationship is required")
@@ -596,7 +596,7 @@ func TestUnitGetObjectDescriptorsRelatedToSavedSearch_Success(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterMocks()
 
-	result, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipEditors, nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipEditors, nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -616,7 +616,7 @@ func TestUnitGetObjectDescriptorsRelatedToSavedSearch_WithOptions(t *testing.T) 
 		Cursor: "test-cursor",
 	}
 
-	result, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipEditors, opts)
+	result, _, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), testSavedSearchID, RelationshipEditors, opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 }
@@ -625,7 +625,7 @@ func TestUnitGetObjectDescriptorsRelatedToSavedSearch_WithOptions(t *testing.T) 
 func TestUnitGetObjectDescriptorsRelatedToSavedSearch_EmptySearchID(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), "", RelationshipEditors, nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), "", RelationshipEditors, nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "cannot be empty")
@@ -635,7 +635,7 @@ func TestUnitGetObjectDescriptorsRelatedToSavedSearch_EmptySearchID(t *testing.T
 func TestUnitGetObjectDescriptorsRelatedToSavedSearch_EmptyRelationship(t *testing.T) {
 	service := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), testSavedSearchID, "", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToSavedSearch(context.Background(), testSavedSearchID, "", nil)
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "relationship is required")

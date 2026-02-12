@@ -38,7 +38,7 @@ func main() {
 	relationship := "file" // Supported: file, attack_techniques
 
 	// Get related objects with automatic pagination (pass nil)
-	relatedObjects, err := vtClient.FileBehaviours.GetObjectsRelatedToFileBehaviour(ctx, sandboxID, relationship, nil)
+	relatedObjects, _, err := vtClient.FileBehaviours.GetObjectsRelatedToFileBehaviour(ctx, sandboxID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get related objects: %v", err)
 	}

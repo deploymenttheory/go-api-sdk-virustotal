@@ -37,7 +37,7 @@ func main() {
 	ctx := context.Background()
 	fileID := "44d88612fea8a8f36de82e1278abb02f" // Example MD5 hash (EICAR test file)
 
-	report, err := vtClient.Files.GetFileReport(ctx, fileID)
+	report, _, err := vtClient.Files.GetFileReport(ctx, fileID)
 	if err != nil {
 		log.Fatalf("Failed to get file report: %v", err)
 	}

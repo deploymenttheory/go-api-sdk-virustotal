@@ -43,7 +43,7 @@ func main() {
 	fmt.Println("=== Get All Object Descriptors (Automatic Pagination) ===")
 	fmt.Printf("Fetching object descriptors for %s related to domain: %s\n\n", relationship, domain)
 
-	response, err := vtClient.Domains.GetObjectDescriptorsRelatedToDomain(ctx, domain, relationship, nil)
+	response, _, err := vtClient.Domains.GetObjectDescriptorsRelatedToDomain(ctx, domain, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}

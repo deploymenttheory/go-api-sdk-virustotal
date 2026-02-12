@@ -36,7 +36,7 @@ func main() {
 	commentID := "u-aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20-abc12345"
 	relationship := "author"
 
-	result, err := vtClient.Comments.GetObjectDescriptorsRelatedToComment(ctx, commentID, relationship, nil)
+	result, _, err := vtClient.Comments.GetObjectDescriptorsRelatedToComment(ctx, commentID, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}

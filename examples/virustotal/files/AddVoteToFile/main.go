@@ -42,7 +42,7 @@ func main() {
 	fmt.Printf("Adding vote to file: %s\n", fileID)
 	fmt.Printf("Verdict: %s\n\n", verdict)
 
-	result, err := vtClient.Files.AddVoteToFile(ctx, fileID, verdict)
+	result, _, err := vtClient.Files.AddVoteToFile(ctx, fileID, verdict)
 	if err != nil {
 		log.Fatalf("Failed to add vote: %v", err)
 	}

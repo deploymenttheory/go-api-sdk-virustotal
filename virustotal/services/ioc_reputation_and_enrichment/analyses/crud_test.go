@@ -51,7 +51,7 @@ func TestUnitGetAnalysis_Success(t *testing.T) {
 	mockHandler := mocks.NewAnalysesMock()
 	mockHandler.RegisterGetAnalysisMock(baseURL)
 
-	result, err := service.GetAnalysis(context.Background(), "NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw==")
+	result, _, err := service.GetAnalysis(context.Background(), "NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw==")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -67,7 +67,7 @@ func TestUnitGetAnalysis_Success(t *testing.T) {
 func TestUnitGetAnalysis_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetAnalysis(context.Background(), "")
+	result, _, err := service.GetAnalysis(context.Background(), "")
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "analysis ID is required")
@@ -79,7 +79,7 @@ func TestUnitGetAnalysis_NotFound(t *testing.T) {
 	mockHandler := mocks.NewAnalysesMock()
 	mockHandler.RegisterNotFoundErrorMock(baseURL)
 
-	result, err := service.GetAnalysis(context.Background(), "nonexistent-id")
+	result, _, err := service.GetAnalysis(context.Background(), "nonexistent-id")
 	assert.Error(t, err)
 	assert.Nil(t, result)
 }
@@ -94,7 +94,7 @@ func TestUnitGetSubmission_Success(t *testing.T) {
 	mockHandler := mocks.NewAnalysesMock()
 	mockHandler.RegisterGetSubmissionMock(baseURL)
 
-	result, err := service.GetSubmission(context.Background(), "f-e7a2b2c164285d1203062b752d87d2f72ca9e2810b52a61f281828f28722d609-1632333331")
+	result, _, err := service.GetSubmission(context.Background(), "f-e7a2b2c164285d1203062b752d87d2f72ca9e2810b52a61f281828f28722d609-1632333331")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -109,7 +109,7 @@ func TestUnitGetSubmission_Success(t *testing.T) {
 func TestUnitGetSubmission_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetSubmission(context.Background(), "")
+	result, _, err := service.GetSubmission(context.Background(), "")
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "submission ID is required")
@@ -125,7 +125,7 @@ func TestUnitGetOperation_Success(t *testing.T) {
 	mockHandler := mocks.NewAnalysesMock()
 	mockHandler.RegisterGetOperationMock(baseURL)
 
-	result, err := service.GetOperation(context.Background(), "334b32b7fa5b47c78369600fad91d1b4")
+	result, _, err := service.GetOperation(context.Background(), "334b32b7fa5b47c78369600fad91d1b4")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -138,7 +138,7 @@ func TestUnitGetOperation_Success(t *testing.T) {
 func TestUnitGetOperation_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetOperation(context.Background(), "")
+	result, _, err := service.GetOperation(context.Background(), "")
 	assert.Error(t, err)
 	assert.Nil(t, result)
 	assert.Contains(t, err.Error(), "operation ID is required")
@@ -154,7 +154,7 @@ func TestUnitGetObjectsRelatedToAnalysis_Success(t *testing.T) {
 	mockHandler := mocks.NewAnalysesMock()
 	mockHandler.RegisterGetObjectsRelatedToAnalysisMock(baseURL)
 
-	result, err := service.GetObjectsRelatedToAnalysis(
+	result, _, err := service.GetObjectsRelatedToAnalysis(
 		context.Background(),
 		"test-analysis-id",
 		RelationshipItem,
@@ -179,7 +179,7 @@ func TestUnitGetObjectsRelatedToAnalysis_ManualPagination(t *testing.T) {
 		Cursor: "test-cursor",
 	}
 
-	result, err := service.GetObjectsRelatedToAnalysis(
+	result, _, err := service.GetObjectsRelatedToAnalysis(
 		context.Background(),
 		"test-analysis-id",
 		RelationshipItem,
@@ -193,7 +193,7 @@ func TestUnitGetObjectsRelatedToAnalysis_ManualPagination(t *testing.T) {
 func TestUnitGetObjectsRelatedToAnalysis_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToAnalysis(
+	result, _, err := service.GetObjectsRelatedToAnalysis(
 		context.Background(),
 		"",
 		RelationshipItem,
@@ -208,7 +208,7 @@ func TestUnitGetObjectsRelatedToAnalysis_EmptyID(t *testing.T) {
 func TestUnitGetObjectsRelatedToAnalysis_EmptyRelationship(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectsRelatedToAnalysis(
+	result, _, err := service.GetObjectsRelatedToAnalysis(
 		context.Background(),
 		"test-id",
 		"",
@@ -229,7 +229,7 @@ func TestUnitGetObjectDescriptorsRelatedToAnalysis_Success(t *testing.T) {
 	mockHandler := mocks.NewAnalysesMock()
 	mockHandler.RegisterGetObjectDescriptorsRelatedToAnalysisMock(baseURL)
 
-	result, err := service.GetObjectDescriptorsRelatedToAnalysis(
+	result, _, err := service.GetObjectDescriptorsRelatedToAnalysis(
 		context.Background(),
 		"test-analysis-id",
 		RelationshipItem,
@@ -247,7 +247,7 @@ func TestUnitGetObjectDescriptorsRelatedToAnalysis_Success(t *testing.T) {
 func TestUnitGetObjectDescriptorsRelatedToAnalysis_EmptyID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToAnalysis(
+	result, _, err := service.GetObjectDescriptorsRelatedToAnalysis(
 		context.Background(),
 		"",
 		RelationshipItem,
@@ -262,7 +262,7 @@ func TestUnitGetObjectDescriptorsRelatedToAnalysis_EmptyID(t *testing.T) {
 func TestUnitGetObjectDescriptorsRelatedToAnalysis_EmptyRelationship(t *testing.T) {
 	service, _ := setupMockClient(t)
 
-	result, err := service.GetObjectDescriptorsRelatedToAnalysis(
+	result, _, err := service.GetObjectDescriptorsRelatedToAnalysis(
 		context.Background(),
 		"test-id",
 		"",
@@ -285,7 +285,7 @@ func TestUnitGetAnalysisItem_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToAnalysis(ctx, testAnalysisID, RelationshipItem, nil)
+	result, _, err := service.GetObjectsRelatedToAnalysis(ctx, testAnalysisID, RelationshipItem, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -301,7 +301,7 @@ func TestUnitGetAnalysisItem_EmptyAnalysisID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToAnalysis(ctx, "", RelationshipItem, nil)
+	result, _, err := service.GetObjectsRelatedToAnalysis(ctx, "", RelationshipItem, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -314,7 +314,7 @@ func TestUnitGetAnalysisItem_InvalidAnalysisID(t *testing.T) {
 	mockHandler.RegisterErrorMocks(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetObjectsRelatedToAnalysis(ctx, "invalid-id", RelationshipItem, nil)
+	result, _, err := service.GetObjectsRelatedToAnalysis(ctx, "invalid-id", RelationshipItem, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -330,7 +330,7 @@ func TestUnitGetAnalysisItemDescriptor_Success(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks()
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, testAnalysisID, RelationshipItem, nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, testAnalysisID, RelationshipItem, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -346,7 +346,7 @@ func TestUnitGetAnalysisItemDescriptor_EmptyAnalysisID(t *testing.T) {
 	service, _ := setupMockClient(t)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, "", RelationshipItem, nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, "", RelationshipItem, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)
@@ -359,7 +359,7 @@ func TestUnitGetAnalysisItemDescriptor_InvalidAnalysisID(t *testing.T) {
 	mockHandler.RegisterErrorMocks(baseURL)
 
 	ctx := context.Background()
-	result, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, "invalid-id", RelationshipItem, nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToAnalysis(ctx, "invalid-id", RelationshipItem, nil)
 
 	require.Error(t, err)
 	require.Nil(t, result)

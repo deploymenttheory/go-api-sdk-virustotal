@@ -41,7 +41,7 @@ func main() {
 	negative := 0
 	abuse := 0
 
-	result, err := vtClient.Comments.AddVoteToComment(ctx, commentID, positive, negative, abuse)
+	result, _, err := vtClient.Comments.AddVoteToComment(ctx, commentID, positive, negative, abuse)
 	if err != nil {
 		log.Fatalf("Failed to add vote: %v", err)
 	}

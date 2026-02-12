@@ -35,7 +35,7 @@ func main() {
 	ctx := context.Background()
 	url := "https://www.example.com" // URL to scan
 
-	result, err := vtClient.URLs.ScanURL(ctx, url)
+	result, _, err := vtClient.URLs.ScanURL(ctx, url)
 	if err != nil {
 		log.Fatalf("Failed to scan URL: %v", err)
 	}

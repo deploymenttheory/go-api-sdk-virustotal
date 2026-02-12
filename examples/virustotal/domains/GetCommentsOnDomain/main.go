@@ -40,7 +40,7 @@ func main() {
 	fmt.Println("=== Get All Comments (Automatic Pagination) ===")
 	fmt.Printf("Fetching community comments for domain: %s\n\n", domain)
 
-	response, err := vtClient.Domains.GetCommentsOnDomain(ctx, domain, nil)
+	response, _, err := vtClient.Domains.GetCommentsOnDomain(ctx, domain, nil)
 	if err != nil {
 		log.Fatalf("Failed to get comments: %v", err)
 	}

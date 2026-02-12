@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("=== Get All Object Descriptors (Automatic Pagination) ===")
 	fmt.Printf("Fetching object descriptors for %s related to IP: %s\n\n", relationship, ip)
 
-	response, err := vtClient.IPAddresses.GetObjectDescriptorsRelatedToIPAddress(ctx, ip, relationship, nil)
+	response, _, err := vtClient.IPAddresses.GetObjectDescriptorsRelatedToIPAddress(ctx, ip, relationship, nil)
 	if err != nil {
 		log.Fatalf("Failed to get object descriptors: %v", err)
 	}

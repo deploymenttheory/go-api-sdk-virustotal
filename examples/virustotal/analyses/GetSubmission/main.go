@@ -26,7 +26,7 @@ func main() {
 
 	// Get the submission
 	ctx := context.Background()
-	submission, err := client.Analyses.GetSubmission(ctx, submissionID)
+	submission, _, err := client.Analyses.GetSubmission(ctx, submissionID)
 	if err != nil {
 		log.Fatalf("Failed to get submission: %v", err)
 	}

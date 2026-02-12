@@ -37,7 +37,7 @@ func main() {
 	urlID := "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20"
 	verdict := "harmless" // Can be "harmless" or "malicious"
 
-	result, err := vtClient.URLs.AddVoteToURL(ctx, urlID, verdict)
+	result, _, err := vtClient.URLs.AddVoteToURL(ctx, urlID, verdict)
 	if err != nil {
 		log.Fatalf("Failed to add vote: %v", err)
 	}

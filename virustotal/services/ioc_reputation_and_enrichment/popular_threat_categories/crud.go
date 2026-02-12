@@ -17,7 +17,7 @@ type (
 		// These categories are normalized and used to classify threats across different antivirus engines.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/popular-threat-categories
-		GetPopularThreatCategories(ctx context.Context) (*PopularThreatCategoriesResponse, error)
+		GetPopularThreatCategories(ctx context.Context) (*PopularThreatCategoriesResponse, *interfaces.Response, error)
 	}
 
 	// Service handles communication with the popular threat categories
@@ -42,7 +42,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // GetPopularThreatCategories retrieves a list of popular threat categories
 // URL: GET https://www.virustotal.com/api/v3/popular_threat_categories
 // https://docs.virustotal.com/reference/popular-threat-categories
-func (s *Service) GetPopularThreatCategories(ctx context.Context) (*PopularThreatCategoriesResponse, error) {
+func (s *Service) GetPopularThreatCategories(ctx context.Context) (*PopularThreatCategoriesResponse, *interfaces.Response, error) {
 	endpoint := EndpointPopularThreatCategories
 
 	headers := map[string]string{
@@ -51,10 +51,10 @@ func (s *Service) GetPopularThreatCategories(ctx context.Context) (*PopularThrea
 	}
 
 	var result PopularThreatCategoriesResponse
-	err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
 
-	return &result, nil
+	return &result, resp, nil
 }
