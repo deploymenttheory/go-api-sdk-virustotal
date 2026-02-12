@@ -1,4 +1,4 @@
-name: Acceptance Tests
+name: 'SDK | VirusTotal Acceptance Tests'
 
 on:
   workflow_dispatch:  # Allow manual trigger
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   acceptance:
-    name: 'Run Acceptance Tests'
+    name: '🧪 Run VirusTotal Acceptance Tests'
     runs-on: ubuntu-24.04-arm
     
     steps:

@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	virustotal "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
 )
 
 func main() {

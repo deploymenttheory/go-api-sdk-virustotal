@@ -5,15 +5,15 @@ import (
 	"os"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/analyses"
-	attacktactics "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/attack_tactics"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/comments"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/domains"
-	filebehaviours "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/file_behaviours"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/files"
-	ipaddresses "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ip_addresses"
-	popularthreatcategories "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/popular_threat_categories"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/urls"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/analyses"
+	attacktactics "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/attack_tactics"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/comments"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/domains"
+	filebehaviours "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/file_behaviours"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
+	ipaddresses "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/ip_addresses"
+	popularthreatcategories "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/popular_threat_categories"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
 )
 
 // Client is the main entry point for the VirusTotal API SDK

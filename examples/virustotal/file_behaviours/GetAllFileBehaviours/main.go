@@ -8,7 +8,7 @@ import (
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/file_behaviours"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/file_behaviours"
 	"go.uber.org/zap"
 )
 

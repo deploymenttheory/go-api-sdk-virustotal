@@ -7,7 +7,7 @@ import (
 	"log"
 
 	virustotal "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/attack_tactics"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/attack_tactics"
 )
 
 func main() {
