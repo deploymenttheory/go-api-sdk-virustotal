@@ -41,7 +41,13 @@ jobs:
             exit 0
           fi
           
-          echo "Running acceptance tests against VirusTotal API..."
+          echo "========================================================================"
+          echo "  Running VirusTotal Acceptance Tests"
+          echo "========================================================================"
+          echo "  Rate limit: 4 requests/minute (16 seconds between tests)"
+          echo "  This will take approximately 3-4 minutes to complete"
+          echo "========================================================================"
+          echo ""
           go test -v -timeout 30m ./virustotal/acceptance/...
 
       - name: Upload Test Results

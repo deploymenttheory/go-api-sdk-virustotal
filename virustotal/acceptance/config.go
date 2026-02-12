@@ -37,7 +37,7 @@ func init() {
 	Config = &TestConfig{
 		APIKey:          getEnv("VT_API_KEY", ""),
 		BaseURL:         getEnv("VT_BASE_URL", "https://www.virustotal.com/api/v3"),
-		RateLimitDelay:  getDurationEnv("VT_RATE_LIMIT_DELAY", 2*time.Second),
+		RateLimitDelay:  getDurationEnv("VT_RATE_LIMIT_DELAY", 16*time.Second), // Free tier: 4 requests/min = 15s between requests
 		RequestTimeout:  getDurationEnv("VT_REQUEST_TIMEOUT", 30*time.Second),
 		SkipCleanup:     getBoolEnv("VT_SKIP_CLEANUP", false),
 		Verbose:         getBoolEnv("VT_VERBOSE", false),
