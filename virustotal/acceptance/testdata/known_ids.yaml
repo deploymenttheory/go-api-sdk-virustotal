@@ -1,0 +1,36 @@
+# Test Fixture IDs for Acceptance Tests
+# These are known, public resources that can be safely queried
+
+# Analysis IDs - Base64 encoded analysis identifiers
+# Format: <file_hash>:<timestamp>
+analyses:
+  default: "NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw=="
+
+# File Hashes - Known test files (safe samples)
+files:
+  eicar: "44d88612fea8a8f36de82e1278abb02f"  # EICAR test file (MD5)
+  eicar_sha256: "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f"
+
+# Domains - Public, well-known domains
+domains:
+  - "google.com"
+  - "virustotal.com"
+  - "github.com"
+
+# IP Addresses - Public DNS servers and well-known IPs
+ip_addresses:
+  - "8.8.8.8"        # Google DNS
+  - "1.1.1.1"        # Cloudflare DNS
+  - "208.67.222.222" # OpenDNS
+
+# URLs - Safe, public URLs
+urls:
+  - "https://www.google.com"
+  - "https://www.virustotal.com"
+  - "https://github.com"
+
+# Notes:
+# - These resources are public and safe to query
+# - EICAR is a standard antivirus test file (not malicious)
+# - Domain/IP/URL examples are well-known public services
+# - Update with your own test resources if needed via environment variables

@@ -1,0 +1,97 @@
+package acceptance
+
+import (
+	"testing"
+
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/YOUR_SERVICE"
+	"github.com/stretchr/testify/assert"
+)
+
+// TestAcceptance_YourService_Operation tests [describe what this tests]
+func TestAcceptance_YourService_Operation(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := YOUR_SERVICE.NewService(Client)
+
+		LogResponse(t, "Testing YourService.Operation")
+
+		// Perform the operation
+		result, err := service.SomeOperation(ctx, "test-parameter")
+		AssertNoError(t, err, "Operation should not return an error")
+		AssertNotNil(t, result, "Result should not be nil")
+
+		// Add specific assertions
+		assert.NotEmpty(t, result.Data, "Data should not be empty")
+		// ... more assertions
+
+		LogResponse(t, "Operation completed successfully")
+	})
+}
+
+// TestAcceptance_YourService_Operation_ErrorCase tests error handling
+func TestAcceptance_YourService_Operation_ErrorCase(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := YOUR_SERVICE.NewService(Client)
+
+		LogResponse(t, "Testing YourService.Operation with invalid input")
+
+		// Perform operation with invalid input
+		result, err := service.SomeOperation(ctx, "invalid-parameter")
+
+		// Expect an error
+		assert.Error(t, err, "Should return error for invalid input")
+		assert.Nil(t, result, "Result should be nil on error")
+
+		LogResponse(t, "Error handling validated: %v", err)
+	})
+}
+
+// TestAcceptance_YourService_CreateAndDelete tests resource lifecycle
+func TestAcceptance_YourService_CreateAndDelete(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := YOUR_SERVICE.NewService(Client)
+
+		LogResponse(t, "Testing resource creation")
+
+		// Create resource
+		created, err := service.Create(ctx, /* params */)
+		AssertNoError(t, err, "Create should not fail")
+		AssertNotNil(t, created, "Created resource should not be nil")
+
+		resourceID := created.Data.ID
+		LogResponse(t, "Created resource with ID: %s", resourceID)
+
+		// Register cleanup
+		Cleanup(t, func() {
+			LogResponse(t, "Cleaning up resource: %s", resourceID)
+			ctx, cancel := NewContext()
+			defer cancel()
+			
+			err := service.Delete(ctx, resourceID)
+			if err != nil {
+				t.Logf("Warning: Failed to cleanup resource %s: %v", resourceID, err)
+			}
+		})
+
+		// Verify resource exists
+		retrieved, err := service.Get(ctx, resourceID)
+		AssertNoError(t, err, "Get should not fail")
+		assert.Equal(t, resourceID, retrieved.Data.ID, "IDs should match")
+
+		LogResponse(t, "Resource verified successfully")
+	})
+}
