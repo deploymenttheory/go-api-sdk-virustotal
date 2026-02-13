@@ -11,6 +11,12 @@ import (
 )
 
 func main() {
+	// Check API key from environment
+	apiKey := os.Getenv("VT_API_KEY")
+	if apiKey == "" {
+		log.Fatal("VT_API_KEY environment variable is required")
+	}
+
 	// Initialize the VirusTotal client
 	client, err := virustotal.NewClientFromEnv()
 	if err != nil {

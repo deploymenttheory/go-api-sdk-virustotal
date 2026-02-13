@@ -31,7 +31,7 @@ import (
 
 func main() {
     // Step 1: Create the client with your API key
-    vtClient, err := virustotal.NewClient(os.Getenv("VIRUSTOTAL_API_KEY"))
+    vtClient, err := virustotal.NewClient(os.Getenv("VT_API_KEY"))
     if err != nil {
         log.Fatal(err)
     }
@@ -57,7 +57,7 @@ func main() {
 **Run it:**
 
 ```bash
-export VIRUSTOTAL_API_KEY="your-api-key-here"
+export VT_API_KEY="your-api-key-here"
 go run main.go
 ```
 
@@ -209,79 +209,82 @@ if retryAfter != "" {
 }
 ```
 
-## Next Steps
+## Complete Production Example
 
-### Production Configuration
-
-For production use, configure the client with appropriate settings:
+Here's a complete example bringing together all the concepts with error handling, logging, and rate limit checking:
 
 ```go
+package main
+
 import (
+    "context"
+    "fmt"
+    "log"
+    "os"
     "time"
+
+    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
+    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
     "go.uber.org/zap"
 )
 
-logger, _ := zap.NewProduction()
+func main() {
+    // Initialize logger
+    logger, _ := zap.NewProduction()
+    defer logger.Sync()
 
-apiClient, err := client.NewClient(
-    os.Getenv("VT_API_KEY"),
-    client.WithTimeout(30*time.Second),
-    client.WithRetryCount(3),
-    client.WithLogger(logger),
-)
+    // Create client with production settings
+    apiClient, err := client.NewClient(
+        os.Getenv("VT_API_KEY"),
+        client.WithTimeout(30*time.Second),
+        client.WithRetryCount(3),
+        client.WithLogger(logger),
+    )
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Create service
+    filesService := files.NewService(apiClient)
+
+    // Make API call with context
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    result, resp, err := filesService.GetFileReport(ctx, "44d88612fea8a8f36de82e1278abb02f")
+
+    // Handle errors
+    if err != nil {
+        if client.IsNotFound(err) {
+            logger.Warn("File not found in VirusTotal database")
+            return
+        }
+        logger.Error("API call failed", zap.Error(err))
+        log.Fatal(err)
+    }
+
+    // Log response metadata
+    logger.Info("API call successful",
+        zap.Int("status_code", resp.StatusCode),
+        zap.Duration("duration", resp.Duration),
+        zap.Int64("size", resp.Size),
+    )
+
+    // Check rate limits
+    limit, remaining, reset, _ := client.GetRateLimitHeaders(resp)
+    logger.Info("Rate limit status",
+        zap.String("quota_remaining", remaining),
+        zap.String("quota_limit", limit),
+        zap.String("quota_reset", reset),
+    )
+
+    // Use results
+    fmt.Printf("File: %s\n", result.Data.Attributes.MeaningfulName)
+    fmt.Printf("SHA256: %s\n", result.Data.Attributes.SHA256)
+    fmt.Printf("Malicious: %d\n", result.Data.Attributes.LastAnalysisStats.Malicious)
+    fmt.Printf("Harmless: %d\n", result.Data.Attributes.LastAnalysisStats.Harmless)
+}
 ```
-
-**Learn more:**
-
-- **[Authentication](authentication.md)** - Secure API key management
-- **[Timeouts & Retries](timeouts-retries.md)** - Configure resilience
-- **[Structured Logging](logging.md)** - Production logging with zap
-
-### Advanced Features
-
-Enhance your integration with advanced client features:
-
-**Observability:**
-
-- **[OpenTelemetry Tracing](opentelemetry.md)** - Distributed tracing for monitoring
-- **[Debug Mode](debugging.md)** - Detailed request/response inspection
-
-**Network Configuration:**
-
-- **[TLS/SSL Configuration](tls-configuration.md)** - Custom certificates and mutual TLS
-- **[Proxy Support](proxy.md)** - Route traffic through proxies
-- **[Custom Headers](custom-headers.md)** - Add tracking or metadata headers
-
-### API Coverage
-
-Explore all available services:
-
-**IOC Reputation & Enrichment:**
-- Files - Upload, scan, download, and retrieve file reports
-- URLs - Scan URLs and retrieve analysis results
-- Domains - Domain reputation and DNS information
-- IP Addresses - IP address reputation and WHOIS data
-- Analyses - Retrieve analysis results and submissions
-- Comments - Manage comments on IOCs
-- Code Insights - Analyze code snippets
-- File Behaviours - Retrieve file behavior reports
-- Attack Techniques/Tactics - MITRE ATT&CK framework integration
-- Saved Searches - Manage saved VirusTotal searches
-
-**VT Enterprise:**
-- Collections - Manage collections of IOCs
-- Search and Metadata - Search for IOCs and retrieve metadata
-
-### Examples
-
-Check out the [examples directory](../../examples/virustotal/) for complete working examples:
-
-- File operations (upload, scan, download)
-- URL scanning
-- Domain and IP lookups
-- Analysis retrieval
-- Comment management
-- Relationship queries
 
 ## Troubleshooting
 
@@ -332,6 +335,67 @@ if client.IsNotFound(err) {
 }
 ```
 
+## Next Steps
+
+### Client Configuration Options
+
+Learn different ways to create and configure a VirusTotal client:
+
+**[📚 Client Building Examples](../../examples/virustotal/_build_client/)**
+
+Four comprehensive examples showing different client setup scenarios:
+
+1. **[Basic Client](../../examples/virustotal/_build_client/new_client/)** - Simplest setup with minimal configuration
+2. **[Environment-Based Client](../../examples/virustotal/_build_client/new_client_with_env_var/)** - 12-factor app compliant configuration
+3. **[Production Client with Logger](../../examples/virustotal/_build_client/new_client_with_logger/)** - Custom timeouts, retries, and structured logging
+4. **[OpenTelemetry Client](../../examples/virustotal/_build_client/new_client_with_open_telemetry/)** - Distributed tracing for observability
+
+Each example includes complete working code, when to use each approach, and security best practices.
+
+### Configuration Guides
+
+**Essential:**
+- **[Authentication](authentication.md)** - Secure API key management
+- **[Timeouts & Retries](timeouts-retries.md)** - Configure resilience
+- **[Structured Logging](logging.md)** - Production logging with zap
+
+**Advanced:**
+- **[OpenTelemetry Tracing](opentelemetry.md)** - Distributed tracing for monitoring
+- **[Debug Mode](debugging.md)** - Detailed request/response inspection
+- **[TLS/SSL Configuration](tls-configuration.md)** - Custom certificates and mutual TLS
+- **[Proxy Support](proxy.md)** - Route traffic through proxies
+- **[Custom Headers](custom-headers.md)** - Add tracking or metadata headers
+
+### API Coverage
+
+Explore all available services:
+
+**IOC Reputation & Enrichment:**
+- Files - Upload, scan, download, and retrieve file reports
+- URLs - Scan URLs and retrieve analysis results
+- Domains - Domain reputation and DNS information
+- IP Addresses - IP address reputation and WHOIS data
+- Analyses - Retrieve analysis results and submissions
+- Comments - Manage comments on IOCs
+- Code Insights - Analyze code snippets
+- File Behaviours - Retrieve file behavior reports
+- Attack Techniques/Tactics - MITRE ATT&CK framework integration
+- Saved Searches - Manage saved VirusTotal searches
+
+**VT Enterprise:**
+- Collections - Manage collections of IOCs
+- Search and Metadata - Search for IOCs and retrieve metadata
+
+### More Examples
+
+Check out the [examples directory](../../examples/virustotal/) for complete working examples:
+- File operations (upload, scan, download)
+- URL scanning
+- Domain and IP lookups
+- Analysis retrieval
+- Comment management
+- Relationship queries
+
 ## Getting Help
 
 - **[Full Documentation](../../README.md)** - Complete SDK documentation
@@ -339,73 +403,6 @@ if client.IsNotFound(err) {
 - **[GitHub Issues](https://github.com/deploymenttheory/go-api-sdk-virustotal/issues)** - Report bugs or request features
 - **[GoDoc](https://pkg.go.dev/github.com/deploymenttheory/go-api-sdk-virustotal)** - Package documentation
 
-## Complete Example
-
-Here's a complete example with error handling, logging, and rate limit checking:
-
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-    "os"
-    "time"
-
-    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
-    "go.uber.org/zap"
-)
-
-func main() {
-    // Initialize logger
-    logger, _ := zap.NewProduction()
-    defer logger.Sync()
-
-    // Create client with production settings
-    apiClient, err := client.NewClient(
-        os.Getenv("VT_API_KEY"),
-        client.WithTimeout(30*time.Second),
-        client.WithRetryCount(3),
-        client.WithLogger(logger),
-    )
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    // Create service
-    filesService := files.NewService(apiClient)
-
-    // Make API call with context
-    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-    defer cancel()
-
-    result, resp, err := filesService.GetFileReport(ctx, "44d88612fea8a8f36de82e1278abb02f")
-
-    // Log response metadata
-    logger.Info("API call successful",
-        zap.Int("status_code", resp.StatusCode),
-        zap.Duration("duration", resp.Duration),
-        zap.Int64("size", resp.Size),
-    )
-
-    // Check rate limits
-    limit, remaining, reset, _ := client.GetRateLimitHeaders(resp)
-    logger.Info("Rate limit status",
-        zap.String("quota_remaining", remaining),
-        zap.String("quota_limit", limit),
-        zap.String("quota_reset", reset),
-    )
-
-    // Use results
-    fmt.Printf("File: %s\n", result.Data.Attributes.MeaningfulName)
-    fmt.Printf("SHA256: %s\n", result.Data.Attributes.SHA256)
-    fmt.Printf("Malicious: %d\n", result.Data.Attributes.LastAnalysisStats.Malicious)
-    fmt.Printf("Harmless: %d\n", result.Data.Attributes.LastAnalysisStats.Harmless)
-}
-```
-
 ---
 
-**Ready to build?** Start with this quick start and explore the [configuration guides](../guides/) to customize the SDK for your needs!
+**Ready to build?** Start with this quick start and explore the configuration guides to customize the SDK for your needs!

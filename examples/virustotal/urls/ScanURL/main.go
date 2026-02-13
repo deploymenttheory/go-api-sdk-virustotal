@@ -13,10 +13,9 @@ import (
 
 func main() {
 
-	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
-
+	apiKey := os.Getenv("VT_API_KEY")
 	if apiKey == "" {
-		log.Fatal("VIRUSTOTAL_API_KEY environment variable must be set")
+		log.Fatal("VT_API_KEY environment variable is required")
 	}
 
 	logger, err := zap.NewProduction()
@@ -25,7 +24,7 @@ func main() {
 	}
 	defer logger.Sync()
 
-	vtClient, err := virustotal.NewClient(apiKey,
+	vtClient, err := virustotal.NewClientFromEnv(
 		client.WithLogger(logger),
 	)
 	if err != nil {
