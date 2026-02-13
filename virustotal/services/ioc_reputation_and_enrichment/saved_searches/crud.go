@@ -386,12 +386,12 @@ func (s *Service) GetObjectsRelatedToSavedSearch(ctx context.Context, searchID s
 	}
 
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointSavedSearches, searchID, relationship, false)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	queryParams := make(map[string]string)
@@ -426,12 +426,12 @@ func (s *Service) GetObjectDescriptorsRelatedToSavedSearch(ctx context.Context, 
 	}
 
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointSavedSearches, searchID, relationship, true)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	queryParams := make(map[string]string)

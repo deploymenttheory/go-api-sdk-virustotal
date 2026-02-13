@@ -283,7 +283,7 @@ func TestUnitDeleteSavedSearch_Success(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterMocks()
 
-	err := service.DeleteSavedSearch(context.Background(), testSavedSearchID)
+	_, err := service.DeleteSavedSearch(context.Background(), testSavedSearchID)
 	require.NoError(t, err)
 }
 
@@ -291,7 +291,7 @@ func TestUnitDeleteSavedSearch_Success(t *testing.T) {
 func TestUnitDeleteSavedSearch_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
-	err := service.DeleteSavedSearch(context.Background(), "")
+	_, err := service.DeleteSavedSearch(context.Background(), "")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "cannot be empty")
 }
@@ -300,7 +300,7 @@ func TestUnitDeleteSavedSearch_EmptyID(t *testing.T) {
 func TestUnitDeleteSavedSearch_InvalidID(t *testing.T) {
 	service := setupMockClient(t)
 
-	err := service.DeleteSavedSearch(context.Background(), "invalid-id")
+	_, err := service.DeleteSavedSearch(context.Background(), "invalid-id")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "32-character hexadecimal string")
 }
@@ -311,7 +311,7 @@ func TestUnitDeleteSavedSearch_Forbidden(t *testing.T) {
 	mockHandler := mocks.NewSavedSearchesMock()
 	mockHandler.RegisterErrorMocks()
 
-	err := service.DeleteSavedSearch(context.Background(), "f60631d600b44a91a8b20cef8c77aeac")
+	_, err := service.DeleteSavedSearch(context.Background(), "f60631d600b44a91a8b20cef8c77aeac")
 	assert.Error(t, err)
 }
 
@@ -332,7 +332,7 @@ func TestUnitShareSavedSearch_ViewersSuccess(t *testing.T) {
 		},
 	}
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
 	require.NoError(t, err)
 }
 
@@ -349,7 +349,7 @@ func TestUnitShareSavedSearch_EditorsSuccess(t *testing.T) {
 		},
 	}
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeEditors, entities)
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeEditors, entities)
 	require.NoError(t, err)
 }
 
@@ -374,7 +374,7 @@ func TestUnitShareSavedSearch_MultipleEntities(t *testing.T) {
 		},
 	}
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
 	require.NoError(t, err)
 }
 
@@ -384,7 +384,7 @@ func TestUnitShareSavedSearch_EmptySearchID(t *testing.T) {
 
 	entities := []AccessEntity{{ID: "user123", Type: ObjectTypeUser}}
 
-	err := service.ShareSavedSearch(context.Background(), "", AccessTypeViewers, entities)
+	_, err := service.ShareSavedSearch(context.Background(), "", AccessTypeViewers, entities)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "cannot be empty")
 }
@@ -395,7 +395,7 @@ func TestUnitShareSavedSearch_InvalidAccessType(t *testing.T) {
 
 	entities := []AccessEntity{{ID: "user123", Type: ObjectTypeUser}}
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, "invalid", entities)
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, "invalid", entities)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "access type must be one of")
 }
@@ -404,7 +404,7 @@ func TestUnitShareSavedSearch_InvalidAccessType(t *testing.T) {
 func TestUnitShareSavedSearch_EmptyEntities(t *testing.T) {
 	service := setupMockClient(t)
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, []AccessEntity{})
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, []AccessEntity{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "at least one entity is required")
 }
@@ -420,7 +420,7 @@ func TestUnitShareSavedSearch_InvalidEntityType(t *testing.T) {
 		},
 	}
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "object type must be one of")
 }
@@ -436,7 +436,7 @@ func TestUnitShareSavedSearch_EmptyEntityID(t *testing.T) {
 		},
 	}
 
-	err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
+	_, err := service.ShareSavedSearch(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "ID cannot be empty")
 }
@@ -458,7 +458,7 @@ func TestUnitRevokeSavedSearchAccess_ViewersSuccess(t *testing.T) {
 		},
 	}
 
-	err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
+	_, err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
 	require.NoError(t, err)
 }
 
@@ -475,7 +475,7 @@ func TestUnitRevokeSavedSearchAccess_EditorsSuccess(t *testing.T) {
 		},
 	}
 
-	err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeEditors, entities)
+	_, err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeEditors, entities)
 	require.NoError(t, err)
 }
 
@@ -496,7 +496,7 @@ func TestUnitRevokeSavedSearchAccess_MultipleEntities(t *testing.T) {
 		},
 	}
 
-	err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
+	_, err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeViewers, entities)
 	require.NoError(t, err)
 }
 
@@ -506,7 +506,7 @@ func TestUnitRevokeSavedSearchAccess_EmptySearchID(t *testing.T) {
 
 	entities := []AccessEntity{{ID: "user123", Type: ObjectTypeUser}}
 
-	err := service.RevokeSavedSearchAccess(context.Background(), "", AccessTypeViewers, entities)
+	_, err := service.RevokeSavedSearchAccess(context.Background(), "", AccessTypeViewers, entities)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "cannot be empty")
 }
@@ -517,7 +517,7 @@ func TestUnitRevokeSavedSearchAccess_InvalidAccessType(t *testing.T) {
 
 	entities := []AccessEntity{{ID: "user123", Type: ObjectTypeUser}}
 
-	err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, "invalid", entities)
+	_, err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, "invalid", entities)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "access type must be one of")
 }
@@ -526,7 +526,7 @@ func TestUnitRevokeSavedSearchAccess_InvalidAccessType(t *testing.T) {
 func TestUnitRevokeSavedSearchAccess_EmptyEntities(t *testing.T) {
 	service := setupMockClient(t)
 
-	err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeViewers, []AccessEntity{})
+	_, err := service.RevokeSavedSearchAccess(context.Background(), testSavedSearchID, AccessTypeViewers, []AccessEntity{})
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "at least one entity is required")
 }

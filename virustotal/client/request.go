@@ -25,6 +25,9 @@ func toInterfaceResponse(resp *resty.Response) *interfaces.Response {
 		Status:     resp.Status(),
 		Headers:    resp.Header(),
 		Body:       []byte(resp.String()),
+		Duration:   resp.Duration(),
+		ReceivedAt: resp.ReceivedAt(),
+		Size:       resp.Size(),
 	}
 }
 

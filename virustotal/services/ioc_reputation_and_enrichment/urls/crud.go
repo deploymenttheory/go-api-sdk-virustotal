@@ -116,7 +116,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/scan-url
 func (s *Service) ScanURL(ctx context.Context, url string) (*ScanURLResponse, *interfaces.Response, error) {
 	if url == "" {
-		return nil, nil, fmt.Errorf("URL is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("URL is required")
 	}
 
 	endpoint := EndpointURLs
@@ -262,7 +262,7 @@ func (s *Service) AddCommentToURL(ctx context.Context, urlID string, comment str
 		return nil, nil, err
 	}
 	if comment == "" {
-		return nil, nil, fmt.Errorf("comment text is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointURLs, urlID)
@@ -304,12 +304,12 @@ func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, rela
 		return nil, nil, err
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointURLs, urlID, relationship, false)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -366,12 +366,12 @@ func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID st
 		return nil, nil, err
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointURLs, urlID, relationship, true)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -486,10 +486,10 @@ func (s *Service) AddVoteToURL(ctx context.Context, urlID string, verdict string
 		return nil, nil, err
 	}
 	if verdict == "" {
-		return nil, nil, fmt.Errorf("verdict is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointURLs, urlID)
