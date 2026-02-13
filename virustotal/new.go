@@ -14,6 +14,7 @@ import (
 	ipaddresses "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/ip_addresses"
 	popularthreatcategories "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/popular_threat_categories"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
+	searchandmetadata "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_enterprise/search_and_metadata"
 )
 
 // Client is the main entry point for the VirusTotal API SDK
@@ -21,7 +22,7 @@ import (
 type Client struct {
 	*client.Client
 
-	// Services
+	// IOC Reputation & Enrichment Services
 	Analyses                *analyses.Service
 	AttackTactics           *attacktactics.Service
 	Comments                *comments.Service
@@ -31,6 +32,9 @@ type Client struct {
 	IPAddresses             *ipaddresses.Service
 	PopularThreatCategories *popularthreatcategories.Service
 	URLs                    *urls.Service
+
+	// VT Enterprise Services
+	SearchAndMetadata *searchandmetadata.Service
 }
 
 // NewClient creates a new VirusTotal API client
@@ -64,6 +68,7 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 		IPAddresses:             ipaddresses.NewService(httpClient),
 		PopularThreatCategories: popularthreatcategories.NewService(httpClient),
 		URLs:                    urls.NewService(httpClient),
+		SearchAndMetadata:       searchandmetadata.NewService(httpClient),
 	}
 
 	return c, nil

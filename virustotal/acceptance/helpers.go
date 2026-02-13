@@ -47,7 +47,7 @@ func NewContext() (context.Context, context.CancelFunc) {
 }
 
 // LogResponse logs the response details if verbose mode is enabled
-func LogResponse(t *testing.T, message string, details ...interface{}) {
+func LogResponse(t *testing.T, message string, details ...any) {
 	t.Helper()
 	if Config.Verbose {
 		if len(details) > 0 {
@@ -60,7 +60,7 @@ func LogResponse(t *testing.T, message string, details ...interface{}) {
 
 // AssertNoError is a helper that fails the test if an error occurs
 // and logs additional context in verbose mode
-func AssertNoError(t *testing.T, err error, msgAndArgs ...interface{}) {
+func AssertNoError(t *testing.T, err error, msgAndArgs ...any) {
 	t.Helper()
 	if err != nil {
 		if Config.Verbose {
@@ -71,7 +71,7 @@ func AssertNoError(t *testing.T, err error, msgAndArgs ...interface{}) {
 }
 
 // AssertNotNil is a helper that fails the test if the object is nil
-func AssertNotNil(t *testing.T, object interface{}, msgAndArgs ...interface{}) {
+func AssertNotNil(t *testing.T, object any, msgAndArgs ...any) {
 	t.Helper()
 	require.NotNil(t, object, msgAndArgs...)
 }
@@ -92,72 +92,72 @@ func isGitHubActions() bool {
 }
 
 // LogTestStage logs a test stage with optional GitHub Actions notice annotation
-func LogTestStage(t *testing.T, stage string, message string, details ...interface{}) {
+func LogTestStage(t *testing.T, stage string, message string, details ...any) {
 	t.Helper()
-	
+
 	formattedMsg := message
 	if len(details) > 0 {
 		formattedMsg = fmt.Sprintf(message, details...)
 	}
-	
+
 	if isGitHubActions() {
 		fmt.Printf("::notice title=%s::%s\n", stage, formattedMsg)
 	}
-	
+
 	if Config.Verbose {
 		t.Logf("🎯 [%s] %s", stage, formattedMsg)
 	}
 }
 
 // LogTestSuccess logs a successful test operation
-func LogTestSuccess(t *testing.T, message string, details ...interface{}) {
+func LogTestSuccess(t *testing.T, message string, details ...any) {
 	t.Helper()
-	
+
 	formattedMsg := message
 	if len(details) > 0 {
 		formattedMsg = fmt.Sprintf(message, details...)
 	}
-	
+
 	if isGitHubActions() {
 		fmt.Printf("::notice title=✅ Success::%s\n", formattedMsg)
 	}
-	
+
 	if Config.Verbose {
 		t.Logf("✅ %s", formattedMsg)
 	}
 }
 
 // LogTestWarning logs a test warning
-func LogTestWarning(t *testing.T, message string, details ...interface{}) {
+func LogTestWarning(t *testing.T, message string, details ...any) {
 	t.Helper()
-	
+
 	formattedMsg := message
 	if len(details) > 0 {
 		formattedMsg = fmt.Sprintf(message, details...)
 	}
-	
+
 	if isGitHubActions() {
 		fmt.Printf("::warning title=⚠️  Warning::%s\n", formattedMsg)
 	}
-	
+
 	if Config.Verbose {
 		t.Logf("⚠️  %s", formattedMsg)
 	}
 }
 
 // LogTestError logs a test error (does not fail test)
-func LogTestError(t *testing.T, message string, details ...interface{}) {
+func LogTestError(t *testing.T, message string, details ...any) {
 	t.Helper()
-	
+
 	formattedMsg := message
 	if len(details) > 0 {
 		formattedMsg = fmt.Sprintf(message, details...)
 	}
-	
+
 	if isGitHubActions() {
 		fmt.Printf("::error title=❌ Error::%s\n", formattedMsg)
 	}
-	
+
 	if Config.Verbose {
 		t.Logf("❌ %s", formattedMsg)
 	}
