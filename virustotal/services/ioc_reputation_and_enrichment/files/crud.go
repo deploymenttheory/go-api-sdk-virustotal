@@ -16,8 +16,15 @@ type (
 	FilesServiceInterface interface {
 		// UploadFile uploads and analyses a file
 		//
-		// Uploads a file to VirusTotal for analysis. Returns an analysis ID that can be used to retrieve
-		// the results. Files must be smaller than 32MB. For larger files, use GetUploadURL.
+		// Uploads a file to VirusTotal for analysis. Automatically handles file size detection and
+		// selects the appropriate upload endpoint:
+		// - Files <= 32MB: uploaded directly to /files
+		// - Files > 32MB and <= 650MB: uploaded via /files/upload_url
+		// - Files > 650MB: rejected with an error
+		//
+		// The file content is streamed to avoid loading the entire file into memory.
+		// Progress updates are sent through the ProgressCallback channel if provided.
+		// Returns an analysis ID that can be used to retrieve the results.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/files-scan
 		UploadFile(ctx context.Context, request *UploadFileRequest) (*UploadFileResponse, *interfaces.Response, error)
@@ -147,8 +154,19 @@ func NewService(client interfaces.HTTPClient) *Service {
 }
 
 // UploadFile uploads and analyses a file
-// URL: POST https://www.virustotal.com/api/v3/files
+// URL: POST https://www.virustotal.com/api/v3/files (for files <= 32MB)
+//
+//	POST [upload_url] (for files > 32MB and <= 650MB)
+//
+// Automatically handles file size detection and selects the appropriate upload endpoint.
+// Files larger than 32MB require using the /files/upload_url endpoint first.
+// Files larger than 650MB are not supported.
+//
+// The file content is streamed to avoid loading the entire file into memory.
+// Progress updates are sent through the ProgressCallback channel if provided.
+//
 // https://docs.virustotal.com/reference/files-scan
+// https://docs.virustotal.com/reference/files-upload-url
 func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*UploadFileResponse, *interfaces.Response, error) {
 	if request == nil || request.File == nil {
 		return nil, nil, fmt.Errorf("file is required")
@@ -157,7 +175,36 @@ func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*
 		return nil, nil, fmt.Errorf("filename is required")
 	}
 
-	endpoint := EndpointFiles
+	reader, fileSize, err := prepareReader(request.File)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to prepare file for upload: %w", err)
+	}
+
+	if err := validateFileSize(fileSize); err != nil {
+		return nil, nil, err
+	}
+
+	// Update request with actual file size
+	request.FileSize = fileSize
+	request.File = reader
+
+	// Determine upload endpoint based on file size
+	var endpoint string
+
+	if shouldUseLargeFileEndpoint(fileSize) {
+		// For files larger than 32MB, get a special upload URL
+		// This returns an absolute URL like: http://www.virustotal.com/_ah/upload/AMmfu6b...
+		// The HTTP client will use this absolute URL directly (base URL is ignored)
+		uploadURLResp, _, err := s.GetUploadURL(ctx)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to get upload URL for large file: %w", err)
+		}
+		endpoint = uploadURLResp.Data // Absolute URL
+	} else {
+		// For files <= 32MB, use the standard endpoint (relative path)
+		// This will be combined with the base URL by the HTTP client
+		endpoint = EndpointFiles // Relative path: "/files"
+	}
 
 	headers := map[string]string{
 		"Accept": "application/json",

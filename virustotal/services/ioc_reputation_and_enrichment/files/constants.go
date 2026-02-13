@@ -7,8 +7,19 @@ import (
 // API endpoints for files
 const (
 	EndpointFiles        = "/files"
+	EndpointFilesUploadURL = "/files/upload_url"
 	EndpointSigmaRules   = "/sigma_rules"
 	EndpointYARARulesets = "/yara_rulesets"
+)
+
+// File size limits for uploads
+const (
+	// MaxPayloadSize is the maximum file size (32MB) that can be uploaded directly to /files
+	// Files larger than this require using /files/upload_url endpoint
+	MaxPayloadSize = 32 * 1024 * 1024 // 32MB in bytes
+	
+	// MaxFileSize is the maximum file size (650MB) that can be uploaded to VirusTotal
+	MaxFileSize = 650 * 1024 * 1024 // 650MB in bytes
 )
 
 // Relationship names for files (from VT API documentation)
