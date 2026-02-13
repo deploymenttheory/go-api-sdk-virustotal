@@ -47,39 +47,13 @@ go get github.com/deploymenttheory/go-api-sdk-virustotal
 
 ## Quick Start
 
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-
-    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
-)
-
-func main() {
-    // Create client
-    apiClient, err := client.NewClient("your-api-key")
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    // Create files service
-    filesService := files.NewService(apiClient)
-
-    // Get file report
-    result, resp, err := filesService.GetFileReport(context.Background(), "44d88612fea8a8f36de82e1278abb02f")
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    fmt.Printf("File: %s\n", result.Data.Attributes.MeaningfulName)
-    fmt.Printf("Status Code: %d\n", resp.StatusCode)
-    fmt.Printf("Malicious: %d\n", result.Data.Attributes.LastAnalysisStats.Malicious)
-}
-```
+Get started quickly with the SDK using the **[Quick Start Guide](docs/guides/quick-start.md)**, which includes:
+- Installation instructions
+- Your first API call
+- Common operations (files, URLs, domains, IPs)
+- Error handling patterns
+- Response metadata access
+- Links to configuration guides for production use
 
 ## Services
 
@@ -101,45 +75,93 @@ func main() {
 - **Collections**: Manage collections of IOCs
 - **Search and Metadata**: Search for IOCs and retrieve metadata
 
-## Response Metadata
-
-All SDK functions return `*interfaces.Response` containing:
-
-```go
-type Response struct {
-    StatusCode int           // HTTP status code
-    Status     string        // HTTP status text
-    Headers    http.Header   // Response headers
-    Body       []byte        // Raw response body
-    Duration   time.Duration // Request duration
-    ReceivedAt time.Time     // Response timestamp
-    Size       int64         // Response body size
-}
-```
-
-Helper functions in `client` package:
-
-```go
-// Check response status
-if client.IsResponseSuccess(resp) {
-    // Handle 2xx response
-}
-
-// Get rate limit headers
-rateLimitHeaders := client.GetRateLimitHeaders(resp)
-```
-
 ## Configuration Options
 
+The SDK client supports extensive configuration through functional options. Below is the complete list of available configuration options grouped by category.
+
+### Basic Configuration
+
 ```go
-apiClient, err := client.NewClient("your-api-key",
-    client.WithBaseURL("https://www.virustotal.com/api/v3"),
+client.WithAPIVersion("v3")              // Set API version
+client.WithBaseURL("https://...")        // Custom base URL
+client.WithTimeout(30*time.Second)       // Request timeout
+client.WithRetryCount(3)                 // Number of retry attempts
+```
+
+### TLS/Security
+
+```go
+client.WithMinTLSVersion(tls.VersionTLS12)                    // Minimum TLS version
+client.WithTLSClientConfig(tlsConfig)                         // Custom TLS configuration
+client.WithRootCertificates("/path/to/ca.pem")                // Custom CA certificates
+client.WithRootCertificateFromString(caPEM)                   // CA certificate from string
+client.WithClientCertificate("/path/cert.pem", "/path/key.pem") // Client certificate (mTLS)
+client.WithClientCertificateFromString(certPEM, keyPEM)       // Client cert from string
+client.WithInsecureSkipVerify()                               // Skip cert verification (dev only!)
+```
+
+### Network
+
+```go
+client.WithProxy("http://proxy:8080")    // HTTP/HTTPS/SOCKS5 proxy
+client.WithTransport(customTransport)    // Custom HTTP transport
+```
+
+### Headers
+
+```go
+client.WithUserAgent("MyApp/1.0")                      // Set User-Agent header
+client.WithCustomAgent("MyApp", "1.0")                 // Custom agent with version
+client.WithGlobalHeader("X-Custom-Header", "value")    // Add single global header
+client.WithGlobalHeaders(map[string]string{...})       // Add multiple global headers
+```
+
+### Observability
+
+```go
+client.WithLogger(zapLogger)            // Structured logging with zap
+client.WithTracing(otelConfig)          // OpenTelemetry distributed tracing
+client.WithDebug()                      // Enable debug mode (dev only!)
+```
+
+### Example: Production Configuration
+
+```go
+import (
+    "crypto/tls"
+    "time"
+    "go.uber.org/zap"
+)
+
+logger, _ := zap.NewProduction()
+
+apiClient, err := client.NewClient(
+    "your-api-key",
     client.WithTimeout(30*time.Second),
-    client.WithLogger(zapLogger),
     client.WithRetryCount(3),
-    client.WithRetryWaitTime(5*time.Second),
+    client.WithLogger(logger),
+    client.WithMinTLSVersion(tls.VersionTLS12),
+    client.WithGlobalHeader("X-Application-Name", "MySecurityApp"),
 )
 ```
+
+See the [configuration guides](docs/guides/) for detailed documentation on each option.
+
+## Examples
+
+The [examples directory](examples/virustotal/) contains complete working examples for all SDK features:
+
+- **[Files](examples/virustotal/files/)** - File upload, scan, download, and report retrieval
+- **[URLs](examples/virustotal/urls/)** - URL scanning and analysis
+- **[Domains](examples/virustotal/domains/)** - Domain reputation and DNS lookups
+- **[IP Addresses](examples/virustotal/ip_addresses/)** - IP address reputation and WHOIS
+- **[Analyses](examples/virustotal/analyses/)** - Retrieve analysis results and submissions
+- **[Comments](examples/virustotal/comments/)** - Manage comments on IOCs
+- **[File Behaviours](examples/virustotal/file_behaviours/)** - Retrieve file behavior reports
+- **[Attack Tactics](examples/virustotal/attack_tactics/)** - MITRE ATT&CK framework integration
+- **[Observability](examples/virustotal/observability/)** - OpenTelemetry tracing examples
+
+Each example includes a complete `main.go` with comments explaining the code.
 
 ## Documentation
 
