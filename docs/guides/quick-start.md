@@ -395,22 +395,6 @@ func main() {
 
     result, resp, err := filesService.GetFileReport(ctx, "44d88612fea8a8f36de82e1278abb02f")
 
-    // Handle errors
-    if err != nil {
-        switch {
-        case client.IsNotFound(err):
-            log.Println("File not found in VirusTotal database")
-            return
-        case client.IsQuotaExceeded(err):
-            log.Println("Rate limit exceeded")
-            return
-        case client.IsUnauthorized(err):
-            log.Fatal("Invalid API key")
-        default:
-            log.Fatal(err)
-        }
-    }
-
     // Log response metadata
     logger.Info("API call successful",
         zap.Int("status_code", resp.StatusCode),
