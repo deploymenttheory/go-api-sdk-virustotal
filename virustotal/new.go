@@ -62,7 +62,7 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 		return nil, fmt.Errorf("failed to create HTTP client: %w", err)
 	}
 
-	// Initialize service clients
+	// Initialize vt sdk service clients
 	c := &Client{
 		Client:                  httpClient,
 		Analyses:                analyses.NewService(httpClient),
@@ -85,7 +85,7 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 // NewClientFromEnv creates a new client using environment variables
 //
 // Required environment variables:
-//   - VIRUSTOTAL_API_KEY: The VirusTotal API key
+//   - VT_API_KEY: The VirusTotal API key
 //
 // Optional environment variables:
 //   - VIRUSTOTAL_BASE_URL: Custom base URL (defaults to https://www.virustotal.com/api/v3)
@@ -94,9 +94,9 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 //
 //	client, err := virustotal.NewClientFromEnv()
 func NewClientFromEnv(options ...client.ClientOption) (*Client, error) {
-	apiKey := os.Getenv("VIRUSTOTAL_API_KEY")
+	apiKey := os.Getenv("VT_API_KEY")
 	if apiKey == "" {
-		return nil, fmt.Errorf("VIRUSTOTAL_API_KEY environment variable is required")
+		return nil, fmt.Errorf("VT_API_KEY environment variable is required")
 	}
 
 	// Check for optional environment variables and append to options
