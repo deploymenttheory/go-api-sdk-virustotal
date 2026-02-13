@@ -4,7 +4,7 @@ Get up and running with the VirusTotal Go SDK in minutes.
 
 ## Prerequisites
 
-- Go 1.25 or higher
+- Go 1.21 or higher
 - A VirusTotal API key ([Get one here](https://www.virustotal.com/gui/join-us))
 
 ## Installation
@@ -26,22 +26,18 @@ import (
     "log"
     "os"
 
-    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
+    "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
 )
 
 func main() {
     // Step 1: Create the client with your API key
-    apiClient, err := client.NewClient(os.Getenv("VT_API_KEY"))
+    vtClient, err := virustotal.NewClient(os.Getenv("VIRUSTOTAL_API_KEY"))
     if err != nil {
         log.Fatal(err)
     }
 
-    // Step 2: Create a service (files, URLs, domains, etc.)
-    filesService := files.NewService(apiClient)
-
-    // Step 3: Make an API call
-    result, resp, err := filesService.GetFileReport(
+    // Step 2: Make an API call using the service
+    result, resp, err := vtClient.Files.GetFileReport(
         context.Background(),
         "44d88612fea8a8f36de82e1278abb02f", // EICAR test file hash
     )
@@ -49,7 +45,7 @@ func main() {
         log.Fatal(err)
     }
 
-    // Step 4: Use the results
+    // Step 3: Use the results
     fmt.Printf("File: %s\n", result.Data.Attributes.MeaningfulName)
     fmt.Printf("Status Code: %d\n", resp.StatusCode)
     fmt.Printf("Malicious: %d\n", result.Data.Attributes.LastAnalysisStats.Malicious)
@@ -61,7 +57,7 @@ func main() {
 **Run it:**
 
 ```bash
-export VT_API_KEY="your-api-key-here"
+export VIRUSTOTAL_API_KEY="your-api-key-here"
 go run main.go
 ```
 
@@ -80,11 +76,7 @@ Harmless: 0
 ### Check a URL
 
 ```go
-import "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
-
-urlsService := urls.NewService(apiClient)
-
-result, _, err := urlsService.GetURLReport(
+result, _, err := vtClient.URLs.GetURLReport(
     context.Background(),
     "https://www.example.com",
 )
@@ -99,11 +91,7 @@ fmt.Printf("Malicious: %d\n", result.Data.Attributes.LastAnalysisStats.Malicious
 ### Check a Domain
 
 ```go
-import "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/domains"
-
-domainsService := domains.NewService(apiClient)
-
-result, _, err := domainsService.GetDomainReport(
+result, _, err := vtClient.Domains.GetDomainReport(
     context.Background(),
     "example.com",
 )
@@ -118,11 +106,7 @@ fmt.Printf("Categories: %v\n", result.Data.Attributes.Categories)
 ### Check an IP Address
 
 ```go
-import "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/ip_addresses"
-
-ipService := ip_addresses.NewService(apiClient)
-
-result, _, err := ipService.GetIPAddressReport(
+result, _, err := vtClient.IPAddresses.GetIPAddressReport(
     context.Background(),
     "8.8.8.8",
 )
@@ -143,8 +127,6 @@ import (
     "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
 )
 
-filesService := files.NewService(apiClient)
-
 // Open the file
 file, err := os.Open("/path/to/file.exe")
 if err != nil {
@@ -163,7 +145,7 @@ uploadReq := &files.UploadFileRequest{
 }
 
 // Upload and scan
-result, _, err := filesService.UploadFile(context.Background(), uploadReq)
+result, _, err := vtClient.Files.UploadFile(context.Background(), uploadReq)
 if err != nil {
     log.Fatal(err)
 }
@@ -177,7 +159,9 @@ fmt.Printf("Check status at: %s\n", result.Data.Links.Self)
 Always check for errors and handle common cases:
 
 ```go
-result, resp, err := filesService.GetFileReport(ctx, hash)
+import "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
+
+result, resp, err := vtClient.Files.GetFileReport(ctx, hash)
 
 if err != nil {
     // Check for specific error types
@@ -209,7 +193,7 @@ fmt.Printf("File: %s\n", result.Data.Attributes.MeaningfulName)
 Every API call returns response metadata:
 
 ```go
-result, resp, err := filesService.GetFileReport(ctx, hash)
+result, resp, err := vtClient.Files.GetFileReport(ctx, hash)
 
 // Access response metadata
 fmt.Printf("Status Code: %d\n", resp.StatusCode)
@@ -218,10 +202,11 @@ fmt.Printf("Response Size: %d bytes\n", resp.Size)
 fmt.Printf("Received At: %v\n", resp.ReceivedAt)
 
 // Check rate limits
-rateLimits := client.GetRateLimitHeaders(resp)
-fmt.Printf("Daily Remaining: %d/%d\n",
-    rateLimits.DailyRemaining,
-    rateLimits.DailyLimit)
+limit, remaining, reset, retryAfter := client.GetRateLimitHeaders(resp)
+fmt.Printf("API Quota: %s/%s (Reset: %s)\n", remaining, limit, reset)
+if retryAfter != "" {
+    fmt.Printf("Retry After: %s\n", retryAfter)
+}
 ```
 
 ## Next Steps
@@ -319,14 +304,17 @@ if err != nil && client.IsUnauthorized(err) {
 
 ```go
 // Check rate limit headers
-rateLimits := client.GetRateLimitHeaders(resp)
-fmt.Printf("Remaining: %d/%d\n",
-    rateLimits.DailyRemaining,
-    rateLimits.DailyLimit)
+limit, remaining, reset, retryAfter := client.GetRateLimitHeaders(resp)
+fmt.Printf("API Quota Remaining: %s/%s\n", remaining, limit)
+fmt.Printf("Quota Reset: %s\n", reset)
 
 // Handle rate limit errors
 if client.IsQuotaExceeded(err) {
-    log.Println("Rate limit exceeded - waiting 60 seconds")
+    if retryAfter != "" {
+        log.Printf("Rate limit exceeded - retry after %s seconds\n", retryAfter)
+    } else {
+        log.Println("Rate limit exceeded - waiting 60 seconds")
+    }
     time.Sleep(60 * time.Second)
     // Retry request
 }
@@ -403,10 +391,11 @@ func main() {
     )
 
     // Check rate limits
-    rateLimits := client.GetRateLimitHeaders(resp)
+    limit, remaining, reset, _ := client.GetRateLimitHeaders(resp)
     logger.Info("Rate limit status",
-        zap.Int("daily_remaining", rateLimits.DailyRemaining),
-        zap.Int("daily_limit", rateLimits.DailyLimit),
+        zap.String("quota_remaining", remaining),
+        zap.String("quota_limit", limit),
+        zap.String("quota_reset", reset),
     )
 
     // Use results

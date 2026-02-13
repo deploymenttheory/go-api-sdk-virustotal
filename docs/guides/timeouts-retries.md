@@ -130,8 +130,8 @@ vtClient, err := client.NewClient(
 
 **Defaults:**
 - Retry count: 3
-- Wait time: 5 seconds
-- Max wait time: 20 seconds
+- Wait time: 2 seconds
+- Max wait time: 10 seconds
 
 ---
 
@@ -206,9 +206,9 @@ The SDK does NOT retry:
 Retries use exponential backoff with jitter:
 
 ```
-Retry 1: Wait 5s  (base wait time)
-Retry 2: Wait 10s (2x)
-Retry 3: Wait 20s (4x, capped at max wait time)
+Retry 1: Wait 2s  (base wait time)
+Retry 2: Wait 4s  (2x)
+Retry 3: Wait 8s  (4x, capped at max wait time)
 ```
 
 This prevents overwhelming the server and respects rate limits.
@@ -222,8 +222,8 @@ vtClient, err := client.NewClient(
     apiKey,
     client.WithTimeout(30*time.Second),
     client.WithRetryCount(3),
-    client.WithRetryWaitTime(5*time.Second),
-    client.WithRetryMaxWaitTime(30*time.Second),
+    client.WithRetryWaitTime(2*time.Second),
+    client.WithRetryMaxWaitTime(10*time.Second),
 )
 ```
 
@@ -248,7 +248,7 @@ vtClient, err := client.NewClient(
     apiKey,
     client.WithTimeout(10*time.Second),
     client.WithRetryCount(1),
-    client.WithRetryWaitTime(2*time.Second),
+    client.WithRetryWaitTime(1*time.Second),
 )
 ```
 
