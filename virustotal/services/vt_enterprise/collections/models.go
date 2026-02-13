@@ -116,14 +116,15 @@ type UpdateCollectionAttributes struct {
 // =============================================================================
 
 // DeleteCollectionResponse represents the response from deleting a collection
+// Note: The API returns an empty object {} on success
 type DeleteCollectionResponse struct {
-	Data DeleteCollectionData `json:"data"`
+	Data *DeleteCollectionData `json:"data,omitempty"`
 }
 
-// DeleteCollectionData contains the deleted collection ID
+// DeleteCollectionData contains the deleted collection ID (may be empty)
 type DeleteCollectionData struct {
-	Type string `json:"type"`
-	ID   string `json:"id"`
+	Type string `json:"type,omitempty"`
+	ID   string `json:"id,omitempty"`
 }
 
 // =============================================================================
@@ -227,14 +228,15 @@ type AddItemsRequest struct {
 }
 
 // AddItemsResponse represents the response from adding items
+// Note: The API returns an empty object {} on success
 type AddItemsResponse struct {
-	Data AddItemsData `json:"data"`
+	Data *AddItemsData `json:"data,omitempty"`
 }
 
-// AddItemsData contains the response data for added items
+// AddItemsData contains the response data for added items (may be empty)
 type AddItemsData struct {
-	Type string `json:"type"`
-	ID   string `json:"id"`
+	Type string `json:"type,omitempty"`
+	ID   string `json:"id,omitempty"`
 }
 
 // DeleteItemsRequest represents a request to delete items from a collection
@@ -243,14 +245,15 @@ type DeleteItemsRequest struct {
 }
 
 // DeleteItemsResponse represents the response from deleting items
+// Note: The API returns an empty object {} on success
 type DeleteItemsResponse struct {
-	Data DeleteItemsData `json:"data"`
+	Data *DeleteItemsData `json:"data,omitempty"`
 }
 
-// DeleteItemsData contains the response data for deleted items
+// DeleteItemsData contains the response data for deleted items (may be empty)
 type DeleteItemsData struct {
-	Type string `json:"type"`
-	ID   string `json:"id"`
+	Type string `json:"type,omitempty"`
+	ID   string `json:"id,omitempty"`
 }
 
 // =============================================================================

@@ -32,17 +32,27 @@ func createTestCollection(t *testing.T, service *collections.Service, suffix str
 			Relationships: &collections.CollectionRelationships{
 				Domains: &collections.RelationshipData{
 					Data: []collections.RelationshipItem{
-						{Type: "domain", ID: "virustotal.com"},
+						{
+							Type: "domain",
+							ID:   "virustotal.com",
+						},
 					},
 				},
 			},
 		},
 	}
 
-	result, _, err := service.CreateCollection(ctx, req)
+	result, resp, err := service.CreateCollection(ctx, req)
 	if err != nil {
+		// Check for quota exceeded
+		if resp != nil && resp.StatusCode == 429 {
+			t.Skip("API quota exceeded - skipping test")
+		}
 		t.Fatalf("Failed to create test collection: %v", err)
 	}
+
+	// Rate limit: sleep after API call
+	time.Sleep(Config.RateLimitDelay)
 
 	return result.Data.ID
 }
@@ -100,6 +110,13 @@ func TestAcceptance_Collections_CreateCollection(t *testing.T) {
 		}
 
 		result, resp, err := service.CreateCollection(ctx, req)
+		
+		// Check for quota exceeded
+		if err != nil && resp != nil && resp.StatusCode == 429 {
+			LogTestWarning(t, "API quota exceeded (429) - test skipped")
+			t.Skip("Skipping test - API quota exceeded")
+		}
+		
 		AssertNoError(t, err, "CreateCollection should not return an error")
 		AssertNotNil(t, result, "CreateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -114,6 +131,9 @@ func TestAcceptance_Collections_CreateCollection(t *testing.T) {
 
 		LogTestSuccess(t, "Collection created with ID: %s", result.Data.ID)
 		LogTestSuccess(t, "Collection name: %s", result.Data.Attributes.Name)
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -144,6 +164,13 @@ func TestAcceptance_Collections_CreateCollection_WithRawItems(t *testing.T) {
 		}
 
 		result, resp, err := service.CreateCollection(ctx, req)
+		
+		// Check for quota exceeded
+		if err != nil && resp != nil && resp.StatusCode == 429 {
+			LogTestWarning(t, "API quota exceeded (429) - test skipped")
+			t.Skip("Skipping test - API quota exceeded")
+		}
+		
 		AssertNoError(t, err, "CreateCollection should not return an error")
 		AssertNotNil(t, result, "CreateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -152,6 +179,9 @@ func TestAcceptance_Collections_CreateCollection_WithRawItems(t *testing.T) {
 		defer cleanupTestCollection(t, service, result.Data.ID)
 
 		LogTestSuccess(t, "Collection created with raw items, ID: %s", result.Data.ID)
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -217,6 +247,9 @@ func TestAcceptance_Collections_GetCollection(t *testing.T) {
 		LogTestSuccess(t, "Collection retrieved successfully")
 		LogTestSuccess(t, "Collection ID: %s", result.Data.ID)
 		LogTestSuccess(t, "Collection name: %s", result.Data.Attributes.Name)
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -283,6 +316,9 @@ func TestAcceptance_Collections_UpdateCollection(t *testing.T) {
 
 		LogTestSuccess(t, "Collection updated successfully")
 		LogTestSuccess(t, "New name: %s", result.Data.Attributes.Name)
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -316,6 +352,9 @@ func TestAcceptance_Collections_UpdateCollection_WithRawItems(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		LogTestSuccess(t, "Collection updated with raw items")
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -351,6 +390,9 @@ func TestAcceptance_Collections_AddCommentToCollection(t *testing.T) {
 
 		LogTestSuccess(t, "Comment added successfully")
 		LogTestSuccess(t, "Comment ID: %s", result.Data.ID)
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -411,6 +453,9 @@ func TestAcceptance_Collections_GetCommentsOnCollection(t *testing.T) {
 		} else {
 			LogTestWarning(t, "No comments found")
 		}
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -440,6 +485,9 @@ func TestAcceptance_Collections_GetCommentsOnCollection_WithOptions(t *testing.T
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		LogTestSuccess(t, "Retrieved comments with limit successfully")
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -479,6 +527,9 @@ func TestAcceptance_Collections_GetObjectsRelatedToCollection(t *testing.T) {
 		} else {
 			LogTestWarning(t, "No related objects found")
 		}
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -537,6 +588,9 @@ func TestAcceptance_Collections_GetObjectDescriptorsRelatedToCollection(t *testi
 		} else {
 			LogTestWarning(t, "No object descriptors found")
 		}
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -572,10 +626,11 @@ func TestAcceptance_Collections_AddItemsToCollection(t *testing.T) {
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
-
+		// Note: API returns empty object {} on success, no data fields to verify
 		LogTestSuccess(t, "Items added successfully to collection")
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -608,6 +663,9 @@ func TestAcceptance_Collections_AddItemsToCollection_WithURLs(t *testing.T) {
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
 		LogTestSuccess(t, "URLs added successfully to collection")
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -674,10 +732,11 @@ func TestAcceptance_Collections_DeleteItemsFromCollection(t *testing.T) {
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
-
+		// Note: API returns empty object {} on success, no data fields to verify
 		LogTestSuccess(t, "Items deleted successfully from collection")
+
+		// Rate limit: sleep before cleanup
+		time.Sleep(Config.RateLimitDelay)
 	})
 }
 
@@ -705,9 +764,7 @@ func TestAcceptance_Collections_DeleteCollection(t *testing.T) {
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
-
+		// Note: API returns empty object {} on success, no data fields to verify
 		LogTestSuccess(t, "Collection deleted successfully")
 	})
 }
