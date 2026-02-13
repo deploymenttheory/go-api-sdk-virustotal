@@ -1,0 +1,50 @@
+{
+  "data": {
+    "type": "collection",
+    "id": "test-collection-123",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/collections/test-collection-123"
+    },
+    "attributes": {
+      "name": "Test Collection",
+      "description": "This is a test collection",
+      "creation_date": 1709856000,
+      "modification_date": 1709856000
+    },
+    "relationships": {
+      "domains": {
+        "data": [
+          {
+            "type": "domain",
+            "id": "virustotal.com"
+          }
+        ],
+        "links": {
+          "self": "https://www.virustotal.com/api/v3/collections/test-collection-123/domains"
+        }
+      },
+      "files": {
+        "data": [
+          {
+            "type": "file",
+            "id": "ecc0f2aa29b102bf8d67b7d7173e8698c0341ddfdf9757be17595460fbf1791a"
+          }
+        ],
+        "links": {
+          "self": "https://www.virustotal.com/api/v3/collections/test-collection-123/files"
+        }
+      },
+      "ip_addresses": {
+        "data": [
+          {
+            "type": "ip_address",
+            "id": "8.8.8.8"
+          }
+        ],
+        "links": {
+          "self": "https://www.virustotal.com/api/v3/collections/test-collection-123/ip_addresses"
+        }
+      }
+    }
+  }
+}

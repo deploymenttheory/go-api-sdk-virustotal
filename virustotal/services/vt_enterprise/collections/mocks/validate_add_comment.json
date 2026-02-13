@@ -1,0 +1,20 @@
+{
+  "data": {
+    "type": "comment",
+    "id": "new-comment-789",
+    "links": {
+      "self": "https://www.virustotal.com/api/v3/comments/new-comment-789"
+    },
+    "attributes": {
+      "date": 1709865000,
+      "text": "New test comment",
+      "html": "New test comment",
+      "tags": [],
+      "votes": {
+        "abuse": 0,
+        "negative": 0,
+        "positive": 0
+      }
+    }
+  }
+}

@@ -69,6 +69,7 @@ func main() {
 ## Services
 
 ### IOC Reputation and Enrichment
+
 - **Files**: Upload, scan, download, and retrieve file reports
 - **URLs**: Scan URLs and retrieve analysis results
 - **Domains**: Domain reputation and DNS information
@@ -79,6 +80,11 @@ func main() {
 - **File Behaviours**: Retrieve file behavior reports
 - **Attack Techniques/Tactics**: MITRE ATT&CK framework integration
 - **Saved Searches**: Manage saved VirusTotal searches
+
+### VT Enterprise
+
+- **Collections**: Manage collections of IOCs
+- **Search and Metadata**: Search for IOCs and retrieve metadata
 
 ## Response Metadata
 

@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "virustotal.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/virustotal.com"
+      },
+      "attributes": {
+        "last_analysis_date": 1709856000,
+        "reputation": 100,
+        "last_dns_records_date": 1709856000
+      }
+    },
+    {
+      "type": "domain",
+      "id": "google.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/google.com"
+      },
+      "attributes": {
+        "last_analysis_date": 1709856000,
+        "reputation": 95,
+        "last_dns_records_date": 1709856000
+      }
+    }
+  ],
+  "meta": {
+    "count": 2
+  }
+}
