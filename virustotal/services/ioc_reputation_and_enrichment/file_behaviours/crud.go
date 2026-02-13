@@ -160,11 +160,11 @@ func isValidFileHash(hash string) bool {
 // https://docs.virustotal.com/reference/file-all-behaviours-summary
 func (s *Service) GetFileBehaviourSummaryByHashId(ctx context.Context, fileID string) (*BehaviourSummaryResponse, *interfaces.Response, error) {
 	if fileID == "" {
-		return nil, nil, fmt.Errorf("file ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
 	}
 
 	if !isValidFileHash(fileID) {
-		return nil, nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/behaviour_summary", EndpointFiles, fileID)
@@ -188,12 +188,12 @@ func (s *Service) GetFileBehaviourSummaryByHashId(ctx context.Context, fileID st
 // https://docs.virustotal.com/reference/file-all-behaviours-summary
 func (s *Service) GetAllFileBehavioursSummary(ctx context.Context, fileHashes []string) (*BehaviourSummaryResponse, *interfaces.Response, error) {
 	if len(fileHashes) == 0 {
-		return nil, nil, fmt.Errorf("at least one file hash is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("at least one file hash is required")
 	}
 
 	for i, hash := range fileHashes {
 		if !isValidFileHash(hash) {
-			return nil, nil, fmt.Errorf("file hash at index %d must be a valid MD5, SHA-1, or SHA-256 hash", i)
+			return nil, client.NewEmptyResponse(), fmt.Errorf("file hash at index %d must be a valid MD5, SHA-1, or SHA-256 hash", i)
 		}
 	}
 
@@ -226,11 +226,11 @@ func (s *Service) GetAllFileBehavioursSummary(ctx context.Context, fileHashes []
 // https://docs.virustotal.com/reference/get-a-summary-of-all-mitre-attck-techniques-observed-in-a-file
 func (s *Service) GetFileMitreAttackTrees(ctx context.Context, fileID string) (*MitreTreesResponse, *interfaces.Response, error) {
 	if fileID == "" {
-		return nil, nil, fmt.Errorf("file ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
 	}
 
 	if !isValidFileHash(fileID) {
-		return nil, nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/behaviour_mitre_trees", EndpointFiles, fileID)
@@ -260,11 +260,11 @@ func (s *Service) GetFileMitreAttackTrees(ctx context.Context, fileID string) (*
 // https://docs.virustotal.com/reference/get-all-behavior-reports-for-a-file
 func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, options *GetRelatedObjectsOptions) (*AllBehavioursResponse, *interfaces.Response, error) {
 	if fileID == "" {
-		return nil, nil, fmt.Errorf("file ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
 	}
 
 	if !isValidFileHash(fileID) {
-		return nil, nil, fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID must be a valid MD5, SHA-1, or SHA-256 hash")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/behaviours", EndpointFiles, fileID)
@@ -322,7 +322,7 @@ func (s *Service) GetAllFileBehaviours(ctx context.Context, fileID string, optio
 // https://docs.virustotal.com/reference/get-file-behaviour-id
 func (s *Service) GetFileBehaviour(ctx context.Context, sandboxID string) (*BehaviourReportResponse, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, nil, fmt.Errorf("sandbox ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointFileBehaviours, sandboxID)
@@ -352,15 +352,15 @@ func (s *Service) GetFileBehaviour(ctx context.Context, sandboxID string) (*Beha
 // https://docs.virustotal.com/reference/get-file-behaviours-relationship
 func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, nil, fmt.Errorf("sandbox ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("sandbox ID is required")
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointFileBehaviours, sandboxID, relationship, false)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -418,15 +418,15 @@ func (s *Service) GetObjectsRelatedToFileBehaviour(ctx context.Context, sandboxI
 // https://docs.virustotal.com/reference/get-file-behaviours-relationship-descriptor
 func (s *Service) GetObjectDescriptorsForFileBehaviour(ctx context.Context, sandboxID string, relationship string, options *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, nil, fmt.Errorf("sandbox ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("sandbox ID is required")
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointFileBehaviours, sandboxID, relationship, true)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -504,7 +504,7 @@ func (s *Service) GetFileBehaviourHTML(ctx context.Context, sandboxID string) (s
 // https://docs.virustotal.com/reference/get-file-behaviours-evtx
 func (s *Service) GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, nil, fmt.Errorf("sandbox ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/evtx", EndpointFileBehaviours, sandboxID)
@@ -526,7 +526,7 @@ func (s *Service) GetFileBehaviourEVTX(ctx context.Context, sandboxID string) ([
 // https://docs.virustotal.com/reference/get-file-behaviours-pcap
 func (s *Service) GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, nil, fmt.Errorf("sandbox ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/pcap", EndpointFileBehaviours, sandboxID)
@@ -548,7 +548,7 @@ func (s *Service) GetFileBehaviourPCAP(ctx context.Context, sandboxID string) ([
 // https://docs.virustotal.com/reference/get-file-behaviours-memdump
 func (s *Service) GetFileBehaviourMemdump(ctx context.Context, sandboxID string) ([]byte, *interfaces.Response, error) {
 	if sandboxID == "" {
-		return nil, nil, fmt.Errorf("sandbox ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("sandbox ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/memdump", EndpointFileBehaviours, sandboxID)

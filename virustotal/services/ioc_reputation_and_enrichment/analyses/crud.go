@@ -84,7 +84,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/analysis
 func (s *Service) GetAnalysis(ctx context.Context, id string) (*AnalysisResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, nil, fmt.Errorf("analysis ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("analysis ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointAnalyses, id)
@@ -110,16 +110,16 @@ func (s *Service) GetAnalysis(ctx context.Context, id string) (*AnalysisResponse
 // https://docs.virustotal.com/reference/analyses-get-objects
 func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, nil, fmt.Errorf("analysis ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("analysis ID is required")
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	// Use RelationshipBuilder to construct the endpoint for full objects
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointAnalyses, id, relationship, false)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -173,15 +173,15 @@ func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, re
 // https://docs.virustotal.com/reference/analyses-get-descriptors
 func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, nil, fmt.Errorf("analysis ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("analysis ID is required")
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointAnalyses, id, relationship, true)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -233,7 +233,7 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 // https://docs.virustotal.com/reference/get-submission
 func (s *Service) GetSubmission(ctx context.Context, id string) (*SubmissionResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, nil, fmt.Errorf("submission ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("submission ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSubmissions, id)
@@ -257,7 +257,7 @@ func (s *Service) GetSubmission(ctx context.Context, id string) (*SubmissionResp
 // https://docs.virustotal.com/reference/get-operations-id
 func (s *Service) GetOperation(ctx context.Context, id string) (*OperationResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, nil, fmt.Errorf("operation ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("operation ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointOperations, id)

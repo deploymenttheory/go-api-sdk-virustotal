@@ -6,6 +6,14 @@ import (
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 )
 
+// NewEmptyResponse creates an empty response for validation errors
+// Use this when returning errors before making HTTP requests
+func NewEmptyResponse() *interfaces.Response {
+	return &interfaces.Response{
+		Headers: make(http.Header),
+	}
+}
+
 // Response helper functions for working with interfaces.Response
 
 // IsResponseSuccess returns true if the response status code is 2xx

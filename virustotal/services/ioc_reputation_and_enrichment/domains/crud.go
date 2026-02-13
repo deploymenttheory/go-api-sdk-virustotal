@@ -114,7 +114,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/domain-info
 func (s *Service) GetDomainReport(ctx context.Context, domain string) (*DomainResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointDomains, domain)
@@ -138,7 +138,7 @@ func (s *Service) GetDomainReport(ctx context.Context, domain string) (*DomainRe
 // https://docs.virustotal.com/reference/domains-rescan
 func (s *Service) RescanDomain(ctx context.Context, domain string) (*RescanResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointDomains, domain)
@@ -164,7 +164,7 @@ func (s *Service) RescanDomain(ctx context.Context, domain string) (*RescanRespo
 // https://docs.virustotal.com/reference/domains-comments-get
 func (s *Service) GetCommentsOnDomain(ctx context.Context, domain string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointDomains, domain)
@@ -218,10 +218,10 @@ func (s *Service) GetCommentsOnDomain(ctx context.Context, domain string, opts *
 // https://docs.virustotal.com/reference/domains-comments-post
 func (s *Service) AddCommentToDomain(ctx context.Context, domain string, comment string) (*AddCommentResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 	if comment == "" {
-		return nil, nil, fmt.Errorf("comment text is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointDomains, domain)
@@ -256,15 +256,15 @@ func (s *Service) AddCommentToDomain(ctx context.Context, domain string, comment
 // https://docs.virustotal.com/reference/domains-relationships
 func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointDomains, domain, relationship, false)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -318,15 +318,15 @@ func (s *Service) GetObjectsRelatedToDomain(ctx context.Context, domain string, 
 // https://docs.virustotal.com/reference/domains-relationships-ids
 func (s *Service) GetObjectDescriptorsRelatedToDomain(ctx context.Context, domain string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 	if relationship == "" {
-		return nil, nil, fmt.Errorf("relationship is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointDomains, domain, relationship, true)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -378,7 +378,7 @@ func (s *Service) GetObjectDescriptorsRelatedToDomain(ctx context.Context, domai
 // https://docs.virustotal.com/reference/get-resolution-by-id
 func (s *Service) GetDNSResolutionObject(ctx context.Context, id string) (*ResolutionResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, nil, fmt.Errorf("resolution ID is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("resolution ID is required")
 	}
 
 	endpoint := fmt.Sprintf("/resolutions/%s", id)
@@ -404,7 +404,7 @@ func (s *Service) GetDNSResolutionObject(ctx context.Context, id string) (*Resol
 // https://docs.virustotal.com/reference/domains-votes-get
 func (s *Service) GetVotesOnDomain(ctx context.Context, domain string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointDomains, domain)
@@ -458,13 +458,13 @@ func (s *Service) GetVotesOnDomain(ctx context.Context, domain string, opts *Get
 // https://docs.virustotal.com/reference/domain-votes-post
 func (s *Service) AddVoteToDomain(ctx context.Context, domain string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
 	if domain == "" {
-		return nil, nil, fmt.Errorf("domain is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("domain is required")
 	}
 	if verdict == "" {
-		return nil, nil, fmt.Errorf("verdict is required")
+		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
+		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointDomains, domain)
