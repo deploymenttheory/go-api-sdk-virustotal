@@ -120,26 +120,6 @@ apiClient, err := client.NewClient("your-api-key",
 )
 ```
 
-## Testing
-
-### Unit Tests
-```bash
-# Run all unit tests
-go test $(go list ./virustotal/... | grep -v /acceptance) -v
-
-# Run specific service tests
-go test ./virustotal/services/ioc_reputation_and_enrichment/files -v
-```
-
-### Acceptance Tests
-```bash
-# Set API key
-export VT_API_KEY="your-api-key"
-
-# Run acceptance tests (rate-limited: 4 requests/minute)
-go test ./virustotal/acceptance -v -timeout 30m
-```
-
 ## Documentation
 
 - [VirusTotal API v3 Documentation](https://docs.virustotal.com/reference/overview)

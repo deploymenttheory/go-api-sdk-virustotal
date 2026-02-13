@@ -31,33 +31,35 @@ jobs:
           cache: true
           go-version: stable
 
+      - name: Install gotestsum
+        run: go install gotest.tools/gotestsum@latest
+
       - name: Run Acceptance Tests
         env:
           VT_API_KEY: ${{ secrets.VT_API_KEY }}
           VT_VERBOSE: true
+          GOTESTSUM_FORMAT: testname
         run: |
           if [ -z "$VT_API_KEY" ]; then
             echo "::warning::VT_API_KEY secret is not set. Skipping acceptance tests."
             exit 0
           fi
           
+          echo "::group::🧪 VirusTotal Acceptance Tests Setup"
           echo "========================================================================"
           echo "  Running VirusTotal Acceptance Tests"
           echo "========================================================================"
           echo "  Rate limit: 4 requests/minute (16 seconds between tests)"
           echo "  This will take approximately 3-4 minutes to complete"
           echo "========================================================================"
+          echo "::endgroup::"
           echo ""
-          go test -v -timeout 30m ./virustotal/acceptance/...
+          
+          gotestsum \
+            --format testname \
+            --no-color=false \
+            -- -timeout 30m ./virustotal/acceptance/...
 
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: acceptance-test-results
-          path: |
-            coverage.txt
-          retention-days: 7
 
       - name: Comment on Failure
         if: failure() && github.event_name == 'schedule'

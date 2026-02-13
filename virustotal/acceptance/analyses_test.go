@@ -18,7 +18,7 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 
 		service := analyses.NewService(Client)
 
-		LogResponse(t, "Testing GetAnalysis with ID: %s", Config.KnownAnalysisID)
+		LogTestStage(t, "🔍 API Call", "Testing GetAnalysis with ID: %s", Config.KnownAnalysisID)
 
 		result, resp, err := service.GetAnalysis(ctx, Config.KnownAnalysisID)
 		AssertNoError(t, err, "GetAnalysis should not return an error")
@@ -49,9 +49,8 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 		// Validate date field
 		assert.Greater(t, attrs.Date, int64(0), "Analysis date should be a valid timestamp")
 
-		LogResponse(t, "Analysis Status: %s", attrs.Status)
-		LogResponse(t, "Analysis Date: %d", attrs.Date)
-		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d, Timeout: %d",
+		LogTestSuccess(t, "Analysis Status: %s, Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d, Timeout: %d",
+			attrs.Status,
 			attrs.Stats.Malicious,
 			attrs.Stats.Suspicious,
 			attrs.Stats.Harmless,
@@ -70,7 +69,7 @@ func TestAcceptance_Analyses_GetAnalysis_InvalidID(t *testing.T) {
 
 		service := analyses.NewService(Client)
 
-		LogResponse(t, "Testing GetAnalysis with invalid ID")
+		LogTestStage(t, "❌ Error Test", "Testing GetAnalysis with invalid ID")
 
 		result, resp, err := service.GetAnalysis(ctx, "invalid-analysis-id-12345")
 
@@ -80,7 +79,7 @@ func TestAcceptance_Analyses_GetAnalysis_InvalidID(t *testing.T) {
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 
-		LogResponse(t, "Expected error received: %v", err)
+		LogTestSuccess(t, "Expected error received: %v", err)
 	})
 }
 
@@ -94,7 +93,7 @@ func TestAcceptance_Analyses_GetAnalysis_EmptyID(t *testing.T) {
 
 		service := analyses.NewService(Client)
 
-		LogResponse(t, "Testing GetAnalysis with empty ID")
+		LogTestStage(t, "🔒 Validation", "Testing GetAnalysis with empty ID")
 
 		result, resp, err := service.GetAnalysis(ctx, "")
 
@@ -104,7 +103,7 @@ func TestAcceptance_Analyses_GetAnalysis_EmptyID(t *testing.T) {
 		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "analysis ID is required", "Error should mention required ID")
 
-		LogResponse(t, "Validation error received as expected: %v", err)
+		LogTestSuccess(t, "Validation error received as expected: %v", err)
 	})
 }
 
@@ -118,7 +117,7 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 
 		service := analyses.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectsRelatedToAnalysis (item) with analysis ID: %s", Config.KnownAnalysisID)
+		LogTestStage(t, "🔗 Relationships", "Testing GetObjectsRelatedToAnalysis (item) with analysis ID: %s", Config.KnownAnalysisID)
 
 		// Get related item (file or URL that was analyzed)
 		opts := &analyses.GetRelatedObjectsOptions{Limit: 10}
@@ -133,7 +132,7 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 		assert.IsType(t, []analyses.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 
 		objectCount := len(result.Data)
-		LogResponse(t, "Retrieved %d related objects", objectCount)
+		LogTestSuccess(t, "Retrieved %d related objects", objectCount)
 
 		// Should have at least one item (the analyzed file/URL)
 		if objectCount > 0 {
@@ -142,7 +141,7 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 			assert.NotEmpty(t, item.Type, "Item type should not be empty")
 			assert.Contains(t, []string{"file", "url"}, item.Type, "Item type should be file or url")
 
-			LogResponse(t, "Related item - Type: %s, ID: %s", item.Type, item.ID)
+			LogResponse(t, "  Related item - Type: %s, ID: %s", item.Type, item.ID)
 		}
 	})
 }
@@ -157,7 +156,7 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 
 		service := analyses.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectDescriptorsRelatedToAnalysis (item) with analysis ID: %s", Config.KnownAnalysisID)
+		LogTestStage(t, "🔗 Relationships", "Testing GetObjectDescriptorsRelatedToAnalysis (item) with analysis ID: %s", Config.KnownAnalysisID)
 
 		// Get related item descriptors (lightweight IDs only)
 		opts := &analyses.GetRelatedObjectsOptions{Limit: 10}
@@ -172,7 +171,7 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 		assert.IsType(t, []analyses.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
 
 		descriptorCount := len(result.Data)
-		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		LogTestSuccess(t, "Retrieved %d object descriptors", descriptorCount)
 
 		// Should have at least one descriptor
 		if descriptorCount > 0 {
@@ -180,7 +179,7 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.NotEmpty(t, descriptor.Type, "Descriptor type should not be empty")
 
-			LogResponse(t, "Related descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+			LogResponse(t, "  Related descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
 }
@@ -198,7 +197,7 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 
 		// First, scan a URL to get a fresh submission/analysis ID
 		testURL := "https://www.virustotal.com"
-		LogResponse(t, "Scanning URL to obtain submission ID: %s", testURL)
+		LogTestStage(t, "🌐 URL Scan", "Scanning URL to obtain submission ID: %s", testURL)
 
 		scanResult, scanResp, scanErr := urlsService.ScanURL(ctx, testURL)
 		AssertNoError(t, scanErr, "ScanURL should not return an error")
@@ -208,10 +207,10 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 
 		submissionID := scanResult.Data.ID
 		assert.NotEmpty(t, submissionID, "Submission ID should not be empty")
-		LogResponse(t, "Obtained submission ID: %s", submissionID)
+		LogTestSuccess(t, "Obtained submission ID: %s", submissionID)
 
 		// Now test GetSubmission with the fresh ID
-		LogResponse(t, "Testing GetSubmission with submission ID: %s", submissionID)
+		LogTestStage(t, "🔍 API Call", "Testing GetSubmission with submission ID: %s", submissionID)
 
 		result, resp, err := analysesService.GetSubmission(ctx, submissionID)
 		AssertNoError(t, err, "GetSubmission should not return an error")
@@ -229,15 +228,14 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		attrs := result.Data.Attributes
 		assert.Greater(t, attrs.Date, int64(0), "Submission date should be valid timestamp")
 
-		LogResponse(t, "Submission ID: %s", result.Data.ID)
-		LogResponse(t, "Submission Date: %d", attrs.Date)
-
+		LogTestSuccess(t, "Submission ID: %s, Date: %d", result.Data.ID, attrs.Date)
+		
 		// Premium API fields (may be empty for free tier)
 		if attrs.Interface != "" {
-			LogResponse(t, "Submission Interface: %s", attrs.Interface)
+			LogResponse(t, "  Submission Interface: %s", attrs.Interface)
 		}
 		if attrs.Country != "" {
-			LogResponse(t, "Submission Country: %s", attrs.Country)
+			LogResponse(t, "  Submission Country: %s", attrs.Country)
 		}
 	})
 }
@@ -252,7 +250,7 @@ func TestAcceptance_Analyses_GetSubmission_EmptyID(t *testing.T) {
 
 		service := analyses.NewService(Client)
 
-		LogResponse(t, "Testing GetSubmission with empty ID")
+		LogTestStage(t, "🔒 Validation", "Testing GetSubmission with empty ID")
 
 		result, resp, err := service.GetSubmission(ctx, "")
 
@@ -262,6 +260,6 @@ func TestAcceptance_Analyses_GetSubmission_EmptyID(t *testing.T) {
 		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "submission ID is required", "Error should mention required submission ID")
 
-		LogResponse(t, "Validation error received as expected: %v", err)
+		LogTestSuccess(t, "Validation error received as expected: %v", err)
 	})
 }

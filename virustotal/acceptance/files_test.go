@@ -17,7 +17,7 @@ func TestAcceptance_Files_GetFileReport(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetFileReport with hash: %s", Config.KnownFileHash)
+		LogTestStage(t, "📄 File Report", "Testing GetFileReport with hash: %s", Config.KnownFileHash)
 
 		result, resp, err := service.GetFileReport(ctx, Config.KnownFileHash)
 		AssertNoError(t, err, "GetFileReport should not return an error")
@@ -75,7 +75,7 @@ func TestAcceptance_Files_GetFileReport_InvalidHash(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetFileReport with invalid hash")
+		LogTestStage(t, "❌ Error Test", "Testing GetFileReport with invalid hash")
 
 		// Use a non-existent hash
 		result, resp, err := service.GetFileReport(ctx, "0000000000000000000000000000000000000000000000000000000000000000")
@@ -86,7 +86,7 @@ func TestAcceptance_Files_GetFileReport_InvalidHash(t *testing.T) {
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for non-existent hash")
 
-		LogResponse(t, "Expected error received: %v", err)
+		LogTestSuccess(t, "Expected error received: %v", err)
 	})
 }
 
@@ -100,7 +100,7 @@ func TestAcceptance_Files_GetFileReport_EmptyHash(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetFileReport with empty hash")
+		LogTestStage(t, "🔒 Validation", "Testing GetFileReport with empty hash")
 
 		result, resp, err := service.GetFileReport(ctx, "")
 
@@ -110,7 +110,7 @@ func TestAcceptance_Files_GetFileReport_EmptyHash(t *testing.T) {
 		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "file ID is required", "Error should mention required file ID")
 
-		LogResponse(t, "Validation error received as expected: %v", err)
+		LogTestSuccess(t, "Validation error received as expected: %v", err)
 	})
 }
 
@@ -124,7 +124,7 @@ func TestAcceptance_Files_GetUploadURL(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetUploadURL")
+		LogTestStage(t, "⬆️  Upload", "Testing GetUploadURL")
 
 		result, resp, err := service.GetUploadURL(ctx)
 		AssertNoError(t, err, "GetUploadURL should not return an error")
@@ -137,7 +137,7 @@ func TestAcceptance_Files_GetUploadURL(t *testing.T) {
 		assert.Contains(t, result.Data, "https://", "Upload URL should be HTTPS")
 		assert.Contains(t, result.Data, "virustotal.com", "Upload URL should be VirusTotal domain")
 
-		LogResponse(t, "Upload URL retrieved successfully: %s", result.Data)
+		LogTestSuccess(t, "Upload URL retrieved successfully")
 	})
 }
 
@@ -151,13 +151,13 @@ func TestAcceptance_Files_GetFileDownloadURL(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetFileDownloadURL with hash: %s", Config.KnownFileHash)
+		LogTestStage(t, "⬇️  Download", "Testing GetFileDownloadURL with hash: %s", Config.KnownFileHash)
 
 		result, resp, err := service.GetFileDownloadURL(ctx, Config.KnownFileHash)
 		
 		// File download requires premium/enterprise API key
 		if err != nil && resp != nil && resp.StatusCode == 403 {
-			LogResponse(t, "GetFileDownloadURL requires premium API key (403 Forbidden) - test passed")
+			LogTestWarning(t, "GetFileDownloadURL requires premium API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetFileDownloadURL test - requires premium/enterprise API key")
 			return
 		}
@@ -185,7 +185,7 @@ func TestAcceptance_Files_GetCommentsOnFile(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetCommentsOnFile with hash: %s", Config.KnownFileHash)
+		LogTestStage(t, "💬 Comments", "Testing GetCommentsOnFile with hash: %s", Config.KnownFileHash)
 
 		// Get comments with limit
 		opts := &files.GetRelatedObjectsOptions{Limit: 10}
@@ -200,7 +200,7 @@ func TestAcceptance_Files_GetCommentsOnFile(t *testing.T) {
 		assert.IsType(t, []files.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		commentCount := len(result.Data)
-		LogResponse(t, "Retrieved %d comments", commentCount)
+		LogTestSuccess(t, "Retrieved %d comments", commentCount)
 		
 		// If comments exist, validate structure
 		if commentCount > 0 {
@@ -228,7 +228,7 @@ func TestAcceptance_Files_GetObjectsRelatedToFile(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectsRelatedToFile (execution_parents) with hash: %s", Config.KnownFileHash)
+		LogTestStage(t, "🔗 Relationships", "Testing GetObjectsRelatedToFile (execution_parents) with hash: %s", Config.KnownFileHash)
 
 		// Get execution parents with limit
 		opts := &files.GetRelatedObjectsOptions{Limit: 10}
@@ -243,7 +243,7 @@ func TestAcceptance_Files_GetObjectsRelatedToFile(t *testing.T) {
 		assert.IsType(t, []files.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		objectCount := len(result.Data)
-		LogResponse(t, "Retrieved %d related objects", objectCount)
+		LogTestSuccess(t, "Retrieved %d related objects", objectCount)
 		
 		// If related objects exist, validate structure
 		if objectCount > 0 {
@@ -265,7 +265,7 @@ func TestAcceptance_Files_GetObjectDescriptorsRelatedToFile(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectDescriptorsRelatedToFile (execution_parents) with hash: %s", Config.KnownFileHash)
+		LogTestStage(t, "🔗 Descriptors", "Testing GetObjectDescriptorsRelatedToFile (execution_parents) with hash: %s", Config.KnownFileHash)
 
 		// Get execution parent descriptors with limit
 		opts := &files.GetRelatedObjectsOptions{Limit: 10}
@@ -280,7 +280,7 @@ func TestAcceptance_Files_GetObjectDescriptorsRelatedToFile(t *testing.T) {
 		assert.IsType(t, []files.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
 		
 		descriptorCount := len(result.Data)
-		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		LogTestSuccess(t, "Retrieved %d object descriptors", descriptorCount)
 		
 		// If descriptors exist, validate structure
 		if descriptorCount > 0 {
@@ -302,7 +302,7 @@ func TestAcceptance_Files_GetVotesOnFile(t *testing.T) {
 
 		service := files.NewService(Client)
 
-		LogResponse(t, "Testing GetVotesOnFile with hash: %s", Config.KnownFileHash)
+		LogTestStage(t, "🗳️  Votes", "Testing GetVotesOnFile with hash: %s", Config.KnownFileHash)
 
 		// Get votes with limit
 		opts := &files.GetVotesOptions{Limit: 10}
@@ -317,7 +317,7 @@ func TestAcceptance_Files_GetVotesOnFile(t *testing.T) {
 		assert.IsType(t, []files.Vote{}, result.Data, "Data should be slice of Vote")
 		
 		voteCount := len(result.Data)
-		LogResponse(t, "Retrieved %d votes", voteCount)
+		LogTestSuccess(t, "Retrieved %d votes", voteCount)
 		
 		// If votes exist, validate structure
 		if voteCount > 0 {
