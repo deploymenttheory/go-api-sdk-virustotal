@@ -201,7 +201,7 @@ func WithMinTLSVersion(minVersion uint16) ClientOption {
 			MinVersion: minVersion,
 		}
 		c.client.SetTLSClientConfig(tlsConfig)
-		
+
 		versionName := "unknown"
 		switch minVersion {
 		case tls.VersionTLS10:
@@ -213,10 +213,40 @@ func WithMinTLSVersion(minVersion uint16) ClientOption {
 		case tls.VersionTLS13:
 			versionName = "TLS 1.3"
 		}
-		
+
 		c.logger.Info("Minimum TLS version configured",
 			zap.String("version", versionName),
 			zap.Uint16("version_code", minVersion))
 		return nil
+	}
+}
+
+// WithTracing enables OpenTelemetry tracing for all HTTP requests.
+// This wraps the HTTP client transport with automatic instrumentation.
+//
+// Example usage:
+//
+//	client, err := client.NewClient(apiKey,
+//	    client.WithTracing(nil), // Uses default config with global tracer provider
+//	)
+//
+// Or with custom configuration:
+//
+//	otelConfig := &client.OTelConfig{
+//	    TracerProvider: myTracerProvider,
+//	    ServiceName:    "my-virustotal-client",
+//	}
+//	client, err := client.NewClient(apiKey,
+//	    client.WithTracing(otelConfig),
+//	)
+//
+// The instrumentation automatically captures:
+// - HTTP method, URL, status code
+// - Request/response timing
+// - Error details
+// - All OpenTelemetry semantic conventions for HTTP
+func WithTracing(config *OTelConfig) ClientOption {
+	return func(c *Client) error {
+		return c.EnableTracing(config)
 	}
 }

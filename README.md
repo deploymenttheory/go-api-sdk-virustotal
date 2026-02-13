@@ -13,16 +13,31 @@ A comprehensive Go client library for the [VirusTotal API v3](https://docs.virus
 
 ## Features
 
-- **Complete API Coverage**: Support for Files, URLs, Domains, IP Addresses, Analyses, and more
-- **Type-Safe**: Strongly typed request/response models
-- **Pagination Support**: Automatic and manual pagination for list endpoints
-- **Error Handling**: Comprehensive error types with detailed API error information
-- **Response Metadata**: Access to HTTP status codes, headers, response timing, and body size
-- **File Upload**: Support for multipart file uploads with progress callbacks
-- **Context Support**: Context-aware operations for timeouts and cancellation
-- **Rate Limiting**: Built-in respect for API rate limits
-- **Structured Logging**: Integration with zap for structured logging
-- **Testing**: Comprehensive unit tests with httpmock and acceptance tests
+### HTTP Client Configuration
+
+The SDK includes a powerful HTTP client with production-ready configuration options:
+
+- **[Authentication](docs/guides/authentication.md)** - Secure API key management
+- **[Timeouts & Retries](docs/guides/timeouts-retries.md)** - Configurable timeouts and automatic retry logic
+- **[TLS/SSL Configuration](docs/guides/tls-configuration.md)** - Custom certificates, mutual TLS, and security settings
+- **[Proxy Support](docs/guides/proxy.md)** - HTTP/HTTPS/SOCKS5 proxy configuration
+- **[Custom Headers](docs/guides/custom-headers.md)** - Global and per-request header management
+- **[Structured Logging](docs/guides/logging.md)** - Integration with zap for production logging
+- **[OpenTelemetry Tracing](docs/guides/opentelemetry.md)** - Distributed tracing and observability
+- **[Debug Mode](docs/guides/debugging.md)** - Detailed request/response inspection
+
+### SDK Capabilities
+
+High-level features for working with the VirusTotal API:
+
+- **Complete API Coverage** - Support for Files, URLs, Domains, IP Addresses, Analyses, and more
+- **Type Safety** - Strongly typed request/response models
+- **Pagination** - Automatic and manual pagination for list endpoints
+- **Error Handling** - Comprehensive error types with detailed API information
+- **Response Metadata** - Access to HTTP status codes, headers, timing, and body size
+- **File Upload** - Support for multipart file uploads with progress callbacks
+- **Context Support** - Context-aware operations for timeouts and cancellation
+- **Rate Limiting** - Built-in respect for API rate limits
 
 ## Installation
 
