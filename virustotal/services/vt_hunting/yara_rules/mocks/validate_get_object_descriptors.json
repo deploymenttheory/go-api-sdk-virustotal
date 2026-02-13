@@ -1,0 +1,20 @@
+{
+	"data": [
+		{
+			"type": "file",
+			"id": "ecc0f2aa29b102bf8d67b7d7173e8698c0341ddfdf9757be17595460fbf1791a",
+			"links": {
+				"self": "https://www.virustotal.com/api/v3/files/ecc0f2aa29b102bf8d67b7d7173e8698c0341ddfdf9757be17595460fbf1791a"
+			},
+			"context_attributes": {
+				"match_date": 1683185194
+			}
+		}
+	],
+	"links": {
+		"self": "https://www.virustotal.com/api/v3/yara_rules/003e1c51ef|PK_AXA_fun/relationships/files"
+	},
+	"meta": {
+		"count": 1
+	}
+}

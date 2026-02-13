@@ -16,6 +16,7 @@ import (
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_enterprise/collections"
 	searchandmetadata "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_enterprise/search_and_metadata"
+	yararules "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_hunting/yara_rules"
 )
 
 // Client is the main entry point for the VirusTotal API SDK
@@ -37,6 +38,9 @@ type Client struct {
 	// VT Enterprise Services
 	Collections       *collections.Service
 	SearchAndMetadata *searchandmetadata.Service
+
+	// VT Hunting Services
+	YaraRules *yararules.Service
 }
 
 // NewClient creates a new VirusTotal API client
@@ -72,6 +76,7 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 		URLs:                    urls.NewService(httpClient),
 		Collections:             collections.NewService(httpClient),
 		SearchAndMetadata:       searchandmetadata.NewService(httpClient),
+		YaraRules:               yararules.NewService(httpClient),
 	}
 
 	return c, nil

@@ -1,0 +1,25 @@
+{
+	"data": [
+		{
+			"type": "file",
+			"id": "ecc0f2aa29b102bf8d67b7d7173e8698c0341ddfdf9757be17595460fbf1791a",
+			"links": {
+				"self": "https://www.virustotal.com/api/v3/files/ecc0f2aa29b102bf8d67b7d7173e8698c0341ddfdf9757be17595460fbf1791a"
+			},
+			"attributes": {
+				"md5": "5eb63bbbe01eeed093cb22bb8f5acdc3",
+				"sha1": "2aae6c35c94fcfb415dbe95f408b9ce91ee846ed",
+				"sha256": "ecc0f2aa29b102bf8d67b7d7173e8698c0341ddfdf9757be17595460fbf1791a",
+				"size": 1024,
+				"type_description": "ZIP",
+				"type_tag": "archive"
+			}
+		}
+	],
+	"links": {
+		"self": "https://www.virustotal.com/api/v3/yara_rules/003e1c51ef|PK_AXA_fun/files"
+	},
+	"meta": {
+		"count": 1
+	}
+}
