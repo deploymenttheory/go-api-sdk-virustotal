@@ -1,11 +1,139 @@
 package acceptance
 
 import (
+	"bytes"
+	"crypto/rand"
 	"testing"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
 	"github.com/stretchr/testify/assert"
 )
+
+// =============================================================================
+// UploadFile Tests
+// =============================================================================
+
+// TestAcceptance_Files_UploadFile_SmallFile tests uploading a file smaller than 32MB
+func TestAcceptance_Files_UploadFile_SmallFile(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := files.NewService(Client)
+
+		LogTestStage(t, "⬆️  Upload Small File", "Testing UploadFile with file < 32MB")
+
+		// Create a small test file (1MB of random data)
+		fileSize := int64(1 * 1024 * 1024) // 1MB
+		fileData := make([]byte, fileSize)
+		_, err := rand.Read(fileData)
+		if err != nil {
+			t.Fatalf("Failed to generate test file data: %v", err)
+		}
+
+		fileReader := bytes.NewReader(fileData)
+
+		request := &files.UploadFileRequest{
+			File:     fileReader,
+			Filename: "test_small_file.bin",
+			FileSize: fileSize,
+		}
+
+		result, resp, err := service.UploadFile(ctx, request)
+		
+		// Check for quota exceeded
+		if err != nil && resp != nil && resp.StatusCode == 429 {
+			LogTestWarning(t, "API quota exceeded (429) - test skipped")
+			t.Skip("Skipping test - API quota exceeded")
+		}
+
+		AssertNoError(t, err, "UploadFile should not return an error")
+		AssertNotNil(t, result, "UploadFile result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Upload data should not be nil")
+		assert.Equal(t, "analysis", result.Data.Type, "Response type should be 'analysis'")
+		assert.NotEmpty(t, result.Data.ID, "Analysis ID should not be empty")
+
+		LogTestSuccess(t, "Small file uploaded successfully")
+		LogTestSuccess(t, "Analysis ID: %s", result.Data.ID)
+		LogTestSuccess(t, "File size: %d bytes (< 32MB, used direct /files endpoint)", fileSize)
+	})
+}
+
+// TestAcceptance_Files_UploadFile_LargeFile tests uploading a file larger than 32MB
+func TestAcceptance_Files_UploadFile_LargeFile(t *testing.T) {
+	RequireClient(t)
+
+	RateLimitedTest(t, func(t *testing.T) {
+		ctx, cancel := NewContext()
+		defer cancel()
+
+		service := files.NewService(Client)
+
+		LogTestStage(t, "⬆️  Upload Large File", "Testing UploadFile with file > 32MB")
+
+		// Create a large test file (33MB of random data, slightly over 32MB limit)
+		fileSize := int64(33 * 1024 * 1024) // 33MB
+		fileData := make([]byte, fileSize)
+		_, err := rand.Read(fileData)
+		if err != nil {
+			t.Fatalf("Failed to generate test file data: %v", err)
+		}
+
+		fileReader := bytes.NewReader(fileData)
+
+		// Track progress with callback
+		var lastProgress float32
+		progressCallback := func(fieldName string, fileName string, bytesWritten int64, totalBytes int64) {
+			if totalBytes > 0 {
+				progress := float32(bytesWritten) / float32(totalBytes) * 100
+				// Log progress at 25%, 50%, 75%, and 100%
+				if progress >= lastProgress+25 || progress >= 99.9 {
+					t.Logf("Upload progress: %.2f%% (%d/%d bytes)", progress, bytesWritten, totalBytes)
+					lastProgress = progress
+				}
+			}
+		}
+
+		request := &files.UploadFileRequest{
+			File:             fileReader,
+			Filename:         "test_large_file.bin",
+			FileSize:         fileSize,
+			ProgressCallback: progressCallback,
+		}
+
+		result, resp, err := service.UploadFile(ctx, request)
+		
+		// Check for quota exceeded
+		if err != nil && resp != nil && resp.StatusCode == 429 {
+			LogTestWarning(t, "API quota exceeded (429) - test skipped")
+			t.Skip("Skipping test - API quota exceeded")
+		}
+
+		AssertNoError(t, err, "UploadFile should not return an error")
+		AssertNotNil(t, result, "UploadFile result should not be nil")
+		AssertNotNil(t, resp, "Response should not be nil")
+		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+
+		// Validate response structure
+		assert.NotNil(t, result.Data, "Upload data should not be nil")
+		assert.Equal(t, "analysis", result.Data.Type, "Response type should be 'analysis'")
+		assert.NotEmpty(t, result.Data.ID, "Analysis ID should not be empty")
+
+		LogTestSuccess(t, "Large file uploaded successfully")
+		LogTestSuccess(t, "Analysis ID: %s", result.Data.ID)
+		LogTestSuccess(t, "File size: %d bytes (> 32MB, used /files/upload_url endpoint)", fileSize)
+	})
+}
+
+// =============================================================================
+// GetFileReport Tests
+// =============================================================================
 
 // TestAcceptance_Files_GetFileReport tests retrieving file information by hash
 func TestAcceptance_Files_GetFileReport(t *testing.T) {
