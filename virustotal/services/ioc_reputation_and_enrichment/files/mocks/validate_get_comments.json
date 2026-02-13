@@ -19,8 +19,7 @@
     }
   ],
   "links": {
-    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/comments",
-    "next": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/comments?cursor=abc123"
+    "self": "https://www.virustotal.com/api/v3/files/44d88612fea8a8f36de82e1278abb02f/comments"
   },
   "meta": {
     "count": 1,

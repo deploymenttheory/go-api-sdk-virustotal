@@ -13,7 +13,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// setupMockClient creates a test client and activates httpmock
+// setupMockClient creates a test client with httpmock activated globally
 func setupMockClient(t *testing.T) *Service {
 	t.Helper()
 
@@ -23,15 +23,16 @@ func setupMockClient(t *testing.T) *Service {
 	// Create base URL for testing
 	baseURL := "https://www.virustotal.com/api/v3"
 
-	// Create HTTP client
+	// Create HTTP client first
 	apiClient, err := client.NewClient("test-api-key",
 		client.WithLogger(logger),
 		client.WithBaseURL(baseURL),
 	)
 	require.NoError(t, err)
 
-	// Activate httpmock
-	httpmock.ActivateNonDefault(apiClient.GetHTTPClient().Client())
+	// Now activate httpmock on the resty client's underlying HTTP client
+	restyClient := apiClient.GetHTTPClient()
+	httpmock.ActivateNonDefault(restyClient.Client())
 
 	// Setup cleanup
 	t.Cleanup(func() {
