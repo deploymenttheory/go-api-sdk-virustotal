@@ -53,15 +53,13 @@ func TestAcceptance_Files_GetFileReport(t *testing.T) {
 		// Validate reputation and vote counts
 		assert.NotNil(t, attrs.TotalVotes, "Total votes should not be nil")
 
-		LogResponse(t, "File Hashes - MD5: %s, SHA1: %s, SHA256: %s", attrs.MD5, attrs.SHA1, attrs.SHA256)
-		LogResponse(t, "File Size: %d bytes", attrs.Size)
-		LogResponse(t, "Last Analysis Date: %d", attrs.LastAnalysisDate)
-		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
+		LogTestSuccess(t, "File SHA256: %s, Size: %d bytes", attrs.SHA256, attrs.Size)
+		LogTestSuccess(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
 			attrs.LastAnalysisStats.Malicious,
 			attrs.LastAnalysisStats.Suspicious,
 			attrs.LastAnalysisStats.Harmless,
 			attrs.LastAnalysisStats.Undetected)
-		LogResponse(t, "Total Votes - Harmless: %d, Malicious: %d", attrs.TotalVotes.Harmless, attrs.TotalVotes.Malicious)
+		LogTestSuccess(t, "Total Votes - Harmless: %d, Malicious: %d", attrs.TotalVotes.Harmless, attrs.TotalVotes.Malicious)
 	})
 }
 
@@ -171,7 +169,7 @@ func TestAcceptance_Files_GetFileDownloadURL(t *testing.T) {
 		assert.NotEmpty(t, result.Data, "Download URL should not be empty")
 		assert.Contains(t, result.Data, "https://", "Download URL should be HTTPS")
 
-		LogResponse(t, "Download URL retrieved successfully")
+		LogTestSuccess(t, "Download URL retrieved successfully")
 	})
 }
 
@@ -212,7 +210,7 @@ func TestAcceptance_Files_GetCommentsOnFile(t *testing.T) {
 			// Access attributes from map
 			if date, ok := comment.Attributes["date"].(float64); ok {
 				assert.Greater(t, date, float64(0), "Comment date should be valid")
-				LogResponse(t, "First comment - Date: %.0f", date)
+				t.Logf("  First comment - Date: %.0f", date)
 			}
 		}
 	})
@@ -250,7 +248,7 @@ func TestAcceptance_Files_GetObjectsRelatedToFile(t *testing.T) {
 			obj := result.Data[0]
 			assert.NotEmpty(t, obj.ID, "Object ID should not be empty")
 			assert.NotEmpty(t, obj.Type, "Object type should not be empty")
-			LogResponse(t, "First related object - Type: %s, ID: %s", obj.Type, obj.ID)
+			t.Logf("  First related object - Type: %s, ID: %s", obj.Type, obj.ID)
 		}
 	})
 }
@@ -287,7 +285,7 @@ func TestAcceptance_Files_GetObjectDescriptorsRelatedToFile(t *testing.T) {
 			descriptor := result.Data[0]
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.NotEmpty(t, descriptor.Type, "Descriptor type should not be empty")
-			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+			t.Logf("  First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
 }
@@ -328,7 +326,7 @@ func TestAcceptance_Files_GetVotesOnFile(t *testing.T) {
 			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
 			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
 			
-			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+			t.Logf("  First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
 		}
 	})
 }

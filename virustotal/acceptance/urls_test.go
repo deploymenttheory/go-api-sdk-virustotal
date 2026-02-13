@@ -55,20 +55,17 @@ func TestAcceptance_URLs_GetURLReport(t *testing.T) {
 		// Validate times submitted
 		assert.Greater(t, attrs.TimesSubmitted, 0, "Times submitted should be greater than 0 for known URL")
 
-		LogResponse(t, "URL: %s", attrs.URL)
-		LogResponse(t, "Reputation: %d", attrs.Reputation)
-		LogResponse(t, "Times Submitted: %d", attrs.TimesSubmitted)
-		LogResponse(t, "Last Analysis Date: %d", attrs.LastAnalysisDate)
-		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
+		LogTestSuccess(t, "URL: %s, Reputation: %d, Times Submitted: %d", attrs.URL, attrs.Reputation, attrs.TimesSubmitted)
+		LogTestSuccess(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
 			attrs.LastAnalysisStats.Malicious,
 			attrs.LastAnalysisStats.Suspicious,
 			attrs.LastAnalysisStats.Harmless,
 			attrs.LastAnalysisStats.Undetected)
-		LogResponse(t, "Total Votes - Harmless: %d, Malicious: %d", attrs.TotalVotes.Harmless, attrs.TotalVotes.Malicious)
+		LogTestSuccess(t, "Total Votes - Harmless: %d, Malicious: %d", attrs.TotalVotes.Harmless, attrs.TotalVotes.Malicious)
 		
 		// Log categories if present
 		if len(attrs.Categories) > 0 {
-			LogResponse(t, "Categories: %v", attrs.Categories)
+			LogTestSuccess(t, "Categories: %v", attrs.Categories)
 		}
 	})
 }
@@ -174,6 +171,13 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 		// Get contacted domains with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
 		result, resp, err := service.GetObjectsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
+		
+		// Check for 403 Forbidden (premium feature)
+		if err != nil && resp != nil && resp.StatusCode == 403 {
+			LogTestWarning(t, "GetObjectsRelatedToURL requires premium API key (403 Forbidden) - test skipped")
+			t.Skip("Skipping GetObjectsRelatedToURL test - requires premium/enterprise API key")
+		}
+		
 		AssertNoError(t, err, "GetObjectsRelatedToURL should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -191,7 +195,7 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 			obj := result.Data[0]
 			assert.NotEmpty(t, obj.ID, "Object ID should not be empty")
 			assert.Equal(t, "domain", obj.Type, "Object type should be 'domain'")
-			LogResponse(t, "First related domain - ID: %s", obj.ID)
+			t.Logf("  First related domain - ID: %s", obj.ID)
 		}
 	})
 }
@@ -211,6 +215,13 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 		// Get contacted domain descriptors with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
 		result, resp, err := service.GetObjectDescriptorsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
+		
+		// Check for 403 Forbidden (premium feature)
+		if err != nil && resp != nil && resp.StatusCode == 403 {
+			LogTestWarning(t, "GetObjectDescriptorsRelatedToURL requires premium API key (403 Forbidden) - test skipped")
+			t.Skip("Skipping GetObjectDescriptorsRelatedToURL test - requires premium/enterprise API key")
+		}
+		
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToURL should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -228,7 +239,7 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 			descriptor := result.Data[0]
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.Equal(t, "domain", descriptor.Type, "Descriptor type should be 'domain'")
-			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+			t.Logf("  First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
 }
@@ -269,7 +280,7 @@ func TestAcceptance_URLs_GetVotesOnURL(t *testing.T) {
 			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
 			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
 			
-			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+			t.Logf("  First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
 		}
 	})
 }

@@ -141,7 +141,7 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 			assert.NotEmpty(t, item.Type, "Item type should not be empty")
 			assert.Contains(t, []string{"file", "url"}, item.Type, "Item type should be file or url")
 
-			LogResponse(t, "  Related item - Type: %s, ID: %s", item.Type, item.ID)
+			t.Logf("  Related item - Type: %s, ID: %s", item.Type, item.ID)
 		}
 	})
 }
@@ -179,7 +179,7 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.NotEmpty(t, descriptor.Type, "Descriptor type should not be empty")
 
-			LogResponse(t, "  Related descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+			t.Logf("  Related descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
 }
@@ -196,7 +196,7 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		urlsService := urls.NewService(Client)
 
 		// First, scan a URL to get a fresh submission/analysis ID
-		testURL := "https://www.virustotal.com"
+		testURL := "http://www.example.com"
 		LogTestStage(t, "🌐 URL Scan", "Scanning URL to obtain submission ID: %s", testURL)
 
 		scanResult, scanResp, scanErr := urlsService.ScanURL(ctx, testURL)
@@ -232,10 +232,10 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		
 		// Premium API fields (may be empty for free tier)
 		if attrs.Interface != "" {
-			LogResponse(t, "  Submission Interface: %s", attrs.Interface)
+			t.Logf("  Submission Interface: %s", attrs.Interface)
 		}
 		if attrs.Country != "" {
-			LogResponse(t, "  Submission Country: %s", attrs.Country)
+			t.Logf("  Submission Country: %s", attrs.Country)
 		}
 	})
 }

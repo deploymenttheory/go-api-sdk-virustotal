@@ -149,9 +149,9 @@ type RelatedThreatActorsContextAttributes struct {
 
 // RelatedFromObject represents the source object for a relationship
 type RelatedFromObject struct {
-	Type       string                 `json:"type"`
-	ID         string                 `json:"id"`
-	Attributes map[string]interface{} `json:"attributes,omitempty"`
+	Type       string         `json:"type"`
+	ID         string         `json:"id"`
+	Attributes map[string]any `json:"attributes,omitempty"`
 }
 
 // URLsRelatedByTrackerIDContextAttributes represents context attributes for urls_related_by_tracker_id relationship

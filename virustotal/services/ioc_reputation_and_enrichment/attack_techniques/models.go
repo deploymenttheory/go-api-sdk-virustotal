@@ -16,19 +16,19 @@ type AttackTechnique struct {
 	ID            string                    `json:"id"`
 	Attributes    AttackTechniqueAttributes `json:"attributes"`
 	Links         Links                     `json:"links,omitempty"`
-	Relationships map[string]interface{}    `json:"relationships,omitempty"`
+	Relationships map[string]any            `json:"relationships,omitempty"`
 }
 
 // AttackTechniqueAttributes contains the attributes of an attack technique
 type AttackTechniqueAttributes struct {
-	CreationDate         int64                  `json:"creation_date"`
-	Description          string                 `json:"description"`
-	Info                 map[string]interface{} `json:"info,omitempty"`
-	LastModificationDate int64                  `json:"last_modification_date"`
-	Link                 string                 `json:"link"`
-	Name                 string                 `json:"name"`
-	Revoked              bool                   `json:"revoked"`
-	StixID               string                 `json:"stix_id"`
+	CreationDate         int64          `json:"creation_date"`
+	Description          string         `json:"description"`
+	Info                 map[string]any `json:"info,omitempty"`
+	LastModificationDate int64          `json:"last_modification_date"`
+	Link                 string         `json:"link"`
+	Name                 string         `json:"name"`
+	Revoked              bool           `json:"revoked"`
+	StixID               string         `json:"stix_id"`
 }
 
 // Links represents the links section of an object

@@ -52,17 +52,15 @@ func TestAcceptance_Domains_GetDomainReport(t *testing.T) {
 			assert.NotEmpty(t, attrs.Categories, "Categories should not be empty for well-known domain")
 		}
 
-		LogResponse(t, "Domain: %s", Config.KnownDomain)
-		LogResponse(t, "Reputation: %d", attrs.Reputation)
-		LogResponse(t, "Last Analysis Date: %d", attrs.LastAnalysisDate)
-		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
+		LogTestSuccess(t, "Domain: %s, Reputation: %d", Config.KnownDomain, attrs.Reputation)
+		LogTestSuccess(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
 			attrs.LastAnalysisStats.Malicious,
 			attrs.LastAnalysisStats.Suspicious,
 			attrs.LastAnalysisStats.Harmless,
 			attrs.LastAnalysisStats.Undetected)
 		
 		if len(attrs.Categories) > 0 {
-			LogResponse(t, "Categories: %v", attrs.Categories)
+			LogTestSuccess(t, "Categories: %v", attrs.Categories)
 		}
 	})
 }
@@ -149,7 +147,7 @@ func TestAcceptance_Domains_GetCommentsOnDomain(t *testing.T) {
 			assert.NotEmpty(t, comment.ID, "Comment ID should not be empty")
 			assert.Equal(t, "comment", comment.Type, "Comment type should be 'comment'")
 			if comment.Attributes != nil {
-				LogResponse(t, "First comment date: %v", comment.Attributes)
+				t.Logf("  First comment date: %v", comment.Attributes)
 			}
 		}
 	})
@@ -165,7 +163,7 @@ func TestAcceptance_Domains_GetObjectsRelatedToDomain(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectsRelatedToDomain (resolutions) with domain: %s", Config.KnownDomain)
+		LogTestStage(t, "🔗 Relationships", "Testing GetObjectsRelatedToDomain (resolutions) with domain: %s", Config.KnownDomain)
 
 		// Get DNS resolutions with limit
 		opts := &domains.GetRelatedObjectsOptions{Limit: 10}
@@ -190,7 +188,7 @@ func TestAcceptance_Domains_GetObjectsRelatedToDomain(t *testing.T) {
 				resolution := result.Data[0]
 				assert.NotEmpty(t, resolution.ID, "Resolution ID should not be empty")
 				assert.Equal(t, "resolution", resolution.Type, "Resolution type should be 'resolution'")
-				LogResponse(t, "First resolution ID: %s", resolution.ID)
+				t.Logf("  First resolution ID: %s", resolution.ID)
 			}
 		}
 	})
@@ -206,7 +204,7 @@ func TestAcceptance_Domains_GetObjectDescriptorsRelatedToDomain(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectDescriptorsRelatedToDomain (resolutions) with domain: %s", Config.KnownDomain)
+		LogTestStage(t, "🔗 Descriptors", "Testing GetObjectDescriptorsRelatedToDomain (resolutions) with domain: %s", Config.KnownDomain)
 
 		// Get DNS resolution descriptors with limit
 		opts := &domains.GetRelatedObjectsOptions{Limit: 10}
@@ -228,7 +226,7 @@ func TestAcceptance_Domains_GetObjectDescriptorsRelatedToDomain(t *testing.T) {
 			descriptor := result.Data[0]
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.Equal(t, "resolution", descriptor.Type, "Descriptor type should be 'resolution'")
-			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+			t.Logf("  First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
 }
@@ -243,7 +241,7 @@ func TestAcceptance_Domains_GetVotesOnDomain(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetVotesOnDomain with domain: %s", Config.KnownDomain)
+		LogTestStage(t, "🗳️ Votes", "Testing GetVotesOnDomain with domain: %s", Config.KnownDomain)
 
 		// Get votes with limit
 		opts := &domains.GetVotesOptions{Limit: 10}
@@ -269,7 +267,7 @@ func TestAcceptance_Domains_GetVotesOnDomain(t *testing.T) {
 			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
 			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
 			
-			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+			t.Logf("  First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
 		}
 	})
 }
