@@ -151,10 +151,10 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/files-scan
 func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*UploadFileResponse, *interfaces.Response, error) {
 	if request == nil || request.File == nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file is required")
+		return nil, nil, fmt.Errorf("file is required")
 	}
 	if request.Filename == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("filename is required")
+		return nil, nil, fmt.Errorf("filename is required")
 	}
 
 	endpoint := EndpointFiles
@@ -204,7 +204,7 @@ func (s *Service) GetUploadURL(ctx context.Context) (*UploadURLResponse, *interf
 // https://docs.virustotal.com/reference/file-info
 func (s *Service) GetFileReport(ctx context.Context, id string) (*FileResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointFiles, id)
@@ -228,7 +228,7 @@ func (s *Service) GetFileReport(ctx context.Context, id string) (*FileResponse, 
 // https://docs.virustotal.com/reference/files-analyse
 func (s *Service) RescanFile(ctx context.Context, id string) (*RescanResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointFiles, id)
@@ -252,7 +252,7 @@ func (s *Service) RescanFile(ctx context.Context, id string) (*RescanResponse, *
 // https://docs.virustotal.com/reference/files-download-url
 func (s *Service) GetFileDownloadURL(ctx context.Context, id string) (*DownloadURLResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/download_url", EndpointFiles, id)
@@ -276,7 +276,7 @@ func (s *Service) GetFileDownloadURL(ctx context.Context, id string) (*DownloadU
 // https://docs.virustotal.com/reference/files-download
 func (s *Service) DownloadFile(ctx context.Context, id string) (*DownloadURLResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/download", EndpointFiles, id)
@@ -302,7 +302,7 @@ func (s *Service) DownloadFile(ctx context.Context, id string) (*DownloadURLResp
 // https://docs.virustotal.com/reference/files-comments-get
 func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointFiles, id)
@@ -356,10 +356,10 @@ func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRel
 // https://docs.virustotal.com/reference/files-comments-post
 func (s *Service) AddCommentToFile(ctx context.Context, id string, comment string) (*AddCommentResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 	if comment == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("comment text is required")
+		return nil, nil, fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointFiles, id)
@@ -394,15 +394,15 @@ func (s *Service) AddCommentToFile(ctx context.Context, id string, comment strin
 // https://docs.virustotal.com/reference/files-relationships
 func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointFiles, id, relationship, false)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -456,15 +456,15 @@ func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relati
 // https://docs.virustotal.com/reference/files-relationships-ids
 func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointFiles, id, relationship, true)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -516,7 +516,7 @@ func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id stri
 // https://docs.virustotal.com/reference/get-sigma-rules
 func (s *Service) GetSigmaRule(ctx context.Context, id string) (*SigmaRuleResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("sigma rule ID is required")
+		return nil, nil, fmt.Errorf("sigma rule ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSigmaRules, id)
@@ -540,7 +540,7 @@ func (s *Service) GetSigmaRule(ctx context.Context, id string) (*SigmaRuleRespon
 // https://docs.virustotal.com/reference/get-yara-rulesets
 func (s *Service) GetYARARuleset(ctx context.Context, id string) (*YARARulesetResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("YARA ruleset ID is required")
+		return nil, nil, fmt.Errorf("YARA ruleset ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointYARARulesets, id)
@@ -566,7 +566,7 @@ func (s *Service) GetYARARuleset(ctx context.Context, id string) (*YARARulesetRe
 // https://docs.virustotal.com/reference/files-votes-get
 func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointFiles, id)
@@ -620,13 +620,13 @@ func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesO
 // https://docs.virustotal.com/reference/files-votes-post
 func (s *Service) AddVoteToFile(ctx context.Context, id string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("file ID is required")
+		return nil, nil, fmt.Errorf("file ID is required")
 	}
 	if verdict == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict is required")
+		return nil, nil, fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
+		return nil, nil, fmt.Errorf("verdict must be 'harmless' or 'malicious', got: %s", verdict)
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointFiles, id)

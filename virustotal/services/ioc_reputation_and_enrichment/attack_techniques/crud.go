@@ -65,7 +65,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/get-attack-techniques
 func (s *Service) GetAttackTechnique(ctx context.Context, id string) (*AttackTechniqueResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("attack technique ID is required")
+		return nil, nil, fmt.Errorf("attack technique ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointAttackTechniques, id)
@@ -91,16 +91,16 @@ func (s *Service) GetAttackTechnique(ctx context.Context, id string) (*AttackTec
 // https://docs.virustotal.com/reference/get-attack-techniques-relationship
 func (s *Service) GetObjectsRelatedToAttackTechnique(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("attack technique ID is required")
+		return nil, nil, fmt.Errorf("attack technique ID is required")
 	}
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	// Use RelationshipBuilder to construct the endpoint for full objects
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointAttackTechniques, id, relationship, false)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -154,15 +154,15 @@ func (s *Service) GetObjectsRelatedToAttackTechnique(ctx context.Context, id str
 // https://docs.virustotal.com/reference/get-attack-techniques-relationship-descriptor
 func (s *Service) GetObjectDescriptorsRelatedToAttackTechnique(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if id == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("attack technique ID is required")
+		return nil, nil, fmt.Errorf("attack technique ID is required")
 	}
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointAttackTechniques, id, relationship, true)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{

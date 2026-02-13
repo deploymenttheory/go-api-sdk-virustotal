@@ -47,16 +47,16 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/analyse-binary
 func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, *interfaces.Response, error) {
 	if err := ValidateBase64(code); err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("code validation failed: %w", err)
+		return nil, nil, fmt.Errorf("code validation failed: %w", err)
 	}
 
 	if err := ValidateCodeType(codeType); err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("code type validation failed: %w", err)
+		return nil, nil, fmt.Errorf("code type validation failed: %w", err)
 	}
 
 	for i, entry := range history {
 		if err := ValidateBase64(entry.Request); err != nil {
-			return nil, client.NewEmptyResponse(), fmt.Errorf("history entry %d request validation failed: %w", i, err)
+			return nil, nil, fmt.Errorf("history entry %d request validation failed: %w", i, err)
 		}
 	}
 

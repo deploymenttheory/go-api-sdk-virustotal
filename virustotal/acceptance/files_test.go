@@ -83,7 +83,7 @@ func TestAcceptance_Files_GetFileReport_InvalidHash(t *testing.T) {
 		// We expect an error (404 Not Found)
 		assert.Error(t, err, "GetFileReport should return an error for non-existent hash")
 		assert.Nil(t, result, "GetFileReport result should be nil for non-existent hash")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for non-existent hash")
 
 		LogResponse(t, "Expected error received: %v", err)
@@ -107,7 +107,7 @@ func TestAcceptance_Files_GetFileReport_EmptyHash(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetFileReport should return an error for empty hash")
 		assert.Nil(t, result, "GetFileReport result should be nil for empty hash")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "file ID is required", "Error should mention required file ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
