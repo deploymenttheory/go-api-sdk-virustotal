@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/analyses"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,7 +37,7 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 		attrs := result.Data.Attributes
 		assert.NotEmpty(t, attrs.Status, "Analysis status should not be empty")
 		assert.Contains(t, []string{"queued", "in-progress", "completed"}, attrs.Status, "Status should be valid")
-		
+
 		// Validate stats structure
 		assert.NotNil(t, attrs.Stats, "Analysis stats should not be nil")
 		assert.GreaterOrEqual(t, attrs.Stats.Harmless, 0, "Harmless count should be >= 0")
@@ -44,7 +45,7 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 		assert.GreaterOrEqual(t, attrs.Stats.Suspicious, 0, "Suspicious count should be >= 0")
 		assert.GreaterOrEqual(t, attrs.Stats.Undetected, 0, "Undetected count should be >= 0")
 		assert.GreaterOrEqual(t, attrs.Stats.Timeout, 0, "Timeout count should be >= 0")
-		
+
 		// Validate date field
 		assert.Greater(t, attrs.Date, int64(0), "Analysis date should be a valid timestamp")
 
@@ -130,17 +131,17 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
 		assert.IsType(t, []analyses.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
-		
+
 		objectCount := len(result.Data)
 		LogResponse(t, "Retrieved %d related objects", objectCount)
-		
+
 		// Should have at least one item (the analyzed file/URL)
 		if objectCount > 0 {
 			item := result.Data[0]
 			assert.NotEmpty(t, item.ID, "Item ID should not be empty")
 			assert.NotEmpty(t, item.Type, "Item type should not be empty")
 			assert.Contains(t, []string{"file", "url"}, item.Type, "Item type should be file or url")
-			
+
 			LogResponse(t, "Related item - Type: %s, ID: %s", item.Type, item.ID)
 		}
 	})
@@ -169,16 +170,16 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related descriptors data should not be nil")
 		assert.IsType(t, []analyses.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
-		
+
 		descriptorCount := len(result.Data)
 		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
-		
+
 		// Should have at least one descriptor
 		if descriptorCount > 0 {
 			descriptor := result.Data[0]
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.NotEmpty(t, descriptor.Type, "Descriptor type should not be empty")
-			
+
 			LogResponse(t, "Related descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
@@ -192,13 +193,27 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := analyses.NewService(Client)
+		analysesService := analyses.NewService(Client)
+		urlsService := urls.NewService(Client)
 
-		// Use analysis ID as submission ID (they share same ID space)
-		submissionID := Config.KnownAnalysisID
+		// First, scan a URL to get a fresh submission/analysis ID
+		testURL := "https://www.virustotal.com"
+		LogResponse(t, "Scanning URL to obtain submission ID: %s", testURL)
+
+		scanResult, scanResp, scanErr := urlsService.ScanURL(ctx, testURL)
+		AssertNoError(t, scanErr, "ScanURL should not return an error")
+		AssertNotNil(t, scanResult, "ScanURL result should not be nil")
+		AssertNotNil(t, scanResp, "ScanURL response should not be nil")
+		assert.Equal(t, 200, scanResp.StatusCode, "ScanURL status code should be 200")
+
+		submissionID := scanResult.Data.ID
+		assert.NotEmpty(t, submissionID, "Submission ID should not be empty")
+		LogResponse(t, "Obtained submission ID: %s", submissionID)
+
+		// Now test GetSubmission with the fresh ID
 		LogResponse(t, "Testing GetSubmission with submission ID: %s", submissionID)
 
-		result, resp, err := service.GetSubmission(ctx, submissionID)
+		result, resp, err := analysesService.GetSubmission(ctx, submissionID)
 		AssertNoError(t, err, "GetSubmission should not return an error")
 		AssertNotNil(t, result, "GetSubmission result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -216,7 +231,7 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 
 		LogResponse(t, "Submission ID: %s", result.Data.ID)
 		LogResponse(t, "Submission Date: %d", attrs.Date)
-		
+
 		// Premium API fields (may be empty for free tier)
 		if attrs.Interface != "" {
 			LogResponse(t, "Submission Interface: %s", attrs.Interface)
