@@ -16,6 +16,9 @@ type Response struct {
 	Status     string
 	Headers    http.Header
 	Body       []byte
+	Duration   time.Duration // Time taken for the request
+	ReceivedAt time.Time     // When the response was received
+	Size       int64         // Response body size in bytes
 }
 
 // MultipartProgressCallback is a callback function for multipart upload progress

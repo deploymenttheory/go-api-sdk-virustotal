@@ -104,7 +104,7 @@ func TestUnitUploadFile_WithProgressCallback(t *testing.T) {
 func TestUnitUploadFile_MissingFile(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.UploadFile(context.Background(), nil)
+	_, _, err := service.UploadFile(context.Background(), nil)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "file is required")
 }
@@ -119,7 +119,7 @@ func TestUnitUploadFile_MissingFilename(t *testing.T) {
 		FileSize: int64(len(fileContent)),
 	}
 
-	_, err := service.UploadFile(context.Background(), request)
+	_, _, err := service.UploadFile(context.Background(), request)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "filename is required")
 }
@@ -130,7 +130,7 @@ func TestUnitGetUploadURL_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetUploadURL(context.Background())
+	result, _, err := service.GetUploadURL(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -144,7 +144,7 @@ func TestUnitGetFileReport_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetFileReport(context.Background(), "44d88612fea8a8f36de82e1278abb02f")
+	result, _, err := service.GetFileReport(context.Background(), "44d88612fea8a8f36de82e1278abb02f")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -181,7 +181,7 @@ func TestUnitRescanFile_Success(t *testing.T) {
 func TestUnitRescanFile_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.RescanFile(context.Background(), "")
+	_, _, err := service.RescanFile(context.Background(), "")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "file ID is required")
 }
@@ -192,7 +192,7 @@ func TestUnitGetFileDownloadURL_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetFileDownloadURL(context.Background(), "44d88612fea8a8f36de82e1278abb02f")
+	result, _, err := service.GetFileDownloadURL(context.Background(), "44d88612fea8a8f36de82e1278abb02f")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -227,7 +227,7 @@ func TestUnitDownloadFile_Success(t *testing.T) {
 func TestUnitDownloadFile_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.DownloadFile(context.Background(), "")
+	_, _, err := service.DownloadFile(context.Background(), "")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "file ID is required")
 }
@@ -238,7 +238,7 @@ func TestUnitGetCommentsOnFile_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetCommentsOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", nil)
+	result, _, err := service.GetCommentsOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -257,7 +257,7 @@ func TestUnitGetCommentsOnFile_ManualPagination(t *testing.T) {
 		Cursor: "abc123",
 	}
 
-	result, _, _, err := service.GetCommentsOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", opts)
+	result, _, err := service.GetCommentsOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -293,7 +293,7 @@ func TestUnitAddCommentToFile_Success(t *testing.T) {
 func TestUnitAddCommentToFile_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.AddCommentToFile(context.Background(), "", "comment")
+	_, _, err := service.AddCommentToFile(context.Background(), "", "comment")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "file ID is required")
 }
@@ -302,7 +302,7 @@ func TestUnitAddCommentToFile_EmptyID(t *testing.T) {
 func TestUnitAddCommentToFile_EmptyComment(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.AddCommentToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "")
+	_, _, err := service.AddCommentToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "comment text is required")
 }
@@ -313,7 +313,7 @@ func TestUnitGetObjectsRelatedToFile_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetObjectsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "contacted_domains", nil)
+	result, _, err := service.GetObjectsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "contacted_domains", nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -332,7 +332,7 @@ func TestUnitGetObjectsRelatedToFile_ManualPagination(t *testing.T) {
 		Cursor: "abc123",
 	}
 
-	result, _, _, err := service.GetObjectsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "contacted_domains", opts)
+	result, _, err := service.GetObjectsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "contacted_domains", opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -345,7 +345,7 @@ func TestUnitGetObjectDescriptorsRelatedToFile_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetObjectDescriptorsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "contacted_domains", nil)
+	result, _, err := service.GetObjectDescriptorsRelatedToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "contacted_domains", nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -378,7 +378,7 @@ func TestUnitGetSigmaRule_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetSigmaRule(context.Background(), "sigma-rule-123")
+	result, _, err := service.GetSigmaRule(context.Background(), "sigma-rule-123")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -402,7 +402,7 @@ func TestUnitGetYARARuleset_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetYARARuleset(context.Background(), "yara-ruleset-123")
+	result, _, err := service.GetYARARuleset(context.Background(), "yara-ruleset-123")
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -426,7 +426,7 @@ func TestUnitGetVotesOnFile_Success(t *testing.T) {
 	mockHandler := mocks.NewFilesMock()
 	mockHandler.RegisterMocks()
 
-	result, _, _, err := service.GetVotesOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", nil)
+	result, _, err := service.GetVotesOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", nil)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -445,7 +445,7 @@ func TestUnitGetVotesOnFile_ManualPagination(t *testing.T) {
 		Cursor: "abc123",
 	}
 
-	result, _, _, err := service.GetVotesOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", opts)
+	result, _, err := service.GetVotesOnFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", opts)
 	require.NoError(t, err)
 	require.NotNil(t, result)
 
@@ -481,7 +481,7 @@ func TestUnitAddVoteToFile_Success(t *testing.T) {
 func TestUnitAddVoteToFile_EmptyID(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.AddVoteToFile(context.Background(), "", "harmless")
+	_, _, err := service.AddVoteToFile(context.Background(), "", "harmless")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "file ID is required")
 }
@@ -490,7 +490,7 @@ func TestUnitAddVoteToFile_EmptyID(t *testing.T) {
 func TestUnitAddVoteToFile_EmptyVerdict(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.AddVoteToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "")
+	_, _, err := service.AddVoteToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "verdict is required")
 }
@@ -499,7 +499,7 @@ func TestUnitAddVoteToFile_EmptyVerdict(t *testing.T) {
 func TestUnitAddVoteToFile_InvalidVerdict(t *testing.T) {
 	service := setupMockClient(t)
 
-	_, err := service.AddVoteToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "invalid")
+	_, _, err := service.AddVoteToFile(context.Background(), "44d88612fea8a8f36de82e1278abb02f", "invalid")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "verdict must be 'harmless' or 'malicious'")
 }
@@ -516,7 +516,7 @@ func TestUnitGetObjectsRelatedToFile_Analyses(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipAnalyses, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipAnalyses, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -532,7 +532,7 @@ func TestUnitGetObjectsRelatedToFile_Behaviours(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipBehaviours, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipBehaviours, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -548,7 +548,7 @@ func TestUnitGetObjectsRelatedToFile_BundledFiles(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipBundledFiles, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipBundledFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -564,7 +564,7 @@ func TestUnitGetObjectsRelatedToFile_CarbonBlackChildren(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCarbonBlackChildren, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCarbonBlackChildren, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -580,7 +580,7 @@ func TestUnitGetObjectsRelatedToFile_CarbonBlackParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCarbonBlackParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCarbonBlackParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -596,7 +596,7 @@ func TestUnitGetObjectsRelatedToFile_Collections(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCollections, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCollections, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -612,7 +612,7 @@ func TestUnitGetObjectsRelatedToFile_Comments(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipComments, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipComments, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -628,7 +628,7 @@ func TestUnitGetObjectsRelatedToFile_CompressedParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCompressedParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipCompressedParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -644,7 +644,7 @@ func TestUnitGetObjectsRelatedToFile_ContactedDomains(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedDomains, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedDomains, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -660,7 +660,7 @@ func TestUnitGetObjectsRelatedToFile_ContactedIPs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedIPs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedIPs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -676,7 +676,7 @@ func TestUnitGetObjectsRelatedToFile_ContactedURLs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedURLs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipContactedURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -692,7 +692,7 @@ func TestUnitGetObjectsRelatedToFile_DroppedFiles(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipDroppedFiles, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipDroppedFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -708,7 +708,7 @@ func TestUnitGetObjectsRelatedToFile_EmailAttachments(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmailAttachments, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmailAttachments, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -724,7 +724,7 @@ func TestUnitGetObjectsRelatedToFile_EmailParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmailParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmailParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -740,7 +740,7 @@ func TestUnitGetObjectsRelatedToFile_EmbeddedDomains(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedDomains, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedDomains, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -756,7 +756,7 @@ func TestUnitGetObjectsRelatedToFile_EmbeddedIPs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedIPs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedIPs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -772,7 +772,7 @@ func TestUnitGetObjectsRelatedToFile_EmbeddedURLs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedURLs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipEmbeddedURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -788,7 +788,7 @@ func TestUnitGetObjectsRelatedToFile_ExecutionParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipExecutionParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipExecutionParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -804,7 +804,7 @@ func TestUnitGetObjectsRelatedToFile_Graphs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipGraphs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipGraphs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -820,7 +820,7 @@ func TestUnitGetObjectsRelatedToFile_ITWDomains(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWDomains, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWDomains, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -836,7 +836,7 @@ func TestUnitGetObjectsRelatedToFile_ITWIPs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWIPs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWIPs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -852,7 +852,7 @@ func TestUnitGetObjectsRelatedToFile_ITWURLs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWURLs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipITWURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -868,7 +868,7 @@ func TestUnitGetObjectsRelatedToFile_MemoryPatternDomains(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternDomains, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternDomains, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -884,7 +884,7 @@ func TestUnitGetObjectsRelatedToFile_MemoryPatternIPs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternIPs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternIPs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -900,7 +900,7 @@ func TestUnitGetObjectsRelatedToFile_MemoryPatternURLs(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternURLs, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipMemoryPatternURLs, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -916,7 +916,7 @@ func TestUnitGetObjectsRelatedToFile_OverlayChildren(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipOverlayChildren, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipOverlayChildren, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -932,7 +932,7 @@ func TestUnitGetObjectsRelatedToFile_OverlayParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipOverlayParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipOverlayParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -948,7 +948,7 @@ func TestUnitGetObjectsRelatedToFile_PCAPChildren(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPCAPChildren, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPCAPChildren, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -964,7 +964,7 @@ func TestUnitGetObjectsRelatedToFile_PCAPParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPCAPParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPCAPParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -980,7 +980,7 @@ func TestUnitGetObjectsRelatedToFile_PEResourceChildren(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPEResourceChildren, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPEResourceChildren, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -996,7 +996,7 @@ func TestUnitGetObjectsRelatedToFile_PEResourceParents(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPEResourceParents, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipPEResourceParents, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1012,7 +1012,7 @@ func TestUnitGetObjectsRelatedToFile_RelatedReferences(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipRelatedReferences, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipRelatedReferences, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1028,7 +1028,7 @@ func TestUnitGetObjectsRelatedToFile_RelatedThreatActors(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipRelatedThreatActors, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipRelatedThreatActors, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1044,7 +1044,7 @@ func TestUnitGetObjectsRelatedToFile_Screenshots(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipScreenshots, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipScreenshots, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1060,7 +1060,7 @@ func TestUnitGetObjectsRelatedToFile_SigmaAnalysis(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSigmaAnalysis, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSigmaAnalysis, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1076,7 +1076,7 @@ func TestUnitGetObjectsRelatedToFile_SimilarFiles(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSimilarFiles, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSimilarFiles, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1092,7 +1092,7 @@ func TestUnitGetObjectsRelatedToFile_Submissions(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSubmissions, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipSubmissions, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1108,7 +1108,7 @@ func TestUnitGetObjectsRelatedToFile_URLsForEmbeddedJS(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipURLsForEmbeddedJS, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipURLsForEmbeddedJS, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1124,7 +1124,7 @@ func TestUnitGetObjectsRelatedToFile_UserVotes(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipUserVotes, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipUserVotes, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
@@ -1140,7 +1140,7 @@ func TestUnitGetObjectsRelatedToFile_Votes(t *testing.T) {
 	mockHandler.RegisterRelationshipMocks("https://www.virustotal.com/api/v3")
 
 	ctx := context.Background()
-	result, _, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipVotes, nil)
+	result, _, err := service.GetObjectsRelatedToFile(ctx, "44d88612fea8a8f36de82e1278abb02f", RelationshipVotes, nil)
 
 	require.NoError(t, err)
 	require.NotNil(t, result)
