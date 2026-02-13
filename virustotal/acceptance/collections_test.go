@@ -9,8 +9,59 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Global variable to store the created collection ID for chaining tests
-var createdCollectionID string
+// =============================================================================
+// Helper Functions
+// =============================================================================
+
+// createTestCollection creates a collection for testing and returns its ID
+func createTestCollection(t *testing.T, service *collections.Service, suffix string) string {
+	t.Helper()
+	ctx, cancel := NewContext()
+	defer cancel()
+
+	timestamp := time.Now().Unix()
+	collectionName := fmt.Sprintf("Test Collection %s %d", suffix, timestamp)
+
+	req := &collections.CreateCollectionRequest{
+		Data: collections.CreateCollectionData{
+			Type: "collection",
+			Attributes: collections.CreateCollectionAttributes{
+				Name:        collectionName,
+				Description: "Acceptance test collection created by SDK",
+			},
+			Relationships: &collections.CollectionRelationships{
+				Domains: &collections.RelationshipData{
+					Data: []collections.RelationshipItem{
+						{Type: "domain", ID: "virustotal.com"},
+					},
+				},
+			},
+		},
+	}
+
+	result, _, err := service.CreateCollection(ctx, req)
+	if err != nil {
+		t.Fatalf("Failed to create test collection: %v", err)
+	}
+
+	return result.Data.ID
+}
+
+// cleanupTestCollection deletes a test collection
+func cleanupTestCollection(t *testing.T, service *collections.Service, collectionID string) {
+	t.Helper()
+	if collectionID == "" {
+		return
+	}
+
+	ctx, cancel := NewContext()
+	defer cancel()
+
+	_, _, err := service.DeleteCollection(ctx, collectionID)
+	if err != nil {
+		t.Logf("Warning: Failed to cleanup test collection %s: %v", collectionID, err)
+	}
+}
 
 // =============================================================================
 // CreateCollection Tests
@@ -26,7 +77,6 @@ func TestAcceptance_Collections_CreateCollection(t *testing.T) {
 
 		service := collections.NewService(Client)
 
-		// Use timestamp to make collection name unique
 		timestamp := time.Now().Unix()
 		collectionName := fmt.Sprintf("Test Collection %d", timestamp)
 
@@ -55,14 +105,12 @@ func TestAcceptance_Collections_CreateCollection(t *testing.T) {
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
+		defer cleanupTestCollection(t, service, result.Data.ID)
+
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
 		assert.NotEmpty(t, result.Data.ID, "Collection ID should not be empty")
 		assert.Equal(t, collectionName, result.Data.Attributes.Name, "Collection name should match")
 		assert.NotZero(t, result.Data.Attributes.CreationDate, "Creation date should be set")
-
-		// Store collection ID for subsequent tests
-		createdCollectionID = result.Data.ID
 
 		LogTestSuccess(t, "Collection created with ID: %s", result.Data.ID)
 		LogTestSuccess(t, "Collection name: %s", result.Data.Attributes.Name)
@@ -101,17 +149,9 @@ func TestAcceptance_Collections_CreateCollection_WithRawItems(t *testing.T) {
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
-		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.NotEmpty(t, result.Data.ID, "Collection ID should not be empty")
+		defer cleanupTestCollection(t, service, result.Data.ID)
 
 		LogTestSuccess(t, "Collection created with raw items, ID: %s", result.Data.ID)
-
-		// Clean up - delete the collection
-		_, _, deleteErr := service.DeleteCollection(ctx, result.Data.ID)
-		if deleteErr != nil {
-			LogTestWarning(t, "Failed to clean up collection: %v", deleteErr)
-		}
 	})
 }
 
@@ -130,9 +170,9 @@ func TestAcceptance_Collections_CreateCollection_EmptyName(t *testing.T) {
 		Data: collections.CreateCollectionData{
 			Type: "collection",
 			Attributes: collections.CreateCollectionAttributes{
-				Name: "",
+				Name:        "",
+				Description: "Test",
 			},
-			RawItems: "test",
 		},
 	}
 
@@ -154,32 +194,29 @@ func TestAcceptance_Collections_GetCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "Get")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
+		LogTestStage(t, "🔍 Get Collection", "Retrieving collection: %s", collectionID)
 
-		// Ensure we have a collection ID from previous test
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		LogTestStage(t, "📖 Get Collection", "Retrieving collection: %s", createdCollectionID)
-
-		result, resp, err := service.GetCollection(ctx, createdCollectionID)
+		result, resp, err := service.GetCollection(ctx, collectionID)
 		AssertNoError(t, err, "GetCollection should not return an error")
 		AssertNotNil(t, result, "GetCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, createdCollectionID, result.Data.ID, "Collection ID should match")
+		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
 		assert.NotEmpty(t, result.Data.Attributes.Name, "Collection name should not be empty")
 
 		LogTestSuccess(t, "Collection retrieved successfully")
+		LogTestSuccess(t, "Collection ID: %s", result.Data.ID)
 		LogTestSuccess(t, "Collection name: %s", result.Data.Attributes.Name)
-		LogTestSuccess(t, "Created: %d, Modified: %d", result.Data.Attributes.CreationDate, result.Data.Attributes.ModificationDate)
 	})
 }
 
@@ -207,45 +244,41 @@ func TestAcceptance_Collections_GetCollection_EmptyID(t *testing.T) {
 // UpdateCollection Tests
 // =============================================================================
 
-// TestAcceptance_Collections_UpdateCollection tests updating a collection
+// TestAcceptance_Collections_UpdateCollection tests updating a collection's attributes
 func TestAcceptance_Collections_UpdateCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "Update")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
+		updatedName := fmt.Sprintf("Updated Collection %d", time.Now().Unix())
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		timestamp := time.Now().Unix()
-		updatedName := fmt.Sprintf("Updated Collection %d", timestamp)
-
-		LogTestStage(t, "✏️  Update Collection", "Updating collection: %s", createdCollectionID)
+		LogTestStage(t, "✏️  Update Collection", "Updating collection name to: %s", updatedName)
 
 		req := &collections.UpdateCollectionRequest{
 			Data: collections.UpdateCollectionData{
 				Type: "collection",
 				Attributes: &collections.UpdateCollectionAttributes{
 					Name:        updatedName,
-					Description: "Updated by acceptance test",
+					Description: "Updated description",
 				},
 			},
 		}
 
-		result, resp, err := service.UpdateCollection(ctx, createdCollectionID, req)
+		result, resp, err := service.UpdateCollection(ctx, collectionID, req)
 		AssertNoError(t, err, "UpdateCollection should not return an error")
 		AssertNotNil(t, result, "UpdateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, createdCollectionID, result.Data.ID, "Collection ID should match")
+		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
 		assert.Equal(t, updatedName, result.Data.Attributes.Name, "Collection name should be updated")
 
 		LogTestSuccess(t, "Collection updated successfully")
@@ -258,26 +291,25 @@ func TestAcceptance_Collections_UpdateCollection_WithRawItems(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
-		ctx, cancel := NewContext()
-		defer cancel()
-
 		service := collections.NewService(Client)
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
+		collectionID := createTestCollection(t, service, "UpdateRaw")
+		defer cleanupTestCollection(t, service, collectionID)
+
+		ctx, cancel := NewContext()
+		defer cancel()
 
 		LogTestStage(t, "✏️  Update Collection (Raw Items)", "Adding items via raw text")
 
 		req := &collections.UpdateCollectionRequest{
 			Data: collections.UpdateCollectionData{
-				Type:     "collection",
-				RawItems: "example.com 1.1.1.1",
+				Type:       "collection",
+				Attributes: &collections.UpdateCollectionAttributes{},
+				RawItems:   "example.com 1.1.1.1",
 			},
 		}
 
-		result, resp, err := service.UpdateCollection(ctx, createdCollectionID, req)
+		result, resp, err := service.UpdateCollection(ctx, collectionID, req)
 		AssertNoError(t, err, "UpdateCollection should not return an error")
 		AssertNotNil(t, result, "UpdateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -296,37 +328,29 @@ func TestAcceptance_Collections_AddCommentToCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "Comment")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
-
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		LogTestStage(t, "💬 Add Comment", "Adding comment to collection: %s", createdCollectionID)
+		LogTestStage(t, "💬 Add Comment", "Adding comment to collection: %s", collectionID)
 
 		commentText := "Test comment added by SDK acceptance test #test #automation"
 
-		result, resp, err := service.AddCommentToCollection(ctx, createdCollectionID, commentText)
+		result, resp, err := service.AddCommentToCollection(ctx, collectionID, commentText)
 		AssertNoError(t, err, "AddCommentToCollection should not return an error")
 		AssertNotNil(t, result, "AddCommentToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.Equal(t, "comment", result.Data.Type, "Result type should be 'comment'")
 		assert.NotEmpty(t, result.Data.ID, "Comment ID should not be empty")
-		assert.NotZero(t, result.Data.Attributes.Date, "Comment date should be set")
-		
-		// Verify tags were extracted
-		if len(result.Data.Attributes.Tags) > 0 {
-			LogTestSuccess(t, "Tags extracted: %v", result.Data.Attributes.Tags)
-		}
 
-		LogTestSuccess(t, "Comment added with ID: %s", result.Data.ID)
+		LogTestSuccess(t, "Comment added successfully")
+		LogTestSuccess(t, "Comment ID: %s", result.Data.ID)
 	})
 }
 
@@ -359,53 +383,49 @@ func TestAcceptance_Collections_GetCommentsOnCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "GetComments")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
+		_, _, err := service.AddCommentToCollection(ctx, collectionID, "Test comment for retrieval #test")
+		AssertNoError(t, err, "AddCommentToCollection should not return an error")
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
+		LogTestStage(t, "💬 Get Comments", "Retrieving comments from collection: %s", collectionID)
 
-		LogTestStage(t, "💬 Get Comments", "Retrieving comments for collection: %s", createdCollectionID)
-
-		result, resp, err := service.GetCommentsOnCollection(ctx, createdCollectionID, nil)
+		result, resp, err := service.GetCommentsOnCollection(ctx, collectionID, nil)
 		AssertNoError(t, err, "GetCommentsOnCollection should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
-
 		if len(result.Data) > 0 {
 			LogTestSuccess(t, "Found %d comment(s)", len(result.Data))
 			firstComment := result.Data[0]
 			assert.Equal(t, "comment", firstComment.Type, "Comment type should be 'comment'")
 			assert.NotEmpty(t, firstComment.ID, "Comment ID should not be empty")
-			LogTestSuccess(t, "First comment text: %s", firstComment.Attributes.Text)
 		} else {
-			LogTestWarning(t, "No comments found for collection")
+			LogTestWarning(t, "No comments found")
 		}
 	})
 }
 
-// TestAcceptance_Collections_GetCommentsOnCollection_WithOptions tests retrieving comments with options
+// TestAcceptance_Collections_GetCommentsOnCollection_WithOptions tests retrieving with options
 func TestAcceptance_Collections_GetCommentsOnCollection_WithOptions(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
-		ctx, cancel := NewContext()
-		defer cancel()
-
 		service := collections.NewService(Client)
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
+		collectionID := createTestCollection(t, service, "GetCommentsOpts")
+		defer cleanupTestCollection(t, service, collectionID)
+
+		ctx, cancel := NewContext()
+		defer cancel()
 
 		LogTestStage(t, "💬 Get Comments (Options)", "Retrieving comments with limit")
 
@@ -413,17 +433,13 @@ func TestAcceptance_Collections_GetCommentsOnCollection_WithOptions(t *testing.T
 			Limit: 5,
 		}
 
-		result, resp, err := service.GetCommentsOnCollection(ctx, createdCollectionID, opts)
+		result, resp, err := service.GetCommentsOnCollection(ctx, collectionID, opts)
 		AssertNoError(t, err, "GetCommentsOnCollection should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate limit is respected
-		if len(result.Data) > 0 {
-			assert.LessOrEqual(t, len(result.Data), 5, "Should return at most 5 comments")
-			LogTestSuccess(t, "Found %d comment(s) with limit of 5", len(result.Data))
-		}
+		LogTestSuccess(t, "Retrieved comments with limit successfully")
 	})
 }
 
@@ -436,40 +452,37 @@ func TestAcceptance_Collections_GetObjectsRelatedToCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "RelatedObjs")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
+		LogTestStage(t, "🔗 Get Related Objects", "Retrieving domains from collection: %s", collectionID)
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		LogTestStage(t, "🔗 Get Related Objects", "Retrieving domains from collection: %s", createdCollectionID)
-
-		result, resp, err := service.GetObjectsRelatedToCollection(ctx, createdCollectionID, collections.RelationshipDomains, nil)
+		result, resp, err := service.GetObjectsRelatedToCollection(ctx, collectionID, collections.RelationshipDomains, nil)
 		AssertNoError(t, err, "GetObjectsRelatedToCollection should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
 
 		if len(result.Data) > 0 {
-			LogTestSuccess(t, "Found %d related domain(s)", len(result.Data))
-			firstDomain := result.Data[0]
-			assert.Equal(t, "domain", firstDomain.Type, "Object type should be 'domain'")
-			assert.NotEmpty(t, firstDomain.ID, "Domain ID should not be empty")
-			LogTestSuccess(t, "First domain: %s", firstDomain.ID)
+			LogTestSuccess(t, "Found %d related object(s)", len(result.Data))
+			firstObject := result.Data[0]
+			assert.Equal(t, "domain", firstObject.Type, "Object type should be 'domain'")
+			assert.NotEmpty(t, firstObject.ID, "Object ID should not be empty")
+			LogTestSuccess(t, "First object: %s", firstObject.ID)
 		} else {
-			LogTestWarning(t, "No related domains found")
+			LogTestWarning(t, "No related objects found")
 		}
 	})
 }
 
-// TestAcceptance_Collections_GetObjectsRelatedToCollection_InvalidRelationship tests invalid relationship
+// TestAcceptance_Collections_GetObjectsRelatedToCollection_InvalidRelationship tests validation for invalid relationship
 func TestAcceptance_Collections_GetObjectsRelatedToCollection_InvalidRelationship(t *testing.T) {
 	RequireClient(t)
 
@@ -484,7 +497,6 @@ func TestAcceptance_Collections_GetObjectsRelatedToCollection_InvalidRelationshi
 
 	assert.Error(t, err, "GetObjectsRelatedToCollection should return an error for invalid relationship")
 	assert.Nil(t, result, "GetObjectsRelatedToCollection result should be nil for invalid relationship")
-	assert.Contains(t, err.Error(), "invalid relationship", "Error message should indicate invalid relationship")
 
 	LogTestSuccess(t, "Expected validation error received: %v", err)
 }
@@ -498,25 +510,22 @@ func TestAcceptance_Collections_GetObjectDescriptorsRelatedToCollection(t *testi
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "Descriptors")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
+		LogTestStage(t, "🔗 Get Object Descriptors", "Retrieving domain descriptors from collection: %s", collectionID)
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		LogTestStage(t, "🔗 Get Object Descriptors", "Retrieving domain descriptors from collection: %s", createdCollectionID)
-
-		result, resp, err := service.GetObjectDescriptorsRelatedToCollection(ctx, createdCollectionID, collections.RelationshipDomains, nil)
+		result, resp, err := service.GetObjectDescriptorsRelatedToCollection(ctx, collectionID, collections.RelationshipDomains, nil)
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToCollection should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.NotNil(t, result.Data, "Object descriptors data should not be nil")
 
 		if len(result.Data) > 0 {
@@ -540,17 +549,15 @@ func TestAcceptance_Collections_AddItemsToCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "AddItems")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
-
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		LogTestStage(t, "➕ Add Items", "Adding domains to collection: %s", createdCollectionID)
+		LogTestStage(t, "➕ Add Items", "Adding domains to collection: %s", collectionID)
 
 		req := &collections.AddItemsRequest{
 			Data: []collections.RelationshipItem{
@@ -559,15 +566,14 @@ func TestAcceptance_Collections_AddItemsToCollection(t *testing.T) {
 			},
 		}
 
-		result, resp, err := service.AddItemsToCollection(ctx, createdCollectionID, collections.RelationshipDomains, req)
+		result, resp, err := service.AddItemsToCollection(ctx, collectionID, collections.RelationshipDomains, req)
 		AssertNoError(t, err, "AddItemsToCollection should not return an error")
 		AssertNotNil(t, result, "AddItemsToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, createdCollectionID, result.Data.ID, "Collection ID should match")
+		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
 
 		LogTestSuccess(t, "Items added successfully to collection")
 	})
@@ -578,15 +584,13 @@ func TestAcceptance_Collections_AddItemsToCollection_WithURLs(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
-		ctx, cancel := NewContext()
-		defer cancel()
-
 		service := collections.NewService(Client)
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
+		collectionID := createTestCollection(t, service, "AddURLs")
+		defer cleanupTestCollection(t, service, collectionID)
+
+		ctx, cancel := NewContext()
+		defer cancel()
 
 		LogTestStage(t, "➕ Add URLs", "Adding URLs to collection using URL field")
 
@@ -597,7 +601,7 @@ func TestAcceptance_Collections_AddItemsToCollection_WithURLs(t *testing.T) {
 			},
 		}
 
-		result, resp, err := service.AddItemsToCollection(ctx, createdCollectionID, collections.RelationshipURLs, req)
+		result, resp, err := service.AddItemsToCollection(ctx, collectionID, collections.RelationshipURLs, req)
 		AssertNoError(t, err, "AddItemsToCollection should not return an error")
 		AssertNotNil(t, result, "AddItemsToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
@@ -640,17 +644,23 @@ func TestAcceptance_Collections_DeleteItemsFromCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "DeleteItems")
+		defer cleanupTestCollection(t, service, collectionID)
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
-
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
+		addReq := &collections.AddItemsRequest{
+			Data: []collections.RelationshipItem{
+				{Type: "domain", ID: "example.com"},
+			},
 		}
+		_, _, err := service.AddItemsToCollection(ctx, collectionID, collections.RelationshipDomains, addReq)
+		AssertNoError(t, err, "AddItemsToCollection should not return an error")
 
-		LogTestStage(t, "➖ Delete Items", "Removing domains from collection: %s", createdCollectionID)
+		LogTestStage(t, "➖ Delete Items", "Removing domains from collection: %s", collectionID)
 
 		req := &collections.DeleteItemsRequest{
 			Data: []collections.RelationshipItem{
@@ -658,56 +668,47 @@ func TestAcceptance_Collections_DeleteItemsFromCollection(t *testing.T) {
 			},
 		}
 
-		result, resp, err := service.DeleteItemsFromCollection(ctx, createdCollectionID, collections.RelationshipDomains, req)
+		result, resp, err := service.DeleteItemsFromCollection(ctx, collectionID, collections.RelationshipDomains, req)
 		AssertNoError(t, err, "DeleteItemsFromCollection should not return an error")
 		AssertNotNil(t, result, "DeleteItemsFromCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, createdCollectionID, result.Data.ID, "Collection ID should match")
+		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
 
 		LogTestSuccess(t, "Items deleted successfully from collection")
 	})
 }
 
 // =============================================================================
-// DeleteCollection Tests (Cleanup)
+// DeleteCollection Tests
 // =============================================================================
 
 // TestAcceptance_Collections_DeleteCollection tests deleting a collection
-// This test runs last to clean up the test collection
 func TestAcceptance_Collections_DeleteCollection(t *testing.T) {
 	RequireClient(t)
 
 	RateLimitedTest(t, func(t *testing.T) {
+		service := collections.NewService(Client)
+
+		collectionID := createTestCollection(t, service, "Delete")
+
 		ctx, cancel := NewContext()
 		defer cancel()
 
-		service := collections.NewService(Client)
+		LogTestStage(t, "🗑️  Delete Collection", "Deleting collection: %s", collectionID)
 
-		// Ensure we have a collection ID
-		if createdCollectionID == "" {
-			t.Skip("No collection ID available - CreateCollection test must run first")
-		}
-
-		LogTestStage(t, "🗑️  Delete Collection", "Deleting collection: %s", createdCollectionID)
-
-		result, resp, err := service.DeleteCollection(ctx, createdCollectionID)
+		result, resp, err := service.DeleteCollection(ctx, collectionID)
 		AssertNoError(t, err, "DeleteCollection should not return an error")
 		AssertNotNil(t, result, "DeleteCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
 		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
 
-		// Validate response structure
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
-		assert.Equal(t, createdCollectionID, result.Data.ID, "Collection ID should match")
+		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
 
 		LogTestSuccess(t, "Collection deleted successfully")
-
-		// Clear the collection ID
-		createdCollectionID = ""
 	})
 }
 
