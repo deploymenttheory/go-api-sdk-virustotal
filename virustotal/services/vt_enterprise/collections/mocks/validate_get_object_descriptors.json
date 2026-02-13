@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "type": "domain",
+      "id": "virustotal.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/virustotal.com"
+      }
+    },
+    {
+      "type": "domain",
+      "id": "google.com",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/domains/google.com"
+      }
+    }
+  ],
+  "meta": {
+    "count": 2
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "data": [
+    {
+      "type": "comment",
+      "id": "comment-123",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/comment-123"
+      },
+      "attributes": {
+        "date": 1709856000,
+        "text": "This is a test comment",
+        "html": "This is a test comment",
+        "tags": ["test"],
+        "votes": {
+          "abuse": 0,
+          "negative": 0,
+          "positive": 5
+        }
+      }
+    },
+    {
+      "type": "comment",
+      "id": "comment-456",
+      "links": {
+        "self": "https://www.virustotal.com/api/v3/comments/comment-456"
+      },
+      "attributes": {
+        "date": 1709860000,
+        "text": "Another test comment #important",
+        "html": "Another test comment #important",
+        "tags": ["important"],
+        "votes": {
+          "abuse": 0,
+          "negative": 1,
+          "positive": 3
+        }
+      }
+    }
+  ],
+  "meta": {
+    "count": 2
+  }
+}

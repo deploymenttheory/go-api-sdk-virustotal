@@ -14,6 +14,7 @@ import (
 	ipaddresses "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/ip_addresses"
 	popularthreatcategories "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/popular_threat_categories"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_enterprise/collections"
 	searchandmetadata "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_enterprise/search_and_metadata"
 )
 
@@ -34,6 +35,7 @@ type Client struct {
 	URLs                    *urls.Service
 
 	// VT Enterprise Services
+	Collections       *collections.Service
 	SearchAndMetadata *searchandmetadata.Service
 }
 
@@ -68,6 +70,7 @@ func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
 		IPAddresses:             ipaddresses.NewService(httpClient),
 		PopularThreatCategories: popularthreatcategories.NewService(httpClient),
 		URLs:                    urls.NewService(httpClient),
+		Collections:             collections.NewService(httpClient),
 		SearchAndMetadata:       searchandmetadata.NewService(httpClient),
 	}
 
