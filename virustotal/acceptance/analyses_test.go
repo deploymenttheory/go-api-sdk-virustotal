@@ -76,7 +76,7 @@ func TestAcceptance_Analyses_GetAnalysis_InvalidID(t *testing.T) {
 		// We expect an error for an invalid ID
 		assert.Error(t, err, "GetAnalysis should return an error for invalid ID")
 		assert.Nil(t, result, "GetAnalysis result should be nil for invalid ID")
-		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
+		assert.NotNil(t, resp, "Response should not be nil for API errors")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 
 		LogResponse(t, "Expected error received: %v", err)

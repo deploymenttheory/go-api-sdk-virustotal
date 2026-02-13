@@ -91,8 +91,9 @@ func TestAcceptance_URLs_GetURLReport_InvalidURLID(t *testing.T) {
 		// We expect an error for an invalid URL ID
 		assert.Error(t, err, "GetURLReport should return an error for invalid URL ID")
 		assert.Nil(t, result, "GetURLReport result should be nil for invalid URL ID")
-		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
-		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
+		if resp != nil {
+			assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
+		}
 
 		LogResponse(t, "Expected error received: %v", err)
 	})

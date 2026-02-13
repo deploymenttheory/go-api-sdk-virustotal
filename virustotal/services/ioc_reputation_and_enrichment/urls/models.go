@@ -71,7 +71,7 @@ type URLAttributes struct {
 	Title                 string                  `json:"title,omitempty"`
 	TotalVotes            Votes                   `json:"total_votes,omitempty"`
 	Categories            map[string]string       `json:"categories,omitempty"`
-	HTMLMeta              map[string]string       `json:"html_meta,omitempty"`
+	HTMLMeta              []map[string]string     `json:"html_meta,omitempty"`
 	OutgoingLinks         []string                `json:"outgoing_links,omitempty"`
 	RedirectionChain      []string                `json:"redirection_chain,omitempty"`
 	TargetedBrand         string                  `json:"targeted_brand,omitempty"`

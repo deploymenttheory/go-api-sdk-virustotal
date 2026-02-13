@@ -86,7 +86,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_InvalidIP(t *testing.T) {
 		// We expect an error for an invalid IP
 		assert.Error(t, err, "GetIPAddressReport should return an error for invalid IP")
 		assert.Nil(t, result, "GetIPAddressReport result should be nil for invalid IP")
-		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
+		assert.NotNil(t, resp, "Response should not be nil for API errors")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid IP")
 
 		LogResponse(t, "Expected error received: %v", err)
