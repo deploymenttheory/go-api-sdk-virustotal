@@ -1,9 +1,13 @@
 package client
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"go.uber.org/zap"
+	"resty.dev/v3"
 )
 
 // Response helper functions for working with interfaces.Response
@@ -50,4 +54,40 @@ func GetRateLimitHeaders(resp *interfaces.Response) (limit, remaining, reset, re
 		resp.Headers.Get("X-Api-Quota-Remaining"),
 		resp.Headers.Get("X-Api-Quota-Reset"),
 		resp.Headers.Get("Retry-After")
+}
+
+// validateResponse validates the HTTP response before processing
+// This includes checking for empty responses and validating Content-Type for JSON endpoints
+func (c *Client) validateResponse(resp *resty.Response, method, path string) error {
+	// Handle empty responses (204 No Content, etc.)
+	bodyLen := len(resp.String())
+	if resp.Header().Get("Content-Length") == "0" || bodyLen == 0 {
+		c.logger.Debug("Empty response received",
+			zap.String("method", method),
+			zap.String("path", path),
+			zap.Int("status_code", resp.StatusCode()))
+		return nil
+	}
+
+	// For non-error responses with content, validate Content-Type is JSON
+	// Skip validation for:
+	// - Error responses (handled by error parser)
+	// - Endpoints that explicitly return non-JSON (download endpoints, etc.)
+	if !resp.IsError() && bodyLen > 0 {
+		contentType := resp.Header().Get("Content-Type")
+
+		// Allow responses without Content-Type header (some endpoints don't set it)
+		if contentType != "" && !strings.HasPrefix(contentType, "application/json") {
+			c.logger.Warn("Unexpected Content-Type in response",
+				zap.String("method", method),
+				zap.String("path", path),
+				zap.String("content_type", contentType),
+				zap.String("expected", "application/json"))
+
+			return fmt.Errorf("unexpected response Content-Type from %s %s: got %q, expected application/json",
+				method, path, contentType)
+		}
+	}
+
+	return nil
 }
