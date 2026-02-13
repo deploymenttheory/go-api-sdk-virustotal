@@ -17,7 +17,7 @@ func TestAcceptance_URLs_GetURLReport(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetURLReport with URL ID: %s", Config.KnownURLID)
+		LogTestStage(t, "🌐 URL Report", "Testing GetURLReport with URL ID: %s", Config.KnownURLID)
 
 		result, resp, err := service.GetURLReport(ctx, Config.KnownURLID)
 		AssertNoError(t, err, "GetURLReport should not return an error")
@@ -83,7 +83,7 @@ func TestAcceptance_URLs_GetURLReport_InvalidURLID(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetURLReport with invalid URL ID")
+		LogTestStage(t, "❌ Error Test", "Testing GetURLReport with invalid URL ID")
 
 		// Use invalid URL ID (contains invalid characters)
 		result, resp, err := service.GetURLReport(ctx, "invalid@#$%url-id")
@@ -95,7 +95,7 @@ func TestAcceptance_URLs_GetURLReport_InvalidURLID(t *testing.T) {
 			assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 		}
 
-		LogResponse(t, "Expected error received: %v", err)
+		LogTestSuccess(t, "Expected error received: %v", err)
 	})
 }
 
@@ -109,7 +109,7 @@ func TestAcceptance_URLs_GetURLReport_EmptyURLID(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetURLReport with empty URL ID")
+		LogTestStage(t, "🔒 Validation", "Testing GetURLReport with empty URL ID")
 
 		result, resp, err := service.GetURLReport(ctx, "")
 
@@ -119,7 +119,7 @@ func TestAcceptance_URLs_GetURLReport_EmptyURLID(t *testing.T) {
 		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "URL ID cannot be empty", "Error should mention empty URL ID")
 
-		LogResponse(t, "Validation error received as expected: %v", err)
+		LogTestSuccess(t, "Validation error received as expected: %v", err)
 	})
 }
 
@@ -133,7 +133,7 @@ func TestAcceptance_URLs_GetCommentsOnURL(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetCommentsOnURL with URL ID: %s", Config.KnownURLID)
+		LogTestStage(t, "💬 Comments", "Testing GetCommentsOnURL with URL ID: %s", Config.KnownURLID)
 
 		// Get comments with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
@@ -148,7 +148,7 @@ func TestAcceptance_URLs_GetCommentsOnURL(t *testing.T) {
 		assert.IsType(t, []urls.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		commentCount := len(result.Data)
-		LogResponse(t, "Retrieved %d comments", commentCount)
+		LogTestSuccess(t, "Retrieved %d comments", commentCount)
 		
 		// If comments exist, validate first comment structure
 		if commentCount > 0 {
@@ -169,7 +169,7 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectsRelatedToURL (contacted_domains) with URL ID: %s", Config.KnownURLID)
+		LogTestStage(t, "🔗 Relationships", "Testing GetObjectsRelatedToURL (contacted_domains) with URL ID: %s", Config.KnownURLID)
 
 		// Get contacted domains with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
@@ -184,7 +184,7 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 		assert.IsType(t, []urls.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		objectCount := len(result.Data)
-		LogResponse(t, "Retrieved %d related objects", objectCount)
+		LogTestSuccess(t, "Retrieved %d related objects", objectCount)
 		
 		// If related objects exist, validate structure
 		if objectCount > 0 {
@@ -206,7 +206,7 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectDescriptorsRelatedToURL (contacted_domains) with URL ID: %s", Config.KnownURLID)
+		LogTestStage(t, "🔗 Descriptors", "Testing GetObjectDescriptorsRelatedToURL (contacted_domains) with URL ID: %s", Config.KnownURLID)
 
 		// Get contacted domain descriptors with limit
 		opts := &urls.GetRelatedObjectsOptions{Limit: 10}
@@ -221,7 +221,7 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 		assert.IsType(t, []urls.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
 		
 		descriptorCount := len(result.Data)
-		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		LogTestSuccess(t, "Retrieved %d object descriptors", descriptorCount)
 		
 		// If descriptors exist, validate structure
 		if descriptorCount > 0 {
@@ -243,7 +243,7 @@ func TestAcceptance_URLs_GetVotesOnURL(t *testing.T) {
 
 		service := urls.NewService(Client)
 
-		LogResponse(t, "Testing GetVotesOnURL with URL ID: %s", Config.KnownURLID)
+		LogTestStage(t, "🗳️  Votes", "Testing GetVotesOnURL with URL ID: %s", Config.KnownURLID)
 
 		// Get votes with limit
 		opts := &urls.GetVotesOptions{Limit: 10}
@@ -258,7 +258,7 @@ func TestAcceptance_URLs_GetVotesOnURL(t *testing.T) {
 		assert.IsType(t, []urls.Vote{}, result.Data, "Data should be slice of Vote")
 		
 		voteCount := len(result.Data)
-		LogResponse(t, "Retrieved %d votes", voteCount)
+		LogTestSuccess(t, "Retrieved %d votes", voteCount)
 		
 		// If votes exist, validate structure
 		if voteCount > 0 {

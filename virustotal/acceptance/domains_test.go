@@ -17,7 +17,7 @@ func TestAcceptance_Domains_GetDomainReport(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetDomainReport with domain: %s", Config.KnownDomain)
+		LogTestStage(t, "🌐 Domain", "Testing GetDomainReport with domain: %s", Config.KnownDomain)
 
 		result, resp, err := service.GetDomainReport(ctx, Config.KnownDomain)
 		AssertNoError(t, err, "GetDomainReport should not return an error")
@@ -77,7 +77,7 @@ func TestAcceptance_Domains_GetDomainReport_InvalidDomain(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetDomainReport with invalid domain")
+		LogTestStage(t, "❌ Error Test", "Testing GetDomainReport with invalid domain")
 
 		// Use an intentionally malformed domain
 		result, resp, err := service.GetDomainReport(ctx, "this-is-not-a-valid-domain-12345.invalid")
@@ -88,7 +88,7 @@ func TestAcceptance_Domains_GetDomainReport_InvalidDomain(t *testing.T) {
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid domain")
 
-		LogResponse(t, "Expected error received: %v", err)
+		LogTestSuccess(t, "Expected error received: %v", err)
 	})
 }
 
@@ -102,7 +102,7 @@ func TestAcceptance_Domains_GetDomainReport_EmptyDomain(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetDomainReport with empty domain")
+		LogTestStage(t, "🔒 Validation", "Testing GetDomainReport with empty domain")
 
 		result, resp, err := service.GetDomainReport(ctx, "")
 
@@ -112,7 +112,7 @@ func TestAcceptance_Domains_GetDomainReport_EmptyDomain(t *testing.T) {
 		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "domain is required", "Error should mention required domain")
 
-		LogResponse(t, "Validation error received as expected: %v", err)
+		LogTestSuccess(t, "Validation error received as expected: %v", err)
 	})
 }
 
@@ -126,7 +126,7 @@ func TestAcceptance_Domains_GetCommentsOnDomain(t *testing.T) {
 
 		service := domains.NewService(Client)
 
-		LogResponse(t, "Testing GetCommentsOnDomain with domain: %s", Config.KnownDomain)
+		LogTestStage(t, "💬 Comments", "Testing GetCommentsOnDomain with domain: %s", Config.KnownDomain)
 
 		// Get comments with limit
 		opts := &domains.GetRelatedObjectsOptions{Limit: 10}
@@ -141,7 +141,7 @@ func TestAcceptance_Domains_GetCommentsOnDomain(t *testing.T) {
 		assert.IsType(t, []domains.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		commentCount := len(result.Data)
-		LogResponse(t, "Retrieved %d comments", commentCount)
+		LogTestSuccess(t, "Retrieved %d comments", commentCount)
 		
 		// If comments exist, validate first comment structure
 		if commentCount > 0 {
@@ -180,7 +180,7 @@ func TestAcceptance_Domains_GetObjectsRelatedToDomain(t *testing.T) {
 		assert.IsType(t, []domains.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		resolutionCount := len(result.Data)
-		LogResponse(t, "Retrieved %d DNS resolutions", resolutionCount)
+		LogTestSuccess(t, "Retrieved %d DNS resolutions", resolutionCount)
 		
 		// For google.com, expect DNS resolutions to exist
 		if Config.KnownDomain == "google.com" {
@@ -221,7 +221,7 @@ func TestAcceptance_Domains_GetObjectDescriptorsRelatedToDomain(t *testing.T) {
 		assert.IsType(t, []domains.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
 		
 		descriptorCount := len(result.Data)
-		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		LogTestSuccess(t, "Retrieved %d object descriptors", descriptorCount)
 		
 		// For google.com, expect descriptors to exist
 		if Config.KnownDomain == "google.com" && descriptorCount > 0 {
@@ -258,7 +258,7 @@ func TestAcceptance_Domains_GetVotesOnDomain(t *testing.T) {
 		assert.IsType(t, []domains.Vote{}, result.Data, "Data should be slice of Vote")
 		
 		voteCount := len(result.Data)
-		LogResponse(t, "Retrieved %d votes", voteCount)
+		LogTestSuccess(t, "Retrieved %d votes", voteCount)
 		
 		// If votes exist, validate structure
 		if voteCount > 0 {

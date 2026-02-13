@@ -17,7 +17,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport(t *testing.T) {
 
 		service := ipaddresses.NewService(Client)
 
-		LogResponse(t, "Testing GetIPAddressReport with IP: %s", Config.KnownIPAddress)
+		LogTestStage(t, "🌍 IP Address", "Testing GetIPAddressReport with IP: %s", Config.KnownIPAddress)
 
 		result, resp, err := service.GetIPAddressReport(ctx, Config.KnownIPAddress, nil)
 		AssertNoError(t, err, "GetIPAddressReport should not return an error")
@@ -78,7 +78,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_InvalidIP(t *testing.T) {
 
 		service := ipaddresses.NewService(Client)
 
-		LogResponse(t, "Testing GetIPAddressReport with invalid IP")
+		LogTestStage(t, "❌ Error Test", "Testing GetIPAddressReport with invalid IP")
 
 		// Use an invalid IP address format
 		result, resp, err := service.GetIPAddressReport(ctx, "999.999.999.999", nil)
@@ -89,7 +89,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_InvalidIP(t *testing.T) {
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid IP")
 
-		LogResponse(t, "Expected error received: %v", err)
+		LogTestSuccess(t, "Expected error received: %v", err)
 	})
 }
 
@@ -103,7 +103,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_EmptyIP(t *testing.T) {
 
 		service := ipaddresses.NewService(Client)
 
-		LogResponse(t, "Testing GetIPAddressReport with empty IP")
+		LogTestStage(t, "🔒 Validation", "Testing GetIPAddressReport with empty IP")
 
 		result, resp, err := service.GetIPAddressReport(ctx, "", nil)
 
@@ -113,7 +113,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_EmptyIP(t *testing.T) {
 		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "ip address is required", "Error should mention required IP")
 
-		LogResponse(t, "Validation error received as expected: %v", err)
+		LogTestSuccess(t, "Validation error received as expected: %v", err)
 	})
 }
 
@@ -127,7 +127,7 @@ func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
 
 		service := ipaddresses.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectsRelatedToIPAddress (resolutions) with IP: %s", Config.KnownIPAddress)
+		LogTestStage(t, "🔗 Relationships", "Testing GetObjectsRelatedToIPAddress (resolutions) with IP: %s", Config.KnownIPAddress)
 
 		// Get DNS resolutions with limit
 		opts := &ipaddresses.GetRelatedObjectsOptions{Limit: 10}
@@ -142,7 +142,7 @@ func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
 		assert.IsType(t, []ipaddresses.RelatedObject{}, result.Data, "Data should be slice of RelatedObject")
 		
 		resolutionCount := len(result.Data)
-		LogResponse(t, "Retrieved %d DNS resolutions", resolutionCount)
+		LogTestSuccess(t, "Retrieved %d DNS resolutions", resolutionCount)
 		
 		// For Google DNS (8.8.8.8), expect DNS resolutions to exist
 		if Config.KnownIPAddress == "8.8.8.8" {
@@ -168,7 +168,7 @@ func TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress(t *testin
 
 		service := ipaddresses.NewService(Client)
 
-		LogResponse(t, "Testing GetObjectDescriptorsRelatedToIPAddress (resolutions) with IP: %s", Config.KnownIPAddress)
+		LogTestStage(t, "🔗 Descriptors", "Testing GetObjectDescriptorsRelatedToIPAddress (resolutions) with IP: %s", Config.KnownIPAddress)
 
 		// Get DNS resolution descriptors with limit
 		opts := &ipaddresses.GetRelatedObjectsOptions{Limit: 10}
@@ -183,7 +183,7 @@ func TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress(t *testin
 		assert.IsType(t, []ipaddresses.ObjectDescriptor{}, result.Data, "Data should be slice of ObjectDescriptor")
 		
 		descriptorCount := len(result.Data)
-		LogResponse(t, "Retrieved %d object descriptors", descriptorCount)
+		LogTestSuccess(t, "Retrieved %d object descriptors", descriptorCount)
 		
 		// For Google DNS (8.8.8.8), expect descriptors to exist
 		if Config.KnownIPAddress == "8.8.8.8" && descriptorCount > 0 {
@@ -205,7 +205,7 @@ func TestAcceptance_IPAddresses_GetVotesOnIPAddress(t *testing.T) {
 
 		service := ipaddresses.NewService(Client)
 
-		LogResponse(t, "Testing GetVotesOnIPAddress with IP: %s", Config.KnownIPAddress)
+		LogTestStage(t, "🗳️  Votes", "Testing GetVotesOnIPAddress with IP: %s", Config.KnownIPAddress)
 
 		// Get votes with limit
 		opts := &ipaddresses.GetVotesOptions{Limit: 10}
@@ -220,7 +220,7 @@ func TestAcceptance_IPAddresses_GetVotesOnIPAddress(t *testing.T) {
 		assert.IsType(t, []ipaddresses.Vote{}, result.Data, "Data should be slice of Vote")
 		
 		voteCount := len(result.Data)
-		LogResponse(t, "Retrieved %d votes", voteCount)
+		LogTestSuccess(t, "Retrieved %d votes", voteCount)
 		
 		// If votes exist, validate structure
 		if voteCount > 0 {

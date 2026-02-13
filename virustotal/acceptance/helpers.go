@@ -2,6 +2,8 @@ package acceptance
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"testing"
 	"time"
 
@@ -33,9 +35,7 @@ func RequireClient(t *testing.T) {
 func RateLimitedTest(t *testing.T, testFunc func(t *testing.T)) {
 	t.Helper()
 	defer func() {
-		if Config.Verbose {
-			t.Logf("Rate limiting: sleeping for %v", Config.RateLimitDelay)
-		}
+		LogTestWarning(t, "Rate limiting: sleeping for %v", Config.RateLimitDelay)
 		time.Sleep(Config.RateLimitDelay)
 	}()
 	testFunc(t)
@@ -83,5 +83,98 @@ func Cleanup(t *testing.T, cleanupFunc func()) {
 		t.Cleanup(cleanupFunc)
 	} else if Config.Verbose {
 		t.Log("Skipping cleanup due to VT_SKIP_CLEANUP=true")
+	}
+}
+
+// isGitHubActions returns true if running in GitHub Actions
+func isGitHubActions() bool {
+	return os.Getenv("GITHUB_ACTIONS") == "true"
+}
+
+// LogTestStage logs a test stage with optional GitHub Actions notice annotation
+func LogTestStage(t *testing.T, stage string, message string, details ...interface{}) {
+	t.Helper()
+	
+	formattedMsg := message
+	if len(details) > 0 {
+		formattedMsg = fmt.Sprintf(message, details...)
+	}
+	
+	if isGitHubActions() {
+		fmt.Printf("::notice title=%s::%s\n", stage, formattedMsg)
+	}
+	
+	if Config.Verbose {
+		t.Logf("🎯 [%s] %s", stage, formattedMsg)
+	}
+}
+
+// LogTestSuccess logs a successful test operation
+func LogTestSuccess(t *testing.T, message string, details ...interface{}) {
+	t.Helper()
+	
+	formattedMsg := message
+	if len(details) > 0 {
+		formattedMsg = fmt.Sprintf(message, details...)
+	}
+	
+	if isGitHubActions() {
+		fmt.Printf("::notice title=✅ Success::%s\n", formattedMsg)
+	}
+	
+	if Config.Verbose {
+		t.Logf("✅ %s", formattedMsg)
+	}
+}
+
+// LogTestWarning logs a test warning
+func LogTestWarning(t *testing.T, message string, details ...interface{}) {
+	t.Helper()
+	
+	formattedMsg := message
+	if len(details) > 0 {
+		formattedMsg = fmt.Sprintf(message, details...)
+	}
+	
+	if isGitHubActions() {
+		fmt.Printf("::warning title=⚠️  Warning::%s\n", formattedMsg)
+	}
+	
+	if Config.Verbose {
+		t.Logf("⚠️  %s", formattedMsg)
+	}
+}
+
+// LogTestError logs a test error (does not fail test)
+func LogTestError(t *testing.T, message string, details ...interface{}) {
+	t.Helper()
+	
+	formattedMsg := message
+	if len(details) > 0 {
+		formattedMsg = fmt.Sprintf(message, details...)
+	}
+	
+	if isGitHubActions() {
+		fmt.Printf("::error title=❌ Error::%s\n", formattedMsg)
+	}
+	
+	if Config.Verbose {
+		t.Logf("❌ %s", formattedMsg)
+	}
+}
+
+// LogGroup starts a collapsible log group in GitHub Actions
+func LogGroup(title string) {
+	if isGitHubActions() {
+		fmt.Printf("::group::%s\n", title)
+	} else {
+		fmt.Printf("\n=== %s ===\n", title)
+	}
+}
+
+// LogGroupEnd ends a collapsible log group in GitHub Actions
+func LogGroupEnd() {
+	if isGitHubActions() {
+		fmt.Println("::endgroup::")
 	}
 }
