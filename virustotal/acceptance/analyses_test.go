@@ -76,7 +76,7 @@ func TestAcceptance_Analyses_GetAnalysis_InvalidID(t *testing.T) {
 		// We expect an error for an invalid ID
 		assert.Error(t, err, "GetAnalysis should return an error for invalid ID")
 		assert.Nil(t, result, "GetAnalysis result should be nil for invalid ID")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 
 		LogResponse(t, "Expected error received: %v", err)
@@ -100,7 +100,7 @@ func TestAcceptance_Analyses_GetAnalysis_EmptyID(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetAnalysis should return an error for empty ID")
 		assert.Nil(t, result, "GetAnalysis result should be nil for empty ID")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "analysis ID is required", "Error should mention required ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
@@ -244,7 +244,7 @@ func TestAcceptance_Analyses_GetSubmission_EmptyID(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetSubmission should return an error for empty ID")
 		assert.Nil(t, result, "GetSubmission result should be nil for empty ID")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "submission ID is required", "Error should mention required submission ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)

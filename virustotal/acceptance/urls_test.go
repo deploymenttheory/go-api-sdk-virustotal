@@ -91,7 +91,7 @@ func TestAcceptance_URLs_GetURLReport_InvalidURLID(t *testing.T) {
 		// We expect an error for an invalid URL ID
 		assert.Error(t, err, "GetURLReport should return an error for invalid URL ID")
 		assert.Nil(t, result, "GetURLReport result should be nil for invalid URL ID")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
 
 		LogResponse(t, "Expected error received: %v", err)
@@ -115,7 +115,7 @@ func TestAcceptance_URLs_GetURLReport_EmptyURLID(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetURLReport should return an error for empty URL ID")
 		assert.Nil(t, result, "GetURLReport result should be nil for empty URL ID")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "URL ID cannot be empty", "Error should mention empty URL ID")
 
 		LogResponse(t, "Validation error received as expected: %v", err)

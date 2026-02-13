@@ -100,7 +100,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // https://docs.virustotal.com/reference/ip-info
 func (s *Service) GetIPAddressReport(ctx context.Context, ip string, opts *RequestQueryOptions) (*IPAddressResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointIPAddresses, ip)
@@ -129,7 +129,7 @@ func (s *Service) GetIPAddressReport(ctx context.Context, ip string, opts *Reque
 // https://docs.virustotal.com/reference/rescan-ip
 func (s *Service) RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddressResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointIPAddresses, ip)
@@ -153,10 +153,10 @@ func (s *Service) RescanIPAddress(ctx context.Context, ip string) (*RescanIPAddr
 // https://docs.virustotal.com/reference/ip-comments-post
 func (s *Service) AddCommentToIPAddress(ctx context.Context, ip string, commentText string) (*AddCommentResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if commentText == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("comment text is required")
+		return nil, nil, fmt.Errorf("comment text is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointIPAddresses, ip)
@@ -191,15 +191,15 @@ func (s *Service) AddCommentToIPAddress(ctx context.Context, ip string, commentT
 // https://docs.virustotal.com/reference/ip-relationships
 func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointIPAddresses, ip, relationship, false)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -253,15 +253,15 @@ func (s *Service) GetObjectsRelatedToIPAddress(ctx context.Context, ip string, r
 // https://docs.virustotal.com/reference/ip-relationships-ids
 func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointIPAddresses, ip, relationship, true)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	headers := map[string]string{
@@ -315,7 +315,7 @@ func (s *Service) GetObjectDescriptorsRelatedToIPAddress(ctx context.Context, ip
 // https://docs.virustotal.com/reference/ip-votes
 func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointIPAddresses, ip)
@@ -369,13 +369,13 @@ func (s *Service) GetVotesOnIPAddress(ctx context.Context, ip string, opts *GetV
 // https://docs.virustotal.com/reference/ip-votes-post
 func (s *Service) AddVoteToIPAddress(ctx context.Context, ip string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
 	if ip == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("ip address is required")
+		return nil, nil, fmt.Errorf("ip address is required")
 	}
 	if verdict == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict is required")
+		return nil, nil, fmt.Errorf("verdict is required")
 	}
 	if verdict != "harmless" && verdict != "malicious" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("verdict must be either 'harmless' or 'malicious'")
+		return nil, nil, fmt.Errorf("verdict must be either 'harmless' or 'malicious'")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointIPAddresses, ip)

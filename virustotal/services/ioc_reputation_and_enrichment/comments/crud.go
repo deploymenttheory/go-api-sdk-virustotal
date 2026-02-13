@@ -181,12 +181,12 @@ func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID stri
 	}
 
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointComments, commentID, relationship, false)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	queryParams := make(map[string]string)
@@ -221,12 +221,12 @@ func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, comm
 	}
 
 	if relationship == "" {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("relationship is required")
+		return nil, nil, fmt.Errorf("relationship is required")
 	}
 
 	endpoint, err := client.BuildRelationshipEndpoint(EndpointComments, commentID, relationship, true)
 	if err != nil {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("failed to build relationship endpoint: %w", err)
+		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
 	queryParams := make(map[string]string)
@@ -266,7 +266,7 @@ func (s *Service) AddVoteToComment(ctx context.Context, commentID string, positi
 
 	// Validate vote values
 	if positive < 0 || negative < 0 || abuse < 0 {
-		return nil, client.NewEmptyResponse(), fmt.Errorf("vote values cannot be negative")
+		return nil, nil, fmt.Errorf("vote values cannot be negative")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/vote", EndpointComments, commentID)

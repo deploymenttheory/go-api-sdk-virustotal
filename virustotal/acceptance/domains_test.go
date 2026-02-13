@@ -85,7 +85,7 @@ func TestAcceptance_Domains_GetDomainReport_InvalidDomain(t *testing.T) {
 		// We expect an error for an invalid/unknown domain
 		assert.Error(t, err, "GetDomainReport should return an error for invalid domain")
 		assert.Nil(t, result, "GetDomainReport result should be nil for invalid domain")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid domain")
 
 		LogResponse(t, "Expected error received: %v", err)
@@ -109,7 +109,7 @@ func TestAcceptance_Domains_GetDomainReport_EmptyDomain(t *testing.T) {
 		// Should fail validation
 		assert.Error(t, err, "GetDomainReport should return an error for empty domain")
 		assert.Nil(t, result, "GetDomainReport result should be nil for empty domain")
-		AssertNotNil(t, resp, "Response should not be nil even on error")
+		assert.Nil(t, resp, "Response should be nil for validation errors (no HTTP call made)")
 		assert.Contains(t, err.Error(), "domain is required", "Error should mention required domain")
 
 		LogResponse(t, "Validation error received as expected: %v", err)
