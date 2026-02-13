@@ -12,18 +12,19 @@ import (
 
 // TestConfig holds configuration for acceptance tests
 type TestConfig struct {
-	APIKey          string
-	BaseURL         string
-	RateLimitDelay  time.Duration
-	RequestTimeout  time.Duration
-	SkipCleanup     bool
-	Verbose         bool
-	KnownAnalysisID string
-	KnownFileHash   string
-	KnownDomain     string
-	KnownIPAddress  string
-	KnownURL        string
-	KnownURLID      string
+	APIKey            string
+	BaseURL           string
+	RateLimitDelay    time.Duration
+	RequestTimeout    time.Duration
+	SkipCleanup       bool
+	Verbose           bool
+	KnownAnalysisID   string
+	KnownSubmissionID string
+	KnownFileHash     string
+	KnownDomain       string
+	KnownIPAddress    string
+	KnownURL          string
+	KnownURLID        string
 }
 
 var (
@@ -36,18 +37,19 @@ var (
 // init initializes the test configuration from environment variables
 func init() {
 	Config = &TestConfig{
-		APIKey:          getEnv("VT_API_KEY", ""),
-		BaseURL:         getEnv("VT_BASE_URL", "https://www.virustotal.com/api/v3"),
-		RateLimitDelay:  getDurationEnv("VT_RATE_LIMIT_DELAY", 16*time.Second), // Free tier: 4 requests/min = 15s between requests
-		RequestTimeout:  getDurationEnv("VT_REQUEST_TIMEOUT", 30*time.Second),
-		SkipCleanup:     getBoolEnv("VT_SKIP_CLEANUP", false),
-		Verbose:         getBoolEnv("VT_VERBOSE", false),
-		KnownAnalysisID: getEnv("VT_TEST_ANALYSIS_ID", "NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw=="),
-		KnownFileHash:   getEnv("VT_TEST_FILE_HASH", "44d88612fea8a8f36de82e1278abb02f"), // EICAR test file
-		KnownDomain:     getEnv("VT_TEST_DOMAIN", "google.com"),
-		KnownIPAddress:  getEnv("VT_TEST_IP", "8.8.8.8"),
-		KnownURL:        getEnv("VT_TEST_URL", "https://www.google.com"),
-		KnownURLID:      getEnv("VT_TEST_URL_ID", "aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ"), // base64 of https://www.google.com (no padding)
+		APIKey:            getEnv("VT_API_KEY", ""),
+		BaseURL:           getEnv("VT_BASE_URL", "https://www.virustotal.com/api/v3"),
+		RateLimitDelay:    getDurationEnv("VT_RATE_LIMIT_DELAY", 16*time.Second), // Free tier: 4 requests/min = 15s between requests
+		RequestTimeout:    getDurationEnv("VT_REQUEST_TIMEOUT", 30*time.Second),
+		SkipCleanup:       getBoolEnv("VT_SKIP_CLEANUP", false),
+		Verbose:           getBoolEnv("VT_VERBOSE", false),
+		KnownAnalysisID:   getEnv("VT_TEST_ANALYSIS_ID", "NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw=="),
+		KnownSubmissionID: getEnv("VT_TEST_SUBMISSION_ID", ""), // No default - requires Premium API or specific test data
+		KnownFileHash:     getEnv("VT_TEST_FILE_HASH", "44d88612fea8a8f36de82e1278abb02f"), // EICAR test file
+		KnownDomain:       getEnv("VT_TEST_DOMAIN", "google.com"),
+		KnownIPAddress:    getEnv("VT_TEST_IP", "8.8.8.8"),
+		KnownURL:          getEnv("VT_TEST_URL", "https://www.google.com"),
+		KnownURLID:        getEnv("VT_TEST_URL_ID", "aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbQ"), // base64 of https://www.google.com (no padding)
 	}
 }
 

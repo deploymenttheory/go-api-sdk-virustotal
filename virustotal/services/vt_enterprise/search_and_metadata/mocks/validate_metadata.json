@@ -1,0 +1,137 @@
+{
+  "data": {
+    "engines": {
+      "ALYac": {},
+      "APEX": {},
+      "AVG": {},
+      "Avast": {},
+      "Avira": {},
+      "BitDefender": {},
+      "ClamAV": {},
+      "DrWeb": {},
+      "ESET-NOD32": {},
+      "F-Secure": {},
+      "Fortinet": {},
+      "GData": {},
+      "Kaspersky": {},
+      "McAfee": {},
+      "Microsoft": {},
+      "Sophos": {},
+      "Symantec": {},
+      "TrendMicro": {},
+      "VIPRE": {},
+      "VirusBlokAda": {}
+    },
+    "privileges": [
+      "cases",
+      "click_to_accept",
+      "creditcards",
+      "dogfooder",
+      "file-behaviour-feed",
+      "downloads-tier-1",
+      "downloads-tier-2",
+      "private-scanning",
+      "intelligence"
+    ],
+    "relationships": {
+      "analysis": [
+        {
+          "name": "item",
+          "description": "File or URL the analysis belongs to."
+        }
+      ],
+      "file": [
+        {
+          "name": "analyses",
+          "description": "Analyses for the file."
+        },
+        {
+          "name": "behaviours",
+          "description": "Behaviour reports for the file."
+        },
+        {
+          "name": "comments",
+          "description": "Community posted comments about the file."
+        },
+        {
+          "name": "contacted_domains",
+          "description": "Domains contacted by the file."
+        },
+        {
+          "name": "contacted_ips",
+          "description": "IPs contacted by the file."
+        },
+        {
+          "name": "contacted_urls",
+          "description": "URLs contacted by the file."
+        },
+        {
+          "name": "votes",
+          "description": "Votes for the file."
+        }
+      ],
+      "url": [
+        {
+          "name": "analyses",
+          "description": "Analyses for the URL."
+        },
+        {
+          "name": "comments",
+          "description": "Community posted comments about the URL."
+        },
+        {
+          "name": "contacted_domains",
+          "description": "Domains from which the URL loads some kind of resource."
+        },
+        {
+          "name": "contacted_ips",
+          "description": "IPs from which the URL loads some kind of resource."
+        },
+        {
+          "name": "graphs",
+          "description": "Graphs including the URL."
+        },
+        {
+          "name": "last_serving_ip_address",
+          "description": "Last IP address that served the URL."
+        },
+        {
+          "name": "network_location",
+          "description": "Domain or IP for the URL."
+        },
+        {
+          "name": "votes",
+          "description": "Votes for the URL."
+        }
+      ],
+      "domain": [
+        {
+          "name": "comments",
+          "description": "Community posted comments about the domain."
+        },
+        {
+          "name": "resolutions",
+          "description": "DNS resolutions for the domain."
+        },
+        {
+          "name": "votes",
+          "description": "Votes for the domain."
+        }
+      ],
+      "ip_address": [
+        {
+          "name": "comments",
+          "description": "Community posted comments about the IP address."
+        },
+        {
+          "name": "resolutions",
+          "description": "DNS resolutions for the IP address."
+        },
+        {
+          "name": "votes",
+          "description": "Votes for the IP address."
+        }
+      ]
+    }
+  }
+}

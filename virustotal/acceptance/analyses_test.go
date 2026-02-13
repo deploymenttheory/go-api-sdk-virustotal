@@ -1,10 +1,11 @@
 package acceptance
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/analyses"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -185,6 +186,13 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 }
 
 // TestAcceptance_Analyses_GetSubmission tests retrieving a submission object
+//
+// Note: Submission IDs are different from Analysis IDs. This test creates a submission by
+// uploading a test file, retrieves the submission ID from the file's submissions relationship,
+// and then tests the GetSubmission function.
+//
+// The submissions relationship requires Premium API access. If you don't have Premium access,
+// you can set VT_TEST_SUBMISSION_ID to a known submission ID to skip the file upload step.
 func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 	RequireClient(t)
 
@@ -193,23 +201,83 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		defer cancel()
 
 		analysesService := analyses.NewService(Client)
-		urlsService := urls.NewService(Client)
+		filesService := files.NewService(Client)
 
-		// First, scan a URL to get a fresh submission/analysis ID
-		testURL := "http://www.example.com"
-		LogTestStage(t, "🌐 URL Scan", "Scanning URL to obtain submission ID: %s", testURL)
+		var submissionID string
 
-		scanResult, scanResp, scanErr := urlsService.ScanURL(ctx, testURL)
-		AssertNoError(t, scanErr, "ScanURL should not return an error")
-		AssertNotNil(t, scanResult, "ScanURL result should not be nil")
-		AssertNotNil(t, scanResp, "ScanURL response should not be nil")
-		assert.Equal(t, 200, scanResp.StatusCode, "ScanURL status code should be 200")
+		// If a known submission ID is configured, use it; otherwise create one
+		if Config.KnownSubmissionID != "" {
+			submissionID = Config.KnownSubmissionID
+			LogTestStage(t, "📋 Using Config", "Using pre-configured submission ID: %s", submissionID)
+		} else {
+			// Step 1: Upload a test file to create a submission
+			testFileContent := "This is a test file for VirusTotal submission testing."
+			testFileName := "vt_test_submission.txt"
 
-		submissionID := scanResult.Data.ID
-		assert.NotEmpty(t, submissionID, "Submission ID should not be empty")
-		LogTestSuccess(t, "Obtained submission ID: %s", submissionID)
+			LogTestStage(t, "📤 File Upload", "Uploading test file to create submission: %s", testFileName)
 
-		// Now test GetSubmission with the fresh ID
+			uploadRequest := &files.UploadFileRequest{
+				File:     strings.NewReader(testFileContent),
+				Filename: testFileName,
+				FileSize: int64(len(testFileContent)),
+			}
+
+			uploadResult, uploadResp, uploadErr := filesService.UploadFile(ctx, uploadRequest)
+			AssertNoError(t, uploadErr, "File upload should not return an error")
+			AssertNotNil(t, uploadResult, "Upload result should not be nil")
+			AssertNotNil(t, uploadResp, "Upload response should not be nil")
+			assert.Equal(t, 200, uploadResp.StatusCode, "Upload status code should be 200")
+
+			analysisID := uploadResult.Data.ID
+			assert.NotEmpty(t, analysisID, "Analysis ID should not be empty")
+			LogTestSuccess(t, "File uploaded successfully, analysis ID: %s", analysisID)
+
+			// Step 2: Get the file hash from the analysis ID
+			// Analysis IDs are typically base64 encoded "{hash}:{timestamp}"
+			// We need the file hash to query submissions
+			LogTestStage(t, "🔍 Get File", "Retrieving file analysis to get file hash")
+
+			analysisResult, analysisResp, analysisErr := analysesService.GetAnalysis(ctx, analysisID)
+			AssertNoError(t, analysisErr, "GetAnalysis should not return an error")
+			AssertNotNil(t, analysisResult, "Analysis result should not be nil")
+			AssertNotNil(t, analysisResp, "Analysis response should not be nil")
+
+			// The file hash should be in the analysis result
+			// For now, we'll use the known file hash
+			fileHash := Config.KnownFileHash
+
+			LogTestSuccess(t, "Using file hash: %s", fileHash)
+
+			// Step 3: Get submissions for the file (Premium API feature)
+			LogTestStage(t, "📋 Get Submissions", "Retrieving submissions for file hash: %s", fileHash)
+
+			submissionsResult, submissionsResp, submissionsErr := filesService.GetObjectsRelatedToFile(
+				ctx,
+				fileHash,
+				"submissions",
+				&files.GetRelatedObjectsOptions{Limit: 1},
+			)
+
+			// If we get a forbidden error, the user doesn't have Premium API access
+			if submissionsErr != nil {
+				t.Skipf("Cannot retrieve submissions (Premium API feature required): %v. "+
+					"Set VT_TEST_SUBMISSION_ID to a known submission ID to test GetSubmission.", submissionsErr)
+			}
+
+			AssertNoError(t, submissionsErr, "GetObjectsRelatedToFile(submissions) should not return an error")
+			AssertNotNil(t, submissionsResult, "Submissions result should not be nil")
+			AssertNotNil(t, submissionsResp, "Submissions response should not be nil")
+
+			if len(submissionsResult.Data) == 0 {
+				t.Skip("No submissions found for the uploaded file")
+			}
+
+			submissionID = submissionsResult.Data[0].ID
+			assert.NotEmpty(t, submissionID, "Submission ID should not be empty")
+			LogTestSuccess(t, "Retrieved submission ID: %s", submissionID)
+		}
+
+		// Step 4: Test GetSubmission with the obtained submission ID
 		LogTestStage(t, "🔍 API Call", "Testing GetSubmission with submission ID: %s", submissionID)
 
 		result, resp, err := analysesService.GetSubmission(ctx, submissionID)
@@ -229,7 +297,7 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		assert.Greater(t, attrs.Date, int64(0), "Submission date should be valid timestamp")
 
 		LogTestSuccess(t, "Submission ID: %s, Date: %d", result.Data.ID, attrs.Date)
-		
+
 		// Premium API fields (may be empty for free tier)
 		if attrs.Interface != "" {
 			t.Logf("  Submission Interface: %s", attrs.Interface)

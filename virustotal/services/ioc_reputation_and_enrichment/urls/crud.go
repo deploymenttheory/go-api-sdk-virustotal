@@ -18,6 +18,10 @@ type (
 		//
 		// Returns an analysis ID that can be used to retrieve the scan results from the Analyses endpoint.
 		//
+		// Note: Some URLs (including virustotal.com and other protected domains) are considered "Private URLs"
+		// and require a Private Scanning license. Attempting to scan these without the license will result
+		// in a 403 Forbidden error with message "Private URL".
+		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/scan-url
 		ScanURL(ctx context.Context, url string) (*ScanURLResponse, *interfaces.Response, error)
 
@@ -61,6 +65,12 @@ type (
 		// Supported relationships include: analyses, collections, comments, communicating_files, contacted_domains,
 		// contacted_ips, downloaded_files, graphs, and more. Results are paginated.
 		//
+		// Note: Many relationships require VT Enterprise license. Public API relationships include:
+		// comments, graphs, last_serving_ip_address, network_location, related_comments.
+		// Enterprise-only relationships include: analyses, communicating_files, contacted_domains,
+		// contacted_ips, downloaded_files, referrer_files, referrer_urls, redirecting_urls,
+		// redirects_to, related_references, related_threat_actors, submissions.
+		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-relationships
 		GetObjectsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
 
@@ -69,6 +79,12 @@ type (
 		// Returns lightweight object descriptors with just IDs and context attributes instead of full objects.
 		// This is more efficient when you only need to know which objects are related without fetching all attributes.
 		// Supported relationships are the same as GetObjectsRelatedToURL.
+		//
+		// Note: Many relationships require VT Enterprise license. Public API relationships include:
+		// comments, graphs, last_serving_ip_address, network_location, related_comments.
+		// Enterprise-only relationships include: analyses, communicating_files, contacted_domains,
+		// contacted_ips, downloaded_files, referrer_files, referrer_urls, redirecting_urls,
+		// redirects_to, related_references, related_threat_actors, submissions.
 		//
 		// VirusTotal API docs: https://docs.virustotal.com/reference/urls-relationships-ids
 		GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error)
@@ -113,6 +129,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 
 // ScanURL submits a URL for scanning
 // URL: POST https://www.virustotal.com/api/v3/urls
+// Note: Protected domains (e.g., virustotal.com) require Private Scanning license.
 // https://docs.virustotal.com/reference/scan-url
 func (s *Service) ScanURL(ctx context.Context, url string) (*ScanURLResponse, *interfaces.Response, error) {
 	if url == "" {
@@ -298,6 +315,7 @@ func (s *Service) AddCommentToURL(ctx context.Context, urlID string, comment str
 // URL: GET https://www.virustotal.com/api/v3/urls/{id}/{relationship}
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
+// Note: Many relationships require VT Enterprise license (contacted_domains, contacted_ips, analyses, etc.).
 // https://docs.virustotal.com/reference/urls-relationships
 func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {
@@ -360,6 +378,7 @@ func (s *Service) GetObjectsRelatedToURL(ctx context.Context, urlID string, rela
 // URL: GET https://www.virustotal.com/api/v3/urls/{id}/relationships/{relationship}
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
+// Note: Many relationships require VT Enterprise license (contacted_domains, contacted_ips, analyses, etc.).
 // https://docs.virustotal.com/reference/urls-relationships-ids
 func (s *Service) GetObjectDescriptorsRelatedToURL(ctx context.Context, urlID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
 	if err := ValidateURLID(urlID); err != nil {

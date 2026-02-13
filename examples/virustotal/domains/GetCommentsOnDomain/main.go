@@ -75,11 +75,11 @@ func main() {
 			fmt.Printf("   Text: %s\n", text)
 		}
 
-		if tags, ok := comment.Attributes["tags"].([]interface{}); ok && len(tags) > 0 {
+		if tags, ok := comment.Attributes["tags"].([]any); ok && len(tags) > 0 {
 			fmt.Printf("   Tags: %v\n", tags)
 		}
 
-		if votes, ok := comment.Attributes["votes"].(map[string]interface{}); ok {
+		if votes, ok := comment.Attributes["votes"].(map[string]any); ok {
 			if harmless, ok := votes["harmless"].(float64); ok {
 				fmt.Printf("   Votes - Harmless: %.0f", harmless)
 			}
