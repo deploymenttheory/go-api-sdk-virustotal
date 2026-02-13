@@ -31,9 +31,9 @@ type ScanURLResponse struct {
 }
 
 type ScanURLData struct {
-	Type string        `json:"type"`
-	ID   string        `json:"id"`
-	Links Links        `json:"links"`
+	Type  string `json:"type"`
+	ID    string `json:"id"`
+	Links Links  `json:"links"`
 }
 
 // =============================================================================
@@ -52,31 +52,31 @@ type URL struct {
 }
 
 type URLAttributes struct {
-	URL                   string                  `json:"url,omitempty"`
-	FirstSubmissionDate   int64                   `json:"first_submission_date,omitempty"`
-	LastAnalysisDate      int64                   `json:"last_analysis_date,omitempty"`
-	LastAnalysisResults   map[string]EngineResult `json:"last_analysis_results,omitempty"`
-	LastAnalysisStats     LastAnalysisStats       `json:"last_analysis_stats,omitempty"`
-	LastFinalURL          string                  `json:"last_final_url,omitempty"`
-	LastHTTPResponseCode  int                     `json:"last_http_response_code,omitempty"`
-	LastHTTPResponseContentLength int             `json:"last_http_response_content_length,omitempty"`
-	LastHTTPResponseContentSHA256 string          `json:"last_http_response_content_sha256,omitempty"`
-	LastHTTPResponseCookies       map[string]string `json:"last_http_response_cookies,omitempty"`
-	LastHTTPResponseHeaders       map[string]string `json:"last_http_response_headers,omitempty"`
-	LastModificationDate  int64                   `json:"last_modification_date,omitempty"`
-	LastSubmissionDate    int64                   `json:"last_submission_date,omitempty"`
-	Reputation            int                     `json:"reputation,omitempty"`
-	Tags                  []string                `json:"tags,omitempty"`
-	TimesSubmitted        int                     `json:"times_submitted,omitempty"`
-	Title                 string                  `json:"title,omitempty"`
-	TotalVotes            Votes                   `json:"total_votes,omitempty"`
-	Categories            map[string]string       `json:"categories,omitempty"`
-	HTMLMeta              []map[string]string     `json:"html_meta,omitempty"`
-	OutgoingLinks         []string                `json:"outgoing_links,omitempty"`
-	RedirectionChain      []string                `json:"redirection_chain,omitempty"`
-	TargetedBrand         string                  `json:"targeted_brand,omitempty"`
-	ThreatNames           []string                `json:"threat_names,omitempty"`
-	TrackerID             string                  `json:"tracker_id,omitempty"`
+	URL                           string                  `json:"url,omitempty"`
+	FirstSubmissionDate           int64                   `json:"first_submission_date,omitempty"`
+	LastAnalysisDate              int64                   `json:"last_analysis_date,omitempty"`
+	LastAnalysisResults           map[string]EngineResult `json:"last_analysis_results,omitempty"`
+	LastAnalysisStats             LastAnalysisStats       `json:"last_analysis_stats,omitempty"`
+	LastFinalURL                  string                  `json:"last_final_url,omitempty"`
+	LastHTTPResponseCode          int                     `json:"last_http_response_code,omitempty"`
+	LastHTTPResponseContentLength int                     `json:"last_http_response_content_length,omitempty"`
+	LastHTTPResponseContentSHA256 string                  `json:"last_http_response_content_sha256,omitempty"`
+	LastHTTPResponseCookies       map[string]string       `json:"last_http_response_cookies,omitempty"`
+	LastHTTPResponseHeaders       map[string]string       `json:"last_http_response_headers,omitempty"`
+	LastModificationDate          int64                   `json:"last_modification_date,omitempty"`
+	LastSubmissionDate            int64                   `json:"last_submission_date,omitempty"`
+	Reputation                    int                     `json:"reputation,omitempty"`
+	Tags                          []string                `json:"tags,omitempty"`
+	TimesSubmitted                int                     `json:"times_submitted,omitempty"`
+	Title                         string                  `json:"title,omitempty"`
+	TotalVotes                    Votes                   `json:"total_votes,omitempty"`
+	Categories                    map[string]string       `json:"categories,omitempty"`
+	HTMLMeta                      any                     `json:"html_meta,omitempty"` // Can be object or array depending on URL
+	OutgoingLinks                 []string                `json:"outgoing_links,omitempty"`
+	RedirectionChain              []string                `json:"redirection_chain,omitempty"`
+	TargetedBrand                 string                  `json:"targeted_brand,omitempty"`
+	ThreatNames                   []string                `json:"threat_names,omitempty"`
+	TrackerID                     string                  `json:"tracker_id,omitempty"`
 }
 
 type EngineResult struct {

@@ -186,7 +186,7 @@ type RelatedThreatActorsContextAttributes struct {
 
 // RelatedFromObject specifies an object from which something is related
 type RelatedFromObject struct {
-	Type       string                 `json:"type"`                 // Object type
-	ID         string                 `json:"id"`                   // Object ID
-	Attributes map[string]interface{} `json:"attributes,omitempty"` // Optional object attributes (e.g., name)
+	Type       string         `json:"type"`                 // Object type
+	ID         string         `json:"id"`                   // Object ID
+	Attributes map[string]any `json:"attributes,omitempty"` // Optional object attributes (e.g., name)
 }

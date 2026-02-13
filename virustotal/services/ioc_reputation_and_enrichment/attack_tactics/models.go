@@ -16,7 +16,7 @@ type AttackTactic struct {
 	ID            string                 `json:"id"`
 	Attributes    AttackTacticAttributes `json:"attributes"`
 	Links         Links                  `json:"links,omitempty"`
-	Relationships map[string]interface{} `json:"relationships,omitempty"`
+	Relationships map[string]any         `json:"relationships,omitempty"`
 }
 
 // AttackTacticAttributes contains the attributes of an attack tactic
@@ -31,7 +31,7 @@ type AttackTacticAttributes struct {
 
 // Links represents the links section of an object
 type Links struct {
-	Self string `json:"self"` // URL to this object
+	Self string `json:"self"`           // URL to this object
 	Next string `json:"next,omitempty"` // Next page URL
 }
 

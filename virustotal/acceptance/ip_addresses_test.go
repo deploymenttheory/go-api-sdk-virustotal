@@ -53,14 +53,9 @@ func TestAcceptance_IPAddresses_GetIPAddressReport(t *testing.T) {
 		assert.NotEmpty(t, attrs.ASOwner, "AS owner should not be empty for known IP")
 		assert.Greater(t, attrs.ASN, 0, "ASN should be greater than 0")
 
-		LogResponse(t, "IP Address: %s", Config.KnownIPAddress)
-		LogResponse(t, "Reputation: %d", attrs.Reputation)
-		LogResponse(t, "Network: %s", attrs.Network)
-		LogResponse(t, "Country: %s", attrs.Country)
-		LogResponse(t, "AS Owner: %s", attrs.ASOwner)
-		LogResponse(t, "ASN: %d", attrs.ASN)
-		LogResponse(t, "Last Analysis Date: %d", attrs.LastAnalysisDate)
-		LogResponse(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
+		LogTestSuccess(t, "IP: %s, Network: %s, Country: %s, ASN: %d (%s)", 
+			Config.KnownIPAddress, attrs.Network, attrs.Country, attrs.ASN, attrs.ASOwner)
+		LogTestSuccess(t, "Analysis Stats - Malicious: %d, Suspicious: %d, Harmless: %d, Undetected: %d",
 			attrs.LastAnalysisStats.Malicious,
 			attrs.LastAnalysisStats.Suspicious,
 			attrs.LastAnalysisStats.Harmless,
@@ -152,7 +147,7 @@ func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
 				resolution := result.Data[0]
 				assert.NotEmpty(t, resolution.ID, "Resolution ID should not be empty")
 				assert.Equal(t, "resolution", resolution.Type, "Resolution type should be 'resolution'")
-				LogResponse(t, "First resolution ID: %s", resolution.ID)
+				t.Logf("  First resolution ID: %s", resolution.ID)
 			}
 		}
 	})
@@ -190,7 +185,7 @@ func TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress(t *testin
 			descriptor := result.Data[0]
 			assert.NotEmpty(t, descriptor.ID, "Descriptor ID should not be empty")
 			assert.Equal(t, "resolution", descriptor.Type, "Descriptor type should be 'resolution'")
-			LogResponse(t, "First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
+			t.Logf("  First descriptor - Type: %s, ID: %s", descriptor.Type, descriptor.ID)
 		}
 	})
 }
@@ -231,7 +226,7 @@ func TestAcceptance_IPAddresses_GetVotesOnIPAddress(t *testing.T) {
 			assert.Contains(t, []string{"harmless", "malicious"}, vote.Attributes.Verdict, "Verdict should be harmless or malicious")
 			assert.Greater(t, vote.Attributes.Date, int64(0), "Vote date should be valid")
 			
-			LogResponse(t, "First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
+			t.Logf("  First vote - Verdict: %s, Date: %d", vote.Attributes.Verdict, vote.Attributes.Date)
 		}
 	})
 }
