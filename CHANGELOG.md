@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1](https://github.com/deploymenttheory/go-api-sdk-virustotal/compare/v0.1.0...v0.1.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* added graceful handling for uploads, handling small and large files with appropriate endpoints; update file upload logic to support size-based endpoint selection ([def6825](https://github.com/deploymenttheory/go-api-sdk-virustotal/commit/def6825074557d00ec8bb9ea2ff7c45ee08bddb7))
+* added graceful handling for uploads, handling small and large files with appropriate endpoints; update file upload logic to support size-based endpoint selection ([9273e3d](https://github.com/deploymenttheory/go-api-sdk-virustotal/commit/9273e3d036a34a625f4fac7b8fd86c298ebb457b))
+
 ## 0.1.0 (2026-02-13)
 
 
