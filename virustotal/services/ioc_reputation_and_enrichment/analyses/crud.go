@@ -129,6 +129,22 @@ func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, re
 
 	queryParams := make(map[string]string)
 
+	// The "item" relationship returns a single object, not an array
+	if relationship == "item" {
+		var singleResult SingleRelatedObjectResponse
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &singleResult)
+		if err != nil {
+			return nil, resp, err
+		}
+
+		// Convert single object response to array response for consistency
+		return &RelatedObjectsResponse{
+			Data:  []RelatedObject{singleResult.Data},
+			Links: singleResult.Links,
+			Meta:  singleResult.Meta,
+		}, resp, nil
+	}
+
 	if opts != nil {
 		if opts.Limit > 0 {
 			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
@@ -190,6 +206,22 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 	}
 
 	queryParams := make(map[string]string)
+
+	// The "item" relationship returns a single object, not an array
+	if relationship == "item" {
+		var singleResult SingleObjectDescriptorResponse
+		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &singleResult)
+		if err != nil {
+			return nil, resp, err
+		}
+
+		// Convert single object response to array response for consistency
+		return &RelatedObjectDescriptorsResponse{
+			Data:  []ObjectDescriptor{singleResult.Data},
+			Links: singleResult.Links,
+			Meta:  singleResult.Meta,
+		}, resp, nil
+	}
 
 	if opts != nil {
 		if opts.Limit > 0 {

@@ -118,6 +118,13 @@ type RelatedObjectsResponse struct {
 	Meta  Meta            `json:"meta,omitempty"`
 }
 
+// SingleRelatedObjectResponse represents the response for a single related object
+type SingleRelatedObjectResponse struct {
+	Data  RelatedObject `json:"data"`
+	Links RelatedLinks  `json:"links,omitempty"`
+	Meta  Meta          `json:"meta,omitempty"`
+}
+
 // RelatedObject represents an object related to an analysis
 type RelatedObject struct {
 	Type              string         `json:"type"`                         // Object type (e.g., "file", "url")
@@ -154,6 +161,13 @@ type RelatedObjectDescriptorsResponse struct {
 	Data  []ObjectDescriptor `json:"data"`
 	Links RelatedLinks       `json:"links,omitempty"`
 	Meta  Meta               `json:"meta,omitempty"`
+}
+
+// SingleObjectDescriptorResponse represents the response for a single object descriptor
+type SingleObjectDescriptorResponse struct {
+	Data  ObjectDescriptor `json:"data"`
+	Links RelatedLinks     `json:"links,omitempty"`
+	Meta  Meta             `json:"meta,omitempty"`
 }
 
 // ObjectDescriptor represents a lightweight descriptor for a related object
