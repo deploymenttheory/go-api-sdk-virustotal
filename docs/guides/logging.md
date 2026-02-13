@@ -476,6 +476,5 @@ func TestLogging(t *testing.T) {
 ## Related Documentation
 
 - [OpenTelemetry Tracing](opentelemetry.md) - Combine logs with traces
-- [Error Handling](error-handling.md) - Log errors effectively
 - [Debugging](debugging.md) - Use debug mode for detailed inspection
 - [Zap Documentation](https://pkg.go.dev/go.uber.org/zap)

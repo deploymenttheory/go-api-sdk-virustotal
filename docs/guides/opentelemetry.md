@@ -261,6 +261,5 @@ See [examples/virustotal/observability/tracing/main.go](../../examples/virustota
 ## Related Documentation
 
 - [Structured Logging](logging.md) - Combine tracing with logging for complete observability
-- [Error Handling](error-handling.md) - How errors are captured in traces
-- [Context Support](context.md) - Using context for trace propagation
+- [Debugging](debugging.md) - Debug distributed tracing issues
 - [OpenTelemetry Go Documentation](https://opentelemetry.io/docs/languages/go/)

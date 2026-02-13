@@ -306,8 +306,6 @@ if err != nil {
 2. Implement application-level rate limiting
 3. Consider upgrading to a higher-tier API key
 
-See [Rate Limiting Guide](rate-limiting.md) for more details.
-
 ## Testing
 
 ### Simulating Timeouts
@@ -345,7 +343,6 @@ func TestRetries(t *testing.T) {
 
 ## Related Documentation
 
-- [Error Handling](error-handling.md) - Handle timeout and retry errors
-- [Rate Limiting](rate-limiting.md) - Understand API quotas and 429 errors
-- [Context Support](context.md) - Use context for request control
 - [Authentication](authentication.md) - Configure API access
+- [Debugging](debugging.md) - Debug timeout and connection issues
+- [Logging](logging.md) - Monitor request durations and failures
