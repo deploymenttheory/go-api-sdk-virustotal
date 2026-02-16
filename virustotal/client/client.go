@@ -14,6 +14,7 @@ type Client struct {
 	client        *resty.Client
 	logger        *zap.Logger
 	authConfig    *AuthConfig
+	authManager   *AuthManager
 	BaseURL       string
 	globalHeaders map[string]string
 	userAgent     string
@@ -62,9 +63,12 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 		}
 	}
 
-	if err := SetupAuthentication(restyClient, authConfig, logger); err != nil {
+	// Setup authentication with middleware and thread-safe auth manager
+	authManager, err := SetupAuthentication(restyClient, authConfig, logger)
+	if err != nil {
 		return nil, fmt.Errorf("failed to setup authentication: %w", err)
 	}
+	client.authManager = authManager
 
 	restyClient.SetBaseURL(client.BaseURL)
 
@@ -88,4 +92,26 @@ func (c *Client) GetLogger() *zap.Logger {
 // QueryBuilder creates a new query builder instance
 func (c *Client) QueryBuilder() interfaces.ServiceQueryBuilder {
 	return NewQueryBuilder()
+}
+
+// GetAuthManager returns the auth manager instance for advanced authentication operations
+func (c *Client) GetAuthManager() *AuthManager {
+	return c.authManager
+}
+
+// UpdateAPIKey updates the API key at runtime without recreating the client
+// This is useful for API key rotation or switching between multiple keys
+func (c *Client) UpdateAPIKey(newAPIKey string) error {
+	if c.authManager == nil {
+		return fmt.Errorf("auth manager not initialized")
+	}
+	return c.authManager.UpdateAPIKey(newAPIKey)
+}
+
+// ValidateAPIKey validates that the current API key is set and valid
+func (c *Client) ValidateAPIKey() error {
+	if c.authManager == nil {
+		return fmt.Errorf("auth manager not initialized")
+	}
+	return c.authManager.ValidateAPIKey()
 }
