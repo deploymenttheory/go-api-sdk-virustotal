@@ -6,9 +6,9 @@ import (
 
 // API endpoints for analyses, submissions, and operations
 const (
-	EndpointAnalyses    = "/analyses"
-	EndpointSubmissions = "/submissions"
-	EndpointOperations  = "/operations"
+	EndpointAnalyses    = "/v3/analyses"
+	EndpointSubmissions = "/v3/submissions"
+	EndpointOperations  = "/v3/operations"
 )
 
 // Relationship names for analyses (from VT API documentation)

@@ -1,7 +1,7 @@
 package collections
 
 const (
-	EndpointCollections = "/collections"
+	EndpointCollections = "/v3/collections"
 )
 
 // Collection relationship types

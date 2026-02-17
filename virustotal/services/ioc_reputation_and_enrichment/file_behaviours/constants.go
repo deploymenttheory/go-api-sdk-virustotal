@@ -6,8 +6,8 @@ import (
 
 // API endpoints for file behaviours
 const (
-	EndpointFiles          = "/files"
-	EndpointFileBehaviours = "/file_behaviours"
+	EndpointFiles          = "/v3/files"
+	EndpointFileBehaviours = "/v3/file_behaviours"
 )
 
 // Relationship names for file behaviours (from VT API documentation)

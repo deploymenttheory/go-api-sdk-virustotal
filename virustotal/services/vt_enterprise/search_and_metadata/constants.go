@@ -2,12 +2,12 @@ package search_and_metadata
 
 const (
 	// Basic search endpoint - available to all users
-	EndpointSearch = "/search"
+	EndpointSearch = "/v3/search"
 	
 	// VT Enterprise endpoints
-	EndpointIntelligenceSearch    = "/intelligence/search"
-	EndpointSearchSnippets        = "/intelligence/search/snippets"
-	EndpointMetadata              = "/metadata"
+	EndpointIntelligenceSearch    = "/v3/intelligence/search"
+	EndpointSearchSnippets        = "/v3/intelligence/search/snippets"
+	EndpointMetadata              = "/v3/metadata"
 )
 
 // Search entity types

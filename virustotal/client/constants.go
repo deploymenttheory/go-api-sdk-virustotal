@@ -2,7 +2,7 @@ package client
 
 const (
 	// DefaultBaseURL is the default base URL for the VirusTotal API
-	DefaultBaseURL = "https://www.virustotal.com/api/v3"
+	DefaultBaseURL = "https://www.virustotal.com/api"
 
 	// DefaultAPIVersion is the API version
 	DefaultAPIVersion = "v3"

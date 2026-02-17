@@ -1,7 +1,7 @@
 package yara_rules
 
 const (
-	EndpointYaraRules = "/yara_rules"
+	EndpointYaraRules = "/v3/yara_rules"
 )
 
 // YARA rule relationship types

@@ -6,10 +6,10 @@ import (
 
 // API endpoints for files
 const (
-	EndpointFiles        = "/files"
-	EndpointFilesUploadURL = "/files/upload_url"
-	EndpointSigmaRules   = "/sigma_rules"
-	EndpointYARARulesets = "/yara_rulesets"
+	EndpointFiles        = "/v3/files"
+	EndpointFilesUploadURL = "/v3/files/upload_url"
+	EndpointSigmaRules   = "/v3/sigma_rules"
+	EndpointYARARulesets = "/v3/yara_rulesets"
 )
 
 // File size limits for uploads
