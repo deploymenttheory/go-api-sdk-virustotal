@@ -31,7 +31,7 @@ type PaginationOptions struct {
 // GetPaginated executes a paginated GET request, automatically looping through all pages.
 // The mergePage callback receives raw JSON for each page and handles unmarshaling and merging.
 // Returns response metadata from the last page and error.
-func (c *Client) GetPaginated(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, mergePage func(pageData []byte) error) (*interfaces.Response, error) {
+func (t *Transport) GetPaginated(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, mergePage func(pageData []byte) error) (*interfaces.Response, error) {
 	currentParams := make(map[string]string)
 	maps.Copy(currentParams, queryParams)
 
@@ -39,7 +39,7 @@ func (c *Client) GetPaginated(ctx context.Context, path string, queryParams map[
 
 	for {
 		var rawResponse json.RawMessage
-		resp, err := c.Get(ctx, path, currentParams, headers, &rawResponse)
+		resp, err := t.Get(ctx, path, currentParams, headers, &rawResponse)
 		lastResp = resp
 		if err != nil {
 			return lastResp, err

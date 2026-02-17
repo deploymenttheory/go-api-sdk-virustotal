@@ -18,14 +18,14 @@ type testResponse struct {
 	Message string `json:"message"`
 }
 
-func setupTestClient(t *testing.T, baseURL string) *Client {
+func setupTestClient(t *testing.T, baseURL string) *Transport {
 	logger := zaptest.NewLogger(t)
 	authConfig := &AuthConfig{
 		APIKey:     "test-api-key",
 		APIVersion: "v3",
 	}
 
-	client := &Client{
+	transport := &Transport{
 		client:        resty.New().SetBaseURL(baseURL),
 		logger:        logger,
 		authConfig:    authConfig,
@@ -34,7 +34,7 @@ func setupTestClient(t *testing.T, baseURL string) *Client {
 		userAgent:     "test-agent",
 	}
 
-	return client
+	return transport
 }
 
 func TestGet_Success(t *testing.T) {
@@ -71,11 +71,11 @@ func TestGet_Success(t *testing.T) {
 	defer server.Close()
 
 	// Create client
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	// Execute request
 	var result testResponse
-	resp, err := client.Get(
+	resp, err := transport.Get(
 		context.Background(),
 		"/test",
 		map[string]string{"limit": "10"},
@@ -124,10 +124,10 @@ func TestGet_EmptyQueryParams(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	_, err := client.Get(
+	_, err := transport.Get(
 		context.Background(),
 		"/test",
 		map[string]string{"empty": "", "valid": "value"},
@@ -165,11 +165,11 @@ func TestPost_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	requestBody := testResponse{Message: "test message"}
 	var result testResponse
-	resp, err := client.Post(
+	resp, err := transport.Post(
 		context.Background(),
 		"/test",
 		requestBody,
@@ -203,10 +203,10 @@ func TestPost_NilBody(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	_, err := client.Post(
+	_, err := transport.Post(
 		context.Background(),
 		"/test",
 		nil,
@@ -243,10 +243,10 @@ func TestPostWithQuery_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	_, err := client.PostWithQuery(
+	_, err := transport.PostWithQuery(
 		context.Background(),
 		"/test",
 		map[string]string{"action": "create"},
@@ -291,7 +291,7 @@ func TestPostForm_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	formData := map[string]string{
 		"field1": "value1",
@@ -299,7 +299,7 @@ func TestPostForm_Success(t *testing.T) {
 	}
 
 	var result testResponse
-	_, err := client.PostForm(
+	_, err := transport.PostForm(
 		context.Background(),
 		"/test",
 		formData,
@@ -355,7 +355,7 @@ func TestPostMultipart_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	fileContent := []byte("test file content")
 	fileReader := bytes.NewReader(fileContent)
@@ -365,7 +365,7 @@ func TestPostMultipart_Success(t *testing.T) {
 	}
 
 	var result testResponse
-	_, err := client.PostMultipart(
+	_, err := transport.PostMultipart(
 		context.Background(),
 		"/test",
 		"file",
@@ -395,7 +395,7 @@ func TestPostMultipart_WithProgressCallback(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	fileContent := []byte("test file content")
 	fileReader := bytes.NewReader(fileContent)
@@ -412,7 +412,7 @@ func TestPostMultipart_WithProgressCallback(t *testing.T) {
 	}
 
 	var result testResponse
-	_, err := client.PostMultipart(
+	_, err := transport.PostMultipart(
 		context.Background(),
 		"/test",
 		"file",
@@ -446,10 +446,10 @@ func TestPut_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	resp, err := client.Put(
+	resp, err := transport.Put(
 		context.Background(),
 		"/test/123",
 		testResponse{Message: "update"},
@@ -482,10 +482,10 @@ func TestPatch_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	resp, err := client.Patch(
+	resp, err := transport.Patch(
 		context.Background(),
 		"/test/123",
 		map[string]string{"field": "value"},
@@ -523,10 +523,10 @@ func TestDelete_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	resp, err := client.Delete(
+	resp, err := transport.Delete(
 		context.Background(),
 		"/test/123",
 		map[string]string{"confirm": "true"},
@@ -559,13 +559,13 @@ func TestDeleteWithBody_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	deleteBody := map[string][]string{
 		"ids": {"123", "456"},
 	}
 	var result testResponse
-	resp, err := client.DeleteWithBody(
+	resp, err := transport.DeleteWithBody(
 		context.Background(),
 		"/test/bulk",
 		deleteBody,
@@ -598,10 +598,10 @@ func TestDeleteWithBody_NilBody(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	resp, err := client.DeleteWithBody(
+	resp, err := transport.DeleteWithBody(
 		context.Background(),
 		"/test/delete",
 		nil,
@@ -637,9 +637,9 @@ func TestGetBytes_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
-	resp, data, err := client.GetBytes(
+	resp, data, err := transport.GetBytes(
 		context.Background(),
 		"/test/binary",
 		map[string]string{"format": "binary"},
@@ -676,9 +676,9 @@ func TestGetBytes_Error(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
-	resp, data, err := client.GetBytes(
+	resp, data, err := transport.GetBytes(
 		context.Background(),
 		"/test/not-found",
 		nil,
@@ -709,10 +709,10 @@ func TestGetBytes_Error(t *testing.T) {
 }
 
 func TestExecuteRequest_UnsupportedMethod(t *testing.T) {
-	client := setupTestClient(t, "http://localhost")
+	transport := setupTestClient(t, "http://localhost")
 
-	req := client.client.R()
-	_, err := client.executeRequest(req, "UNSUPPORTED", "/test")
+	req := transport.client.R()
+	_, err := transport.executeRequest(req, "UNSUPPORTED", "/test")
 
 	if err == nil {
 		t.Fatal("executeRequest() error = nil, want error for unsupported method")
@@ -736,10 +736,10 @@ func TestRequest_ErrorResponse(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	resp, err := client.Get(
+	resp, err := transport.Get(
 		context.Background(),
 		"/test",
 		nil,
@@ -793,12 +793,12 @@ func TestRequest_WithGlobalHeaders(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
-	client.globalHeaders["X-Global"] = "global-value"
-	client.globalHeaders["X-Override"] = "global-override"
+	transport := setupTestClient(t, server.URL)
+	transport.globalHeaders["X-Global"] = "global-value"
+	transport.globalHeaders["X-Override"] = "global-override"
 
 	var result testResponse
-	_, err := client.Get(
+	_, err := transport.Get(
 		context.Background(),
 		"/test",
 		nil,
@@ -818,14 +818,14 @@ func TestRequest_ContextCancellation(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	// Create cancelled context
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel() // Cancel immediately
 
 	var result testResponse
-	_, err := client.Get(ctx, "/test", nil, nil, &result)
+	_, err := transport.Get(ctx, "/test", nil, nil, &result)
 
 	if err == nil {
 		t.Fatal("Get() error = nil, want error for cancelled context")
@@ -841,10 +841,10 @@ func TestRequest_InvalidContentType(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	_, err := client.Get(
+	_, err := transport.Get(
 		context.Background(),
 		"/test",
 		nil,
@@ -870,14 +870,14 @@ func TestPostMultipart_NilFile(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	formFields := map[string]string{
 		"description": "no file uploaded",
 	}
 
 	var result testResponse
-	_, err := client.PostMultipart(
+	_, err := transport.PostMultipart(
 		context.Background(),
 		"/test",
 		"",
@@ -907,14 +907,14 @@ func TestPostMultipart_CustomReader(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	// Use a custom reader that wraps bytes
 	content := []byte("custom content")
 	reader := io.NopCloser(bytes.NewReader(content))
 
 	var result testResponse
-	_, err := client.PostMultipart(
+	_, err := transport.PostMultipart(
 		context.Background(),
 		"/test",
 		"file",
@@ -944,10 +944,10 @@ func TestPostForm_NilFormData(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	var result testResponse
-	_, err := client.PostForm(
+	_, err := transport.PostForm(
 		context.Background(),
 		"/test",
 		nil, // nil form data
@@ -978,7 +978,7 @@ func TestPostForm_HeadersNotOverrideContentType(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := setupTestClient(t, server.URL)
+	transport := setupTestClient(t, server.URL)
 
 	formData := map[string]string{
 		"key": "value",
@@ -991,7 +991,7 @@ func TestPostForm_HeadersNotOverrideContentType(t *testing.T) {
 	}
 
 	var result testResponse
-	_, err := client.PostForm(
+	_, err := transport.PostForm(
 		context.Background(),
 		"/test",
 		formData,

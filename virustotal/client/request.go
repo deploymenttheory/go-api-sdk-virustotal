@@ -31,8 +31,8 @@ func toInterfaceResponse(resp *resty.Response) *interfaces.Response {
 }
 
 // Get executes a GET request
-func (c *Client) Get(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) Get(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -42,14 +42,14 @@ func (c *Client) Get(ctx context.Context, path string, queryParams map[string]st
 		}
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "GET", path)
+	return t.executeRequest(req, "GET", path)
 }
 
 // Post executes a POST request with JSON body
-func (c *Client) Post(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) Post(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -57,14 +57,14 @@ func (c *Client) Post(ctx context.Context, path string, body any, headers map[st
 		req.SetBody(body)
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "POST", path)
+	return t.executeRequest(req, "POST", path)
 }
 
 // PostWithQuery executes a POST request with both body and query parameters
-func (c *Client) PostWithQuery(ctx context.Context, path string, queryParams map[string]string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) PostWithQuery(ctx context.Context, path string, queryParams map[string]string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -78,14 +78,14 @@ func (c *Client) PostWithQuery(ctx context.Context, path string, queryParams map
 		req.SetBody(body)
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "POST", path)
+	return t.executeRequest(req, "POST", path)
 }
 
 // PostForm executes a POST request with form-urlencoded data
-func (c *Client) PostForm(ctx context.Context, path string, formData map[string]string, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) PostForm(ctx context.Context, path string, formData map[string]string, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -95,7 +95,7 @@ func (c *Client) PostForm(ctx context.Context, path string, formData map[string]
 
 	// Apply headers with precedence (global first, then per-request)
 	// Note: Content-Type is handled automatically by resty for form data
-	for k, v := range c.globalHeaders {
+	for k, v := range t.globalHeaders {
 		if v != "" && k != "Content-Type" {
 			req.SetHeader(k, v)
 		}
@@ -106,12 +106,12 @@ func (c *Client) PostForm(ctx context.Context, path string, formData map[string]
 		}
 	}
 
-	return c.executeRequest(req, "POST", path)
+	return t.executeRequest(req, "POST", path)
 }
 
 // PostMultipart executes a POST request with multipart form data and progress tracking
-func (c *Client) PostMultipart(ctx context.Context, path string, fileField string, fileName string, fileReader io.Reader, fileSize int64, formFields map[string]string, headers map[string]string, progressCallback interfaces.MultipartProgressCallback, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) PostMultipart(ctx context.Context, path string, fileField string, fileName string, fileReader io.Reader, fileSize int64, formFields map[string]string, headers map[string]string, progressCallback interfaces.MultipartProgressCallback, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -141,7 +141,7 @@ func (c *Client) PostMultipart(ctx context.Context, path string, fileField strin
 
 	// Apply headers with precedence (global first, then per-request)
 	// Note: Content-Type is handled automatically by resty for multipart
-	for k, v := range c.globalHeaders {
+	for k, v := range t.globalHeaders {
 		if v != "" && k != "Content-Type" {
 			req.SetHeader(k, v)
 		}
@@ -152,12 +152,12 @@ func (c *Client) PostMultipart(ctx context.Context, path string, fileField strin
 		}
 	}
 
-	return c.executeRequest(req, "POST", path)
+	return t.executeRequest(req, "POST", path)
 }
 
 // Put executes a PUT request
-func (c *Client) Put(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) Put(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -165,14 +165,14 @@ func (c *Client) Put(ctx context.Context, path string, body any, headers map[str
 		req.SetBody(body)
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "PUT", path)
+	return t.executeRequest(req, "PUT", path)
 }
 
 // Patch executes a PATCH request
-func (c *Client) Patch(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) Patch(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -180,14 +180,14 @@ func (c *Client) Patch(ctx context.Context, path string, body any, headers map[s
 		req.SetBody(body)
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "PATCH", path)
+	return t.executeRequest(req, "PATCH", path)
 }
 
 // Delete executes a DELETE request
-func (c *Client) Delete(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) Delete(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -197,14 +197,14 @@ func (c *Client) Delete(ctx context.Context, path string, queryParams map[string
 		}
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "DELETE", path)
+	return t.executeRequest(req, "DELETE", path)
 }
 
 // DeleteWithBody executes a DELETE request with body (for bulk operations)
-func (c *Client) DeleteWithBody(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
-	req := c.client.R().
+func (t *Transport) DeleteWithBody(ctx context.Context, path string, body any, headers map[string]string, result any) (*interfaces.Response, error) {
+	req := t.client.R().
 		SetContext(ctx).
 		SetResult(result)
 
@@ -212,16 +212,16 @@ func (c *Client) DeleteWithBody(ctx context.Context, path string, body any, head
 		req.SetBody(body)
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	return c.executeRequest(req, "DELETE", path)
+	return t.executeRequest(req, "DELETE", path)
 }
 
 // GetBytes performs a GET request and returns raw bytes without unmarshaling
 // Use this for non-JSON responses like HTML, CSV, binary files (EVTX, PCAP, memdump), etc.
 // Apply headers with precedence (global first, then per-request)
-func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) (*interfaces.Response, []byte, error) {
-	req := c.client.R().
+func (t *Transport) GetBytes(ctx context.Context, path string, queryParams map[string]string, headers map[string]string) (*interfaces.Response, []byte, error) {
+	req := t.client.R().
 		SetContext(ctx)
 
 	for k, v := range queryParams {
@@ -230,16 +230,16 @@ func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[stri
 		}
 	}
 
-	c.applyHeaders(req, headers)
+	t.applyHeaders(req, headers)
 
-	c.logger.Debug("Executing bytes request",
+	t.logger.Debug("Executing bytes request",
 		zap.String("method", "GET"),
 		zap.String("path", path))
 
 	resp, err := req.Get(path)
 	ifaceResp := toInterfaceResponse(resp)
 	if err != nil {
-		c.logger.Error("Bytes request failed",
+		t.logger.Error("Bytes request failed",
 			zap.String("path", path),
 			zap.Error(err))
 		return ifaceResp, nil, fmt.Errorf("bytes request failed: %w", err)
@@ -252,12 +252,12 @@ func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[stri
 			resp.Status(),
 			"GET",
 			path,
-			c.logger,
+			t.logger,
 		)
 	}
 
 	body := []byte(resp.String())
-	c.logger.Debug("Bytes request completed successfully",
+	t.logger.Debug("Bytes request completed successfully",
 		zap.String("path", path),
 		zap.Int("status_code", resp.StatusCode()),
 		zap.Int("content_length", len(body)))
@@ -267,8 +267,8 @@ func (c *Client) GetBytes(ctx context.Context, path string, queryParams map[stri
 
 // executeRequest is a centralized request executor that handles error processing
 // Returns response metadata and error. Response is always non-nil for accessing headers.
-func (c *Client) executeRequest(req *resty.Request, method, path string) (*interfaces.Response, error) {
-	c.logger.Debug("Executing API request",
+func (t *Transport) executeRequest(req *resty.Request, method, path string) (*interfaces.Response, error) {
+	t.logger.Debug("Executing API request",
 		zap.String("method", method),
 		zap.String("path", path))
 
@@ -294,7 +294,7 @@ func (c *Client) executeRequest(req *resty.Request, method, path string) (*inter
 	ifaceResp := toInterfaceResponse(resp)
 
 	if err != nil {
-		c.logger.Error("Request failed",
+		t.logger.Error("Request failed",
 			zap.String("method", method),
 			zap.String("path", path),
 			zap.Error(err))
@@ -302,7 +302,7 @@ func (c *Client) executeRequest(req *resty.Request, method, path string) (*inter
 	}
 
 	// Validate response before processing
-	if err := c.validateResponse(resp, method, path); err != nil {
+	if err := t.validateResponse(resp, method, path); err != nil {
 		return ifaceResp, err
 	}
 
@@ -313,11 +313,11 @@ func (c *Client) executeRequest(req *resty.Request, method, path string) (*inter
 			resp.Status(),
 			method,
 			path,
-			c.logger,
+			t.logger,
 		)
 	}
 
-	c.logger.Debug("Request completed successfully",
+	t.logger.Debug("Request completed successfully",
 		zap.String("method", method),
 		zap.String("path", path),
 		zap.Int("status_code", resp.StatusCode()))

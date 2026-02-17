@@ -9,8 +9,11 @@ import (
 	"resty.dev/v3"
 )
 
-// Client represents the HTTP client for VirusTotal API
-type Client struct {
+// Transport represents the HTTP transport layer for VirusTotal API.
+// It provides methods for making HTTP requests to the VirusTotal API with built-in
+// authentication, retry logic, and request/response logging.
+// This is an internal component - users should use virustotal.NewClient() instead.
+type Transport struct {
 	client        *resty.Client
 	logger        *zap.Logger
 	authConfig    *AuthConfig
@@ -20,8 +23,9 @@ type Client struct {
 	userAgent     string
 }
 
-// NewClient creates a new VirusTotal API client
-func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
+// NewTransport creates a new VirusTotal API transport.
+// This is an internal function - users should use virustotal.NewClient() instead.
+func NewTransport(apiKey string, options ...ClientOption) (*Transport, error) {
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -46,8 +50,8 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 	restyClient.SetHeader("User-Agent", userAgent)
 	restyClient.SetHeader("Accept-Encoding", "gzip")
 
-	// Create client instance
-	client := &Client{
+	// Create transport instance
+	transport := &Transport{
 		client:        restyClient,
 		logger:        logger,
 		authConfig:    authConfig,
@@ -58,22 +62,22 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 
 	// Apply any additional options
 	for _, option := range options {
-		if err := option(client); err != nil {
+		if err := option(transport); err != nil {
 			return nil, fmt.Errorf("failed to apply client option: %w", err)
 		}
 	}
 
 	// Define token refresh function
-	// TODO: Implement actual VirusTotal token refresh API call when endpoint is known
+	// TODO: Implement actual VirusTotal token refresh API call when endpoint becomes available.
 	refreshFunc := func(apiKey string) (string, time.Time, error) {
 		// Placeholder implementation - replace with actual VirusTotal token API call
 		// For now, this generates a token with the configured lifetime
 		token := "vt-token-" + apiKey
 		expiresAt := time.Now().Add(authConfig.TokenLifetime)
-		
+
 		logger.Debug("Token refresh called (placeholder implementation)",
 			zap.Time("expires_at", expiresAt))
-		
+
 		return token, expiresAt, nil
 	}
 
@@ -82,52 +86,52 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup authentication: %w", err)
 	}
-	client.tokenManager = tokenManager
+	transport.tokenManager = tokenManager
 
-	restyClient.SetBaseURL(client.BaseURL)
+	restyClient.SetBaseURL(transport.BaseURL)
 
-	logger.Info("VirusTotal API client created",
-		zap.String("base_url", client.BaseURL),
+	logger.Info("VirusTotal API transport created",
+		zap.String("base_url", transport.BaseURL),
 		zap.String("api_version", authConfig.APIVersion),
 		zap.Duration("token_lifetime", authConfig.TokenLifetime),
 		zap.Duration("refresh_threshold", authConfig.RefreshThreshold))
 
-	return client, nil
+	return transport, nil
 }
 
 // GetHTTPClient returns the underlying resty client
-func (c *Client) GetHTTPClient() *resty.Client {
-	return c.client
+func (t *Transport) GetHTTPClient() *resty.Client {
+	return t.client
 }
 
 // GetLogger returns the logger instance
-func (c *Client) GetLogger() *zap.Logger {
-	return c.logger
+func (t *Transport) GetLogger() *zap.Logger {
+	return t.logger
 }
 
 // QueryBuilder creates a new query builder instance
-func (c *Client) QueryBuilder() interfaces.ServiceQueryBuilder {
+func (t *Transport) QueryBuilder() interfaces.ServiceQueryBuilder {
 	return NewQueryBuilder()
 }
 
 // GetTokenManager returns the token manager instance for advanced token operations
-func (c *Client) GetTokenManager() *TokenManager {
-	return c.tokenManager
+func (t *Transport) GetTokenManager() *TokenManager {
+	return t.tokenManager
 }
 
 // GetTokenInfo returns current token status information for monitoring
-func (c *Client) GetTokenInfo() TokenInfo {
-	if c.tokenManager == nil {
+func (t *Transport) GetTokenInfo() TokenInfo {
+	if t.tokenManager == nil {
 		return TokenInfo{}
 	}
-	return c.tokenManager.GetTokenInfo()
+	return t.tokenManager.GetTokenInfo()
 }
 
 // ForceTokenRefresh forces an immediate token refresh
 // This can be useful for testing or when you know the token needs to be refreshed
-func (c *Client) ForceTokenRefresh() error {
-	if c.tokenManager == nil {
+func (t *Transport) ForceTokenRefresh() error {
+	if t.tokenManager == nil {
 		return fmt.Errorf("token manager not initialized")
 	}
-	return c.tokenManager.ForceRefresh()
+	return t.tokenManager.ForceRefresh()
 }
