@@ -43,33 +43,6 @@ func WithAPIKey(apiKey string) ClientOption {
 	}
 }
 
-// WithTokenLifetime sets how long tokens are valid before expiring
-// Default is DefaultTokenLifetime (1 hour)
-func WithTokenLifetime(lifetime time.Duration) ClientOption {
-	return func(t *Transport) error {
-		if lifetime < MinimumRefreshThreshold {
-			return fmt.Errorf("token lifetime must be at least %v", MinimumRefreshThreshold)
-		}
-		t.authConfig.TokenLifetime = lifetime
-		t.logger.Info("Token lifetime configured", zap.Duration("token_lifetime", lifetime))
-		return nil
-	}
-}
-
-// WithTokenRefreshThreshold sets when to refresh tokens before they expire
-// Default is DefaultRefreshThreshold (5 minutes before expiry)
-// Tokens will be refreshed when less than this amount of time remains
-func WithTokenRefreshThreshold(threshold time.Duration) ClientOption {
-	return func(t *Transport) error {
-		if threshold < MinimumRefreshThreshold {
-			return fmt.Errorf("refresh threshold must be at least %v", MinimumRefreshThreshold)
-		}
-		t.authConfig.RefreshThreshold = threshold
-		t.logger.Info("Token refresh threshold configured", zap.Duration("refresh_threshold", threshold))
-		return nil
-	}
-}
-
 // WithTimeout sets a custom timeout for HTTP requests
 func WithTimeout(timeout time.Duration) ClientOption {
 	return func(t *Transport) error {

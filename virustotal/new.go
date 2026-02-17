@@ -119,30 +119,3 @@ func NewClientFromEnv(options ...client.ClientOption) (*Client, error) {
 func (c *Client) GetLogger() *zap.Logger {
 	return c.transport.GetLogger()
 }
-
-// GetTokenManager returns the token manager instance for advanced token operations.
-// This allows access to low-level token management functionality when needed.
-//
-// Returns:
-//   - *client.TokenManager: The token manager instance
-func (c *Client) GetTokenManager() *client.TokenManager {
-	return c.transport.GetTokenManager()
-}
-
-// GetTokenInfo returns current token status information for monitoring.
-// This includes the token value, expiration time, and whether it's expired.
-//
-// Returns:
-//   - client.TokenInfo: Current token information
-func (c *Client) GetTokenInfo() client.TokenInfo {
-	return c.transport.GetTokenInfo()
-}
-
-// ForceTokenRefresh forces an immediate token refresh.
-// This can be useful for testing or when you know the token needs to be refreshed.
-//
-// Returns:
-//   - error: Any error encountered during token refresh
-func (c *Client) ForceTokenRefresh() error {
-	return c.transport.ForceTokenRefresh()
-}

@@ -1,7 +1,5 @@
 package client
 
-import "time"
-
 const (
 	// DefaultBaseURL is the default base URL for the VirusTotal API
 	DefaultBaseURL = "https://www.virustotal.com/api/v3"
@@ -26,16 +24,6 @@ const (
 
 	// RetryMaxWaitTime is the maximum wait time between retries in seconds
 	RetryMaxWaitTime = 10
-
-	// DefaultTokenLifetime is how long a token is valid (1 hour)
-	// I can't find a documented value for this, so I'm using 1 hour as a default
-	DefaultTokenLifetime = 3600 * time.Second
-
-	// DefaultRefreshThreshold - refresh token if less than this time remains (5 minutes)
-	DefaultRefreshThreshold = 300 * time.Second
-
-	// MinimumRefreshThreshold - minimum time before expiry to allow refresh (1 minute)
-	MinimumRefreshThreshold = 60 * time.Second
 )
 
 // Response format constants
