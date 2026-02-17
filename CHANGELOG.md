@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3](https://github.com/deploymenttheory/go-api-sdk-virustotal/compare/v0.1.2...v0.1.3) (2026-02-17)
+
+
+### Bug Fixes
+
+* implement AuthManager for thread-safe API key management and enhance SetupAuthentication to return AuthManager instance ([12e745c](https://github.com/deploymenttheory/go-api-sdk-virustotal/commit/12e745c2684b1cd67e92516f0b2a837f55dc54ae))
+* implement TokenManager for token lifecycle management, enhancing authentication with configurable token lifetime and refresh threshold ([61a54a6](https://github.com/deploymenttheory/go-api-sdk-virustotal/commit/61a54a653640dfcdd80795a69e29058c020d3c6f))
+
 ## [0.1.2](https://github.com/deploymenttheory/go-api-sdk-virustotal/compare/v0.1.1...v0.1.2) (2026-02-13)
 
 
