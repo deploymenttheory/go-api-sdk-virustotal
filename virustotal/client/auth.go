@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"resty.dev/v3"
@@ -10,109 +11,217 @@ import (
 
 // AuthConfig holds authentication configuration for the VirusTotal API
 type AuthConfig struct {
-	// APIKey is the VirusTotal API key
+	// APIKey is the VirusTotal API key (used for initial token generation)
 	APIKey string
 
-	// APIVersion is the optional API version (defaults to v3)
+	// APIVersion is the API version
 	APIVersion string
+
+	// TokenLifetime is how long tokens are valid (defaults to DefaultTokenLifetime)
+	TokenLifetime time.Duration
+
+	// RefreshThreshold - refresh token if less than this time remains (defaults to DefaultRefreshThreshold)
+	RefreshThreshold time.Duration
 }
 
-// AuthManager handles thread-safe API key management
-type AuthManager struct {
+// TokenManager handles token lifecycle with automatic refresh
+type TokenManager struct {
 	authConfig *AuthConfig
 	logger     *zap.Logger
 	mu         sync.RWMutex
+
+	// Token state
+	currentToken    string
+	tokenExpiresAt  time.Time
+	tokenAcquiredAt time.Time
+
+	// Token refresh function (injected)
+	refreshFunc TokenRefreshFunc
 }
 
-// NewAuthManager creates a new auth manager
-func NewAuthManager(authConfig *AuthConfig, logger *zap.Logger) *AuthManager {
-	return &AuthManager{
-		authConfig: authConfig,
-		logger:     logger,
-	}
+// TokenRefreshFunc is called when a new token is needed
+// Implementation should call VirusTotal's token endpoint
+type TokenRefreshFunc func(apiKey string) (token string, expiresAt time.Time, err error)
+
+// TokenInfo provides token metadata for monitoring and debugging
+type TokenInfo struct {
+	HasToken         bool
+	ExpiresAt        time.Time
+	AcquiredAt       time.Time
+	TimeRemaining    time.Duration
+	NeedsRefresh     bool
+	RefreshThreshold time.Duration
 }
 
-// Validate checks if the auth configuration is valid
+// Validate checks if the auth configuration is valid and sets
+// defaults for token lifetime and refresh threshold if not provided
 func (a *AuthConfig) Validate() error {
 	if a.APIKey == "" {
 		return fmt.Errorf("API key is required")
 	}
-	return nil
-}
 
-// GetAPIKey returns the current API key in a thread-safe manner
-func (am *AuthManager) GetAPIKey() (string, error) {
-	am.mu.RLock()
-	defer am.mu.RUnlock()
-
-	if am.authConfig.APIKey == "" {
-		return "", fmt.Errorf("API key is not set")
+	if a.TokenLifetime == 0 {
+		a.TokenLifetime = DefaultTokenLifetime
+	}
+	if a.RefreshThreshold == 0 {
+		a.RefreshThreshold = DefaultRefreshThreshold
 	}
 
-	return am.authConfig.APIKey, nil
-}
-
-// UpdateAPIKey updates the API key in a thread-safe manner
-// This allows for runtime API key rotation without recreating the client
-func (am *AuthManager) UpdateAPIKey(newAPIKey string) error {
-	if newAPIKey == "" {
-		return fmt.Errorf("API key cannot be empty")
+	if a.TokenLifetime < MinimumRefreshThreshold {
+		return fmt.Errorf("token lifetime must be at least %v", MinimumRefreshThreshold)
 	}
 
-	am.mu.Lock()
-	defer am.mu.Unlock()
-
-	oldKey := am.authConfig.APIKey
-	am.authConfig.APIKey = newAPIKey
-
-	am.logger.Info("API key updated successfully",
-		zap.Bool("had_previous_key", oldKey != ""))
+	if a.RefreshThreshold >= a.TokenLifetime {
+		return fmt.Errorf("refresh threshold (%v) must be less than token lifetime (%v)",
+			a.RefreshThreshold, a.TokenLifetime)
+	}
 
 	return nil
 }
 
-// ValidateAPIKey validates that an API key is currently set
-func (am *AuthManager) ValidateAPIKey() error {
-	am.mu.RLock()
-	defer am.mu.RUnlock()
+// NewTokenManager creates a new token manager
+func NewTokenManager(authConfig *AuthConfig, logger *zap.Logger, refreshFunc TokenRefreshFunc) *TokenManager {
 
-	return am.authConfig.Validate()
+	if authConfig.TokenLifetime == 0 {
+		authConfig.TokenLifetime = DefaultTokenLifetime
+	}
+	if authConfig.RefreshThreshold == 0 {
+		authConfig.RefreshThreshold = DefaultRefreshThreshold
+	}
+
+	if authConfig.RefreshThreshold < MinimumRefreshThreshold {
+		logger.Warn("Refresh threshold too low, using minimum",
+			zap.Duration("requested", authConfig.RefreshThreshold),
+			zap.Duration("minimum", MinimumRefreshThreshold))
+		authConfig.RefreshThreshold = MinimumRefreshThreshold
+	}
+
+	return &TokenManager{
+		authConfig:  authConfig,
+		logger:      logger,
+		refreshFunc: refreshFunc,
+	}
+}
+
+// GetToken returns a valid token, refreshing if necessary
+func (tm *TokenManager) GetToken() (string, error) {
+	tm.mu.RLock()
+
+	if tm.isTokenValid() {
+		token := tm.currentToken
+		tm.mu.RUnlock()
+		return token, nil
+	}
+
+	tm.mu.RUnlock()
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+
+	// Double-check after acquiring write lock (another goroutine may have refreshed)
+	if tm.isTokenValid() {
+		return tm.currentToken, nil
+	}
+
+	return tm.refreshToken()
+}
+
+// isTokenValid checks if token is still valid (must be called with lock held)
+func (tm *TokenManager) isTokenValid() bool {
+	if tm.currentToken == "" {
+		return false
+	}
+
+	now := time.Now()
+	timeRemaining := tm.tokenExpiresAt.Sub(now)
+
+	// Token is valid if it hasn't expired and has enough time remaining
+	return timeRemaining > tm.authConfig.RefreshThreshold
+}
+
+// refreshToken gets a new token (must be called with write lock held)
+func (tm *TokenManager) refreshToken() (string, error) {
+	tm.logger.Info("Refreshing authentication token",
+		zap.Time("old_expires_at", tm.tokenExpiresAt))
+
+	newToken, expiresAt, err := tm.refreshFunc(tm.authConfig.APIKey)
+	if err != nil {
+		tm.logger.Error("Failed to refresh token", zap.Error(err))
+		return "", fmt.Errorf("token refresh failed: %w", err)
+	}
+
+	tm.currentToken = newToken
+	tm.tokenExpiresAt = expiresAt
+	tm.tokenAcquiredAt = time.Now()
+
+	timeUntilExpiry := tm.tokenExpiresAt.Sub(tm.tokenAcquiredAt)
+	tm.logger.Info("Token refreshed successfully",
+		zap.Time("expires_at", tm.tokenExpiresAt),
+		zap.Duration("lifetime", timeUntilExpiry))
+
+	return newToken, nil
+}
+
+// ForceRefresh forces an immediate token refresh
+func (tm *TokenManager) ForceRefresh() error {
+	tm.mu.Lock()
+	defer tm.mu.Unlock()
+
+	_, err := tm.refreshToken()
+	return err
+}
+
+// GetTokenInfo returns current token metadata (for monitoring/debugging)
+func (tm *TokenManager) GetTokenInfo() TokenInfo {
+	tm.mu.RLock()
+	defer tm.mu.RUnlock()
+
+	now := time.Now()
+	remaining := tm.tokenExpiresAt.Sub(now)
+	if remaining < 0 {
+		remaining = 0
+	}
+
+	return TokenInfo{
+		HasToken:         tm.currentToken != "",
+		ExpiresAt:        tm.tokenExpiresAt,
+		AcquiredAt:       tm.tokenAcquiredAt,
+		TimeRemaining:    remaining,
+		NeedsRefresh:     !tm.isTokenValid(),
+		RefreshThreshold: tm.authConfig.RefreshThreshold,
+	}
 }
 
 // GetAPIVersion returns the API version
-func (am *AuthManager) GetAPIVersion() string {
-	am.mu.RLock()
-	defer am.mu.RUnlock()
-
-	if am.authConfig.APIVersion == "" {
+func (tm *TokenManager) GetAPIVersion() string {
+	if tm.authConfig.APIVersion == "" {
 		return DefaultAPIVersion
 	}
-	return am.authConfig.APIVersion
+	return tm.authConfig.APIVersion
 }
 
-// SetupAuthentication configures the resty client with API key authentication and middleware
-func SetupAuthentication(client *resty.Client, authConfig *AuthConfig, logger *zap.Logger) (*AuthManager, error) {
+// SetupAuthentication configures the resty client with token-based authentication
+func SetupAuthentication(client *resty.Client, authConfig *AuthConfig, logger *zap.Logger, refreshFunc TokenRefreshFunc) (*TokenManager, error) {
 	if err := authConfig.Validate(); err != nil {
 		logger.Error("Authentication validation failed", zap.Error(err))
 		return nil, fmt.Errorf("authentication validation failed: %w", err)
 	}
 
-	// Create auth manager for thread-safe key management
-	authManager := NewAuthManager(authConfig, logger)
+	tokenManager := NewTokenManager(authConfig, logger, refreshFunc)
 
-	// Set initial API key header
-	client.SetHeader(APIKeyHeader, authConfig.APIKey)
+	_, err := tokenManager.GetToken()
+	if err != nil {
+		return nil, fmt.Errorf("failed to acquire initial token: %w", err)
+	}
 
-	// Add request middleware to validate API key before each request
-	// This ensures the key is always present and allows for runtime key rotation
+	// Add middleware to inject current valid token on every request
 	client.AddRequestMiddleware(func(c *resty.Client, req *resty.Request) error {
-		apiKey, err := authManager.GetAPIKey()
+		token, err := tokenManager.GetToken()
 		if err != nil {
-			logger.Error("Failed to get valid API key for request", zap.Error(err))
-			return fmt.Errorf("failed to get valid API key: %w", err)
+			logger.Error("Failed to get valid token for request", zap.Error(err))
+			return fmt.Errorf("authentication failed: %w", err)
 		}
-		// Update the request header with current API key
-		req.SetHeader(APIKeyHeader, apiKey)
+
+		req.SetHeader("Authorization", "Bearer "+token)
 		return nil
 	})
 
@@ -121,8 +230,10 @@ func SetupAuthentication(client *resty.Client, authConfig *AuthConfig, logger *z
 		apiVersion = DefaultAPIVersion
 	}
 
-	logger.Info("Authentication configured successfully with middleware validation",
-		zap.String("api_version", apiVersion))
+	logger.Info("Token-based authentication configured",
+		zap.String("api_version", apiVersion),
+		zap.Duration("token_lifetime", authConfig.TokenLifetime),
+		zap.Duration("refresh_threshold", authConfig.RefreshThreshold))
 
-	return authManager, nil
+	return tokenManager, nil
 }

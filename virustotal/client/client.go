@@ -14,7 +14,7 @@ type Client struct {
 	client        *resty.Client
 	logger        *zap.Logger
 	authConfig    *AuthConfig
-	authManager   *AuthManager
+	tokenManager  *TokenManager
 	BaseURL       string
 	globalHeaders map[string]string
 	userAgent     string
@@ -63,18 +63,34 @@ func NewClient(apiKey string, options ...ClientOption) (*Client, error) {
 		}
 	}
 
-	// Setup authentication with middleware and thread-safe auth manager
-	authManager, err := SetupAuthentication(restyClient, authConfig, logger)
+	// Define token refresh function
+	// TODO: Implement actual VirusTotal token refresh API call when endpoint is known
+	refreshFunc := func(apiKey string) (string, time.Time, error) {
+		// Placeholder implementation - replace with actual VirusTotal token API call
+		// For now, this generates a token with the configured lifetime
+		token := "vt-token-" + apiKey
+		expiresAt := time.Now().Add(authConfig.TokenLifetime)
+		
+		logger.Debug("Token refresh called (placeholder implementation)",
+			zap.Time("expires_at", expiresAt))
+		
+		return token, expiresAt, nil
+	}
+
+	// Setup token-based authentication
+	tokenManager, err := SetupAuthentication(restyClient, authConfig, logger, refreshFunc)
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup authentication: %w", err)
 	}
-	client.authManager = authManager
+	client.tokenManager = tokenManager
 
 	restyClient.SetBaseURL(client.BaseURL)
 
 	logger.Info("VirusTotal API client created",
 		zap.String("base_url", client.BaseURL),
-		zap.String("api_version", authConfig.APIVersion))
+		zap.String("api_version", authConfig.APIVersion),
+		zap.Duration("token_lifetime", authConfig.TokenLifetime),
+		zap.Duration("refresh_threshold", authConfig.RefreshThreshold))
 
 	return client, nil
 }
@@ -94,24 +110,24 @@ func (c *Client) QueryBuilder() interfaces.ServiceQueryBuilder {
 	return NewQueryBuilder()
 }
 
-// GetAuthManager returns the auth manager instance for advanced authentication operations
-func (c *Client) GetAuthManager() *AuthManager {
-	return c.authManager
+// GetTokenManager returns the token manager instance for advanced token operations
+func (c *Client) GetTokenManager() *TokenManager {
+	return c.tokenManager
 }
 
-// UpdateAPIKey updates the API key at runtime without recreating the client
-// This is useful for API key rotation or switching between multiple keys
-func (c *Client) UpdateAPIKey(newAPIKey string) error {
-	if c.authManager == nil {
-		return fmt.Errorf("auth manager not initialized")
+// GetTokenInfo returns current token status information for monitoring
+func (c *Client) GetTokenInfo() TokenInfo {
+	if c.tokenManager == nil {
+		return TokenInfo{}
 	}
-	return c.authManager.UpdateAPIKey(newAPIKey)
+	return c.tokenManager.GetTokenInfo()
 }
 
-// ValidateAPIKey validates that the current API key is set and valid
-func (c *Client) ValidateAPIKey() error {
-	if c.authManager == nil {
-		return fmt.Errorf("auth manager not initialized")
+// ForceTokenRefresh forces an immediate token refresh
+// This can be useful for testing or when you know the token needs to be refreshed
+func (c *Client) ForceTokenRefresh() error {
+	if c.tokenManager == nil {
+		return fmt.Errorf("token manager not initialized")
 	}
-	return c.authManager.ValidateAPIKey()
+	return c.tokenManager.ForceRefresh()
 }

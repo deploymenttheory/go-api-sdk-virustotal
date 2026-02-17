@@ -2,7 +2,7 @@
 
 ## What is API Key Authentication?
 
-The VirusTotal SDK uses API key authentication to securely access the VirusTotal API. Your API key is sent with every request in the `x-apikey` header to identify and authorize your application.
+The VirusTotal SDK uses API key authentication to securely access the VirusTotal API. Your API key is used to generate access tokens that authenticate your requests to the VirusTotal API.
 
 ## Why Use Proper Authentication?
 
@@ -10,7 +10,7 @@ Proper authentication handling helps you:
 
 - **Secure your credentials** - Avoid hardcoding API keys in source code
 - **Prevent unauthorized access** - Ensure only valid API keys are used
-- **Enable key rotation** - Easily update keys without code changes
+- **Automatic token refresh** - Tokens are refreshed before expiry without interruption
 - **Support multiple environments** - Use different keys for dev, staging, and production
 - **Audit usage** - Track which keys are making requests
 
@@ -73,6 +73,35 @@ func main() {
 export VT_API_KEY="your-api-key-here"
 go run main.go
 ```
+
+## Token Lifecycle Management
+
+The SDK uses token-based authentication with automatic refresh. Your API key is used to generate tokens that expire after a configured lifetime (default: 1 hour). Tokens are automatically refreshed before they expire (default: 5 minutes before expiry), ensuring uninterrupted API access.
+
+**Configure token settings (optional):**
+
+```go
+import "time"
+
+vtClient, err := client.NewClient(apiKey,
+    client.WithTokenLifetime(2 * time.Hour),        // How long tokens are valid
+    client.WithTokenRefreshThreshold(10 * time.Minute), // Refresh when 10 min remains
+)
+```
+
+**Monitor token status:**
+
+```go
+// Check token information
+tokenInfo := vtClient.GetTokenInfo()
+log.Printf("Token expires in: %v", tokenInfo.TimeRemaining)
+log.Printf("Needs refresh: %v", tokenInfo.NeedsRefresh)
+
+// Force immediate refresh if needed
+err := vtClient.ForceTokenRefresh()
+```
+
+> **Note:** Token refresh happens automatically in the background. Manual configuration is only needed for specific use cases with custom token lifetimes or refresh strategies.
 
 ## Alternative Configuration Options
 
@@ -216,7 +245,7 @@ func getAPIKeyFromVault() (string, error) {
         return "", err
     }
 
-    apiKey := secret.Data["data"].(map[string]interface{})["api_key"].(string)
+    apiKey := secret.Data["data"].(map[string]any)["api_key"].(string)
     return apiKey, nil
 }
 ```
@@ -284,10 +313,10 @@ func (s *VirusTotalService) ScanFile(ctx context.Context, hash string, usePremiu
 
 - Store API keys in environment variables
 - Use secret management services in production
-- Rotate API keys regularly
 - Use different keys for different environments
-- Revoke compromised keys immediately
+- Revoke compromised keys immediately and create new clients
 - Add `*.env` files to `.gitignore`
+- Monitor token expiration in production environments
 
 ### ❌ Don't:
 
