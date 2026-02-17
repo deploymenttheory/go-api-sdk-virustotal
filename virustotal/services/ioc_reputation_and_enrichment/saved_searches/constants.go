@@ -1,7 +1,7 @@
 package saved_searches
 
 const (
-	EndpointSavedSearches = "/saved_searches"
+	EndpointSavedSearches = "/v3/saved_searches"
 )
 
 const (

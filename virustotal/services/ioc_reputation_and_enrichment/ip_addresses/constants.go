@@ -6,7 +6,7 @@ import (
 
 // API endpoints for IP addresses
 const (
-	EndpointIPAddresses = "/ip_addresses"
+	EndpointIPAddresses = "/v3/ip_addresses"
 )
 
 // Relationship names for IP addresses (from VT API documentation)

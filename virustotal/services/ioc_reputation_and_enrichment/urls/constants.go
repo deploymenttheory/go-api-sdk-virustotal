@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	EndpointURLs = "/urls"
+	EndpointURLs = "/v3/urls"
 )
 
 const (

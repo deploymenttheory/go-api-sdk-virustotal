@@ -7,7 +7,7 @@ import (
 // Endpoint constants
 const (
 	// EndpointAttackTechniques is the base endpoint for attack techniques operations
-	EndpointAttackTechniques = "/attack_techniques"
+	EndpointAttackTechniques = "/v3/attack_techniques"
 )
 
 // Relationship constants for attack techniques

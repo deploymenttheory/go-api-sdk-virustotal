@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	EndpointComments = "/comments"
+	EndpointComments = "/v3/comments"
 )
 
 const (

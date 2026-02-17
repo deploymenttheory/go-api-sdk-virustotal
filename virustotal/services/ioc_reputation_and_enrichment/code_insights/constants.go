@@ -1,7 +1,7 @@
 package code_insights
 
 const (
-	EndpointCodeInsights = "/codeinsights/analyse-binary"
+	EndpointCodeInsights = "/v3/codeinsights/analyse-binary"
 )
 
 const (

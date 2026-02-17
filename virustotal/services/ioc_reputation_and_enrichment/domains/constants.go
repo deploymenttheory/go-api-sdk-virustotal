@@ -6,7 +6,7 @@ import (
 
 // API endpoints for domains
 const (
-	EndpointDomains = "/domains"
+	EndpointDomains = "/v3/domains"
 )
 
 // Relationship names for domains (from VT API documentation)
