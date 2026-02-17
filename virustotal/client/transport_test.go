@@ -19,7 +19,6 @@ func TestNewTransport_Success(t *testing.T) {
 	assert.NotNil(t, transport.client)
 	assert.NotNil(t, transport.logger)
 	assert.NotNil(t, transport.authConfig)
-	assert.NotNil(t, transport.tokenManager)
 	assert.Equal(t, apiKey, transport.authConfig.APIKey)
 	assert.Equal(t, DefaultBaseURL, transport.BaseURL)
 	assert.Equal(t, DefaultAPIVersion, transport.authConfig.APIVersion)
@@ -62,28 +61,6 @@ func TestNewTransport_WithCustomLogger(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, transport)
 	assert.Equal(t, customLogger, transport.logger)
-}
-
-func TestNewTransport_WithTokenLifetime(t *testing.T) {
-	apiKey := "test-api-key-12345"
-	lifetime := 2 * time.Hour
-	
-	transport, err := NewTransport(apiKey, WithTokenLifetime(lifetime))
-	
-	require.NoError(t, err)
-	require.NotNil(t, transport)
-	assert.Equal(t, lifetime, transport.authConfig.TokenLifetime)
-}
-
-func TestNewTransport_WithTokenRefreshThreshold(t *testing.T) {
-	apiKey := "test-api-key-12345"
-	threshold := 15 * time.Minute
-	
-	transport, err := NewTransport(apiKey, WithTokenRefreshThreshold(threshold))
-	
-	require.NoError(t, err)
-	require.NotNil(t, transport)
-	assert.Equal(t, threshold, transport.authConfig.RefreshThreshold)
 }
 
 func TestNewTransport_WithGlobalHeaders(t *testing.T) {
@@ -157,84 +134,6 @@ func TestTransport_QueryBuilder(t *testing.T) {
 	assert.Equal(t, "10", params["count"])
 }
 
-func TestTransport_GetTokenManager(t *testing.T) {
-	apiKey := "test-api-key-12345"
-	
-	transport, err := NewTransport(apiKey)
-	require.NoError(t, err)
-	
-	tokenManager := transport.GetTokenManager()
-	
-	assert.NotNil(t, tokenManager)
-	assert.Equal(t, transport.tokenManager, tokenManager)
-}
-
-func TestTransport_GetTokenInfo(t *testing.T) {
-	apiKey := "test-api-key-12345"
-	
-	transport, err := NewTransport(apiKey)
-	require.NoError(t, err)
-	
-	tokenInfo := transport.GetTokenInfo()
-	
-	assert.True(t, tokenInfo.HasToken)
-	assert.False(t, tokenInfo.ExpiresAt.IsZero())
-	assert.False(t, tokenInfo.AcquiredAt.IsZero())
-	assert.NotZero(t, tokenInfo.TimeRemaining)
-}
-
-func TestTransport_GetTokenInfo_NilTokenManager(t *testing.T) {
-	// Create a transport with nil token manager (artificial scenario)
-	transport := &Transport{
-		tokenManager: nil,
-	}
-	
-	tokenInfo := transport.GetTokenInfo()
-	
-	// Should return empty TokenInfo without panicking
-	assert.False(t, tokenInfo.HasToken)
-	assert.True(t, tokenInfo.ExpiresAt.IsZero())
-	assert.True(t, tokenInfo.AcquiredAt.IsZero())
-}
-
-func TestTransport_ForceTokenRefresh(t *testing.T) {
-	apiKey := "test-api-key-12345"
-	
-	transport, err := NewTransport(apiKey)
-	require.NoError(t, err)
-	
-	// Get initial token info
-	initialTokenInfo := transport.GetTokenInfo()
-	initialExpiresAt := initialTokenInfo.ExpiresAt
-	
-	// Wait a tiny bit to ensure timestamp difference
-	time.Sleep(10 * time.Millisecond)
-	
-	// Force refresh
-	err = transport.ForceTokenRefresh()
-	require.NoError(t, err)
-	
-	// Get new token info
-	newTokenInfo := transport.GetTokenInfo()
-	
-	// Expiration should be updated (new token acquired)
-	assert.True(t, newTokenInfo.ExpiresAt.After(initialExpiresAt) ||
-		newTokenInfo.ExpiresAt.Equal(initialExpiresAt))
-	assert.True(t, newTokenInfo.HasToken)
-}
-
-func TestTransport_ForceTokenRefresh_NilTokenManager(t *testing.T) {
-	// Create a transport with nil token manager
-	transport := &Transport{
-		tokenManager: nil,
-	}
-	
-	err := transport.ForceTokenRefresh()
-	
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "token manager not initialized")
-}
-
 func TestNewTransport_MultipleOptions(t *testing.T) {
 	apiKey := "test-api-key-12345"
 	customBaseURL := "https://custom.virustotal.com/api/v3"
@@ -299,8 +198,6 @@ func TestTransport_DefaultConfiguration(t *testing.T) {
 	// Verify defaults are applied
 	assert.Equal(t, DefaultBaseURL, transport.BaseURL)
 	assert.Equal(t, DefaultAPIVersion, transport.authConfig.APIVersion)
-	assert.Equal(t, DefaultTokenLifetime, transport.authConfig.TokenLifetime)
-	assert.Equal(t, DefaultRefreshThreshold, transport.authConfig.RefreshThreshold)
 	
 	// Verify resty client defaults
 	httpClient := transport.GetHTTPClient()
