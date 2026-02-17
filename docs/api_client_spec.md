@@ -14,6 +14,19 @@
   - Thread-safe by nature (read-only static value)
   - Contrast with Nexthink: No OAuth2 flow, no separate auth endpoint
 
+### API Versioning
+- **Pattern**: Version in URL path
+- **URL Structure**: `https://www.virustotal.com/api/v3/{resource}`
+- **Current Version**: `v3`
+- **Impact on Client**:
+  - API version embedded in each endpoint path
+  - Base URL is `https://www.virustotal.com/api`
+  - Each service endpoint includes version prefix (e.g., `/v3/files`, `/v3/search`)
+  - No version negotiation via headers
+  - Version constant defined in `client/constants.go` as `DefaultAPIVersion = "v3"`
+  - Future version changes require updating all endpoint constants
+  - Contrast with Workbrew: Workbrew uses `X-Workbrew-API-Version` header instead of URL path
+
 ### Pagination
 - **Pattern**: Cursor-based pagination
 - **Parameters**:
