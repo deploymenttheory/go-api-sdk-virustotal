@@ -6,9 +6,9 @@ import "resty.dev/v3"
 // 1. Global headers are applied first
 // 2. Per-request headers override global headers with the same key
 // This implements the request options pattern similar to the official VirusTotal SDK
-func (c *Client) applyHeaders(req *resty.Request, requestHeaders map[string]string) {
+func (t *Transport) applyHeaders(req *resty.Request, requestHeaders map[string]string) {
 	// Apply global headers first
-	for k, v := range c.globalHeaders {
+	for k, v := range t.globalHeaders {
 		if v != "" {
 			req.SetHeader(k, v)
 		}

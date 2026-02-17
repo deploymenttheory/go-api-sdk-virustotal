@@ -48,23 +48,23 @@ func TestWithTokenLifetime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			apiKey := "test-api-key"
 			var capturedErr error
-			
+
 			// Create client with option
-			client, err := NewClient(apiKey, WithTokenLifetime(tt.lifetime))
-			
+			client, err := NewTransport(apiKey, WithTokenLifetime(tt.lifetime))
+
 			if tt.wantErr {
 				capturedErr = err
 			}
 
 			if (capturedErr != nil) != tt.wantErr {
-				t.Errorf("NewClient() with WithTokenLifetime(%v) error = %v, wantErr %v", 
+				t.Errorf("NewTransport() with WithTokenLifetime(%v) error = %v, wantErr %v",
 					tt.lifetime, capturedErr, tt.wantErr)
 				return
 			}
 
 			if !tt.wantErr {
 				if err != nil {
-					t.Fatalf("NewClient() error = %v, want nil", err)
+					t.Fatalf("NewTransport() error = %v, want nil", err)
 				}
 				if client == nil {
 					t.Fatal("Expected client to be created, got nil")
@@ -113,28 +113,28 @@ func TestWithTokenRefreshThreshold(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			apiKey := "test-api-key"
 			var capturedErr error
-			
-			client, err := NewClient(apiKey, WithTokenRefreshThreshold(tt.threshold))
-			
+
+			client, err := NewTransport(apiKey, WithTokenRefreshThreshold(tt.threshold))
+
 			if tt.wantErr {
 				capturedErr = err
 			}
 
 			if (capturedErr != nil) != tt.wantErr {
-				t.Errorf("NewClient() with WithTokenRefreshThreshold(%v) error = %v, wantErr %v",
+				t.Errorf("NewTransport() with WithTokenRefreshThreshold(%v) error = %v, wantErr %v",
 					tt.threshold, capturedErr, tt.wantErr)
 				return
 			}
 
 			if !tt.wantErr {
 				if err != nil {
-					t.Fatalf("NewClient() error = %v, want nil", err)
+					t.Fatalf("NewTransport() error = %v, want nil", err)
 				}
 				if client == nil {
 					t.Fatal("Expected client to be created, got nil")
 				}
 				if client.authConfig.RefreshThreshold != tt.wantValue {
-					t.Errorf("RefreshThreshold = %v, want %v", 
+					t.Errorf("RefreshThreshold = %v, want %v",
 						client.authConfig.RefreshThreshold, tt.wantValue)
 				}
 			}
@@ -172,14 +172,14 @@ func TestWithTokenLifetimeAndRefreshThreshold(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			apiKey := "test-api-key"
-			
-			client, err := NewClient(apiKey,
+
+			client, err := NewTransport(apiKey,
 				WithTokenLifetime(tt.lifetime),
 				WithTokenRefreshThreshold(tt.threshold),
 			)
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("NewClient() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("NewTransport() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
@@ -195,7 +195,7 @@ func TestWithTokenOptionsAndOtherOptions(t *testing.T) {
 	apiKey := "test-api-key"
 	logger := zaptest.NewLogger(t)
 
-	client, err := NewClient(
+	client, err := NewTransport(
 		apiKey,
 		WithLogger(logger),
 		WithTokenLifetime(2*time.Hour),
@@ -205,7 +205,7 @@ func TestWithTokenOptionsAndOtherOptions(t *testing.T) {
 	)
 
 	if err != nil {
-		t.Fatalf("NewClient() with multiple options error = %v, want nil", err)
+		t.Fatalf("NewTransport() with multiple options error = %v, want nil", err)
 	}
 
 	if client == nil {
@@ -260,9 +260,9 @@ func TestWithRetryWaitTime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create a test client
 			apiKey := "test-api-key"
-			client, err := NewClient(apiKey, WithRetryWaitTime(tt.waitTime))
+			client, err := NewTransport(apiKey, WithRetryWaitTime(tt.waitTime))
 			if err != nil {
-				t.Fatalf("NewClient() error = %v, want nil", err)
+				t.Fatalf("NewTransport() error = %v, want nil", err)
 			}
 
 			// Verify client was created
@@ -314,9 +314,9 @@ func TestWithRetryMaxWaitTime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create a test client
 			apiKey := "test-api-key"
-			client, err := NewClient(apiKey, WithRetryMaxWaitTime(tt.maxWaitTime))
+			client, err := NewTransport(apiKey, WithRetryMaxWaitTime(tt.maxWaitTime))
 			if err != nil {
-				t.Fatalf("NewClient() error = %v, want nil", err)
+				t.Fatalf("NewTransport() error = %v, want nil", err)
 			}
 
 			// Verify client was created
@@ -369,13 +369,13 @@ func TestWithRetryWaitTimeAndMaxWaitTime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create a test client with both options
 			apiKey := "test-api-key"
-			client, err := NewClient(
+			client, err := NewTransport(
 				apiKey,
 				WithRetryWaitTime(tt.waitTime),
 				WithRetryMaxWaitTime(tt.maxWaitTime),
 			)
 			if err != nil {
-				t.Fatalf("NewClient() error = %v, want nil", err)
+				t.Fatalf("NewTransport() error = %v, want nil", err)
 			}
 
 			// Verify client was created
@@ -396,7 +396,7 @@ func TestWithRetryWaitTimeWithOtherOptions(t *testing.T) {
 	apiKey := "test-api-key"
 	logger := zaptest.NewLogger(t)
 
-	client, err := NewClient(
+	client, err := NewTransport(
 		apiKey,
 		WithLogger(logger),
 		WithRetryCount(5),
@@ -406,7 +406,7 @@ func TestWithRetryWaitTimeWithOtherOptions(t *testing.T) {
 	)
 
 	if err != nil {
-		t.Fatalf("NewClient() with multiple options error = %v, want nil", err)
+		t.Fatalf("NewTransport() with multiple options error = %v, want nil", err)
 	}
 
 	if client == nil {
@@ -427,7 +427,7 @@ func TestWithRetryMaxWaitTimeWithOtherOptions(t *testing.T) {
 	apiKey := "test-api-key"
 	logger := zaptest.NewLogger(t)
 
-	client, err := NewClient(
+	client, err := NewTransport(
 		apiKey,
 		WithLogger(logger),
 		WithRetryCount(3),
@@ -436,7 +436,7 @@ func TestWithRetryMaxWaitTimeWithOtherOptions(t *testing.T) {
 	)
 
 	if err != nil {
-		t.Fatalf("NewClient() with multiple options error = %v, want nil", err)
+		t.Fatalf("NewTransport() with multiple options error = %v, want nil", err)
 	}
 
 	if client == nil {
@@ -457,25 +457,25 @@ func TestWithRetryWaitTimeOrder(t *testing.T) {
 	apiKey := "test-api-key"
 
 	// Apply options in one order
-	client1, err := NewClient(
+	client1, err := NewTransport(
 		apiKey,
 		WithRetryCount(3),
 		WithRetryWaitTime(2*time.Second),
 		WithRetryMaxWaitTime(10*time.Second),
 	)
 	if err != nil {
-		t.Fatalf("NewClient() order 1 error = %v, want nil", err)
+		t.Fatalf("NewTransport() order 1 error = %v, want nil", err)
 	}
 
 	// Apply options in different order
-	client2, err := NewClient(
+	client2, err := NewTransport(
 		apiKey,
 		WithRetryMaxWaitTime(10*time.Second),
 		WithRetryWaitTime(2*time.Second),
 		WithRetryCount(3),
 	)
 	if err != nil {
-		t.Fatalf("NewClient() order 2 error = %v, want nil", err)
+		t.Fatalf("NewTransport() order 2 error = %v, want nil", err)
 	}
 
 	// Both clients should be created successfully
@@ -510,10 +510,10 @@ func TestWithRetryWaitTimeEdgeCases(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			apiKey := "test-api-key"
-			client, err := NewClient(apiKey, WithRetryWaitTime(tt.waitTime))
+			client, err := NewTransport(apiKey, WithRetryWaitTime(tt.waitTime))
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("NewClient() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("NewTransport() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			if !tt.wantErr && client == nil {
@@ -549,10 +549,10 @@ func TestWithRetryMaxWaitTimeEdgeCases(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			apiKey := "test-api-key"
-			client, err := NewClient(apiKey, WithRetryMaxWaitTime(tt.maxWaitTime))
+			client, err := NewTransport(apiKey, WithRetryMaxWaitTime(tt.maxWaitTime))
 
 			if (err != nil) != tt.wantErr {
-				t.Errorf("NewClient() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("NewTransport() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			if !tt.wantErr && client == nil {
@@ -604,7 +604,7 @@ func TestRetryConfigurationRealistic(t *testing.T) {
 	for _, scenario := range scenarios {
 		t.Run(scenario.name, func(t *testing.T) {
 			apiKey := "test-api-key"
-			client, err := NewClient(
+			client, err := NewTransport(
 				apiKey,
 				WithRetryCount(scenario.retryCount),
 				WithRetryWaitTime(scenario.waitTime),
@@ -612,7 +612,7 @@ func TestRetryConfigurationRealistic(t *testing.T) {
 			)
 
 			if err != nil {
-				t.Fatalf("NewClient() for %s error = %v, want nil", scenario.description, err)
+				t.Fatalf("NewTransport() for %s error = %v, want nil", scenario.description, err)
 			}
 
 			if client == nil {

@@ -31,7 +31,7 @@ var (
 	// Config is the global test configuration
 	Config *TestConfig
 	// Client is the shared VirusTotal client for acceptance tests
-	Client *client.Client
+	Client *client.Transport
 )
 
 // init initializes the test configuration from environment variables
@@ -44,7 +44,7 @@ func init() {
 		SkipCleanup:       getBoolEnv("VT_SKIP_CLEANUP", false),
 		Verbose:           getBoolEnv("VT_VERBOSE", false),
 		KnownAnalysisID:   getEnv("VT_TEST_ANALYSIS_ID", "NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQzYWNlMzFmZmI6MTQ3NTA0ODI3Nw=="),
-		KnownSubmissionID: getEnv("VT_TEST_SUBMISSION_ID", ""), // No default - requires Premium API or specific test data
+		KnownSubmissionID: getEnv("VT_TEST_SUBMISSION_ID", ""),                             // No default - requires Premium API or specific test data
 		KnownFileHash:     getEnv("VT_TEST_FILE_HASH", "44d88612fea8a8f36de82e1278abb02f"), // EICAR test file
 		KnownDomain:       getEnv("VT_TEST_DOMAIN", "google.com"),
 		KnownIPAddress:    getEnv("VT_TEST_IP", "8.8.8.8"),
@@ -61,7 +61,7 @@ func InitClient() error {
 	}
 
 	var err error
-	Client, err = client.NewClient(
+	Client, err = client.NewTransport(
 		Config.APIKey,
 		client.WithBaseURL(Config.BaseURL),
 		client.WithTimeout(Config.RequestTimeout),

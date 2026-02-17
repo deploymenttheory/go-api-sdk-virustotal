@@ -56,7 +56,7 @@ func main() {
 
 	// Step 3: Create VirusTotal client with tracing enabled
 	// Option 1: Use default tracing config (uses global tracer provider)
-	vtClient, err := client.NewClient(
+	vtClient, err := client.NewTransport(
 		apiKey,
 		client.WithTracing(nil), // nil uses default config
 	)

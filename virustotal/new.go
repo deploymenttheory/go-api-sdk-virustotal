@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"go.uber.org/zap"
+
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/analyses"
 	attacktactics "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/attack_tactics"
@@ -19,10 +21,12 @@ import (
 	yararules "github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/vt_hunting/yara_rules"
 )
 
-// Client is the main entry point for the VirusTotal API SDK
-// It aggregates all service clients and provides a unified interface
+// Client is the main entry point for the VirusTotal API SDK.
+// It aggregates all service clients and provides a unified interface.
+// Users should interact with the API exclusively through the provided service methods.
 type Client struct {
-	*client.Client
+	// transport is the internal HTTP transport layer (not exposed to users)
+	transport *client.Transport
 
 	// IOC Reputation & Enrichment Services
 	Analyses                *analyses.Service
@@ -56,27 +60,27 @@ type Client struct {
 //	    virustotal.WithDebug(),
 //	)
 func NewClient(apiKey string, options ...client.ClientOption) (*Client, error) {
-	// Create base HTTP client
-	httpClient, err := client.NewClient(apiKey, options...)
+
+	transport, err := client.NewTransport(apiKey, options...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create HTTP client: %w", err)
+		return nil, fmt.Errorf("failed to create HTTP transport: %w", err)
 	}
 
 	// Initialize vt sdk service clients
 	c := &Client{
-		Client:                  httpClient,
-		Analyses:                analyses.NewService(httpClient),
-		AttackTactics:           attacktactics.NewService(httpClient),
-		Comments:                comments.NewService(httpClient),
-		Domains:                 domains.NewService(httpClient),
-		FileBehaviours:          filebehaviours.NewService(httpClient),
-		Files:                   files.NewService(httpClient),
-		IPAddresses:             ipaddresses.NewService(httpClient),
-		PopularThreatCategories: popularthreatcategories.NewService(httpClient),
-		URLs:                    urls.NewService(httpClient),
-		Collections:             collections.NewService(httpClient),
-		SearchAndMetadata:       searchandmetadata.NewService(httpClient),
-		YaraRules:               yararules.NewService(httpClient),
+		transport:               transport,
+		Analyses:                analyses.NewService(transport),
+		AttackTactics:           attacktactics.NewService(transport),
+		Comments:                comments.NewService(transport),
+		Domains:                 domains.NewService(transport),
+		FileBehaviours:          filebehaviours.NewService(transport),
+		Files:                   files.NewService(transport),
+		IPAddresses:             ipaddresses.NewService(transport),
+		PopularThreatCategories: popularthreatcategories.NewService(transport),
+		URLs:                    urls.NewService(transport),
+		Collections:             collections.NewService(transport),
+		SearchAndMetadata:       searchandmetadata.NewService(transport),
+		YaraRules:               yararules.NewService(transport),
 	}
 
 	return c, nil
@@ -105,4 +109,40 @@ func NewClientFromEnv(options ...client.ClientOption) (*Client, error) {
 	}
 
 	return NewClient(apiKey, options...)
+}
+
+// GetLogger returns the configured zap logger instance.
+// Use this to add custom logging within your application using the same logger.
+//
+// Returns:
+//   - *zap.Logger: The configured logger instance
+func (c *Client) GetLogger() *zap.Logger {
+	return c.transport.GetLogger()
+}
+
+// GetTokenManager returns the token manager instance for advanced token operations.
+// This allows access to low-level token management functionality when needed.
+//
+// Returns:
+//   - *client.TokenManager: The token manager instance
+func (c *Client) GetTokenManager() *client.TokenManager {
+	return c.transport.GetTokenManager()
+}
+
+// GetTokenInfo returns current token status information for monitoring.
+// This includes the token value, expiration time, and whether it's expired.
+//
+// Returns:
+//   - client.TokenInfo: Current token information
+func (c *Client) GetTokenInfo() client.TokenInfo {
+	return c.transport.GetTokenInfo()
+}
+
+// ForceTokenRefresh forces an immediate token refresh.
+// This can be useful for testing or when you know the token needs to be refreshed.
+//
+// Returns:
+//   - error: Any error encountered during token refresh
+func (c *Client) ForceTokenRefresh() error {
+	return c.transport.ForceTokenRefresh()
 }

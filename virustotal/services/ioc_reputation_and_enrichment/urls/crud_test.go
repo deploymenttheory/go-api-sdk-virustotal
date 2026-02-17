@@ -21,7 +21,7 @@ func setupMockClient(t *testing.T) *Service {
 	baseURL := "https://www.virustotal.com/api/v3"
 
 	// Create HTTP client
-	httpClient, err := client.NewClient("test-api-key",
+	httpClient, err := client.NewTransport("test-api-key",
 		client.WithLogger(logger),
 		client.WithBaseURL(baseURL),
 	)

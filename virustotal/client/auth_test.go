@@ -348,7 +348,7 @@ func TestTokenManager_GetAPIVersion(t *testing.T) {
 
 func TestSetupAuthentication_Success(t *testing.T) {
 	logger := zaptest.NewLogger(t)
-	client := resty.New()
+	transport := resty.New()
 
 	refreshFunc := func(apiKey string) (string, time.Time, error) {
 		return "test-token-" + apiKey, time.Now().Add(1 * time.Hour), nil
@@ -359,7 +359,7 @@ func TestSetupAuthentication_Success(t *testing.T) {
 		APIVersion: "v3",
 	}
 
-	tokenManager, err := SetupAuthentication(client, authConfig, logger, refreshFunc)
+	tokenManager, err := SetupAuthentication(transport, authConfig, logger, refreshFunc)
 
 	if err != nil {
 		t.Fatalf("SetupAuthentication() error = %v, want nil", err)
@@ -378,7 +378,7 @@ func TestSetupAuthentication_Success(t *testing.T) {
 
 func TestSetupAuthentication_InvalidConfig(t *testing.T) {
 	logger := zaptest.NewLogger(t)
-	client := resty.New()
+	transport := resty.New()
 
 	refreshFunc := func(apiKey string) (string, time.Time, error) {
 		return "token", time.Now().Add(1 * time.Hour), nil
@@ -409,7 +409,7 @@ func TestSetupAuthentication_InvalidConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tokenManager, err := SetupAuthentication(client, tt.authConfig, logger, refreshFunc)
+			tokenManager, err := SetupAuthentication(transport, tt.authConfig, logger, refreshFunc)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("SetupAuthentication() error = %v, wantErr %v", err, tt.wantErr)
@@ -425,7 +425,7 @@ func TestSetupAuthentication_InvalidConfig(t *testing.T) {
 
 func TestSetupAuthentication_InitialTokenFailure(t *testing.T) {
 	logger := zaptest.NewLogger(t)
-	client := resty.New()
+	transport := resty.New()
 
 	refreshFunc := func(apiKey string) (string, time.Time, error) {
 		return "", time.Time{}, fmt.Errorf("initial token acquisition failed")
@@ -436,7 +436,7 @@ func TestSetupAuthentication_InitialTokenFailure(t *testing.T) {
 		APIVersion: "v3",
 	}
 
-	_, err := SetupAuthentication(client, authConfig, logger, refreshFunc)
+	_, err := SetupAuthentication(transport, authConfig, logger, refreshFunc)
 
 	if err == nil {
 		t.Fatal("SetupAuthentication() error = nil, want error for initial token failure")
