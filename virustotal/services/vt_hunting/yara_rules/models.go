@@ -30,9 +30,9 @@ type YaraRuleResponse struct {
 
 // YaraRule represents a VirusTotal crowdsourced YARA rule
 type YaraRule struct {
-	Type       string           `json:"type"`
-	ID         string           `json:"id"`
-	Links      Links            `json:"links,omitempty"`
+	Type       string             `json:"type"`
+	ID         string             `json:"id"`
+	Links      Links              `json:"links,omitempty"`
 	Attributes YaraRuleAttributes `json:"attributes"`
 }
 
@@ -68,11 +68,11 @@ type RelatedObjectsResponse struct {
 
 // RelatedObject represents a related object
 type RelatedObject struct {
-	Type              string                 `json:"type"`
-	ID                string                 `json:"id"`
-	Links             Links                  `json:"links,omitempty"`
-	Attributes        map[string]interface{} `json:"attributes,omitempty"`
-	ContextAttributes map[string]interface{} `json:"context_attributes,omitempty"`
+	Type              string         `json:"type"`
+	ID                string         `json:"id"`
+	Links             Links          `json:"links,omitempty"`
+	Attributes        map[string]any `json:"attributes,omitempty"`
+	ContextAttributes map[string]any `json:"context_attributes,omitempty"`
 }
 
 // ObjectDescriptorsResponse represents object descriptors response
@@ -84,10 +84,10 @@ type ObjectDescriptorsResponse struct {
 
 // ObjectDescriptor represents an object descriptor
 type ObjectDescriptor struct {
-	Type              string                 `json:"type"`
-	ID                string                 `json:"id"`
-	Links             Links                  `json:"links,omitempty"`
-	ContextAttributes map[string]interface{} `json:"context_attributes,omitempty"`
+	Type              string         `json:"type"`
+	ID                string         `json:"id"`
+	Links             Links          `json:"links,omitempty"`
+	ContextAttributes map[string]any `json:"context_attributes,omitempty"`
 }
 
 // =============================================================================

@@ -32,7 +32,6 @@ func WithAPIVersion(version string) ClientOption {
 }
 
 // WithAPIKey allows changing the API key during client initialization (before auth setup)
-// For runtime API key updates after client creation, use client.UpdateAPIKey() instead
 func WithAPIKey(apiKey string) ClientOption {
 	return func(c *Client) error {
 		if apiKey == "" {
@@ -40,6 +39,33 @@ func WithAPIKey(apiKey string) ClientOption {
 		}
 		c.authConfig.APIKey = apiKey
 		c.logger.Info("API key updated during initialization")
+		return nil
+	}
+}
+
+// WithTokenLifetime sets how long tokens are valid before expiring
+// Default is DefaultTokenLifetime (1 hour)
+func WithTokenLifetime(lifetime time.Duration) ClientOption {
+	return func(c *Client) error {
+		if lifetime < MinimumRefreshThreshold {
+			return fmt.Errorf("token lifetime must be at least %v", MinimumRefreshThreshold)
+		}
+		c.authConfig.TokenLifetime = lifetime
+		c.logger.Info("Token lifetime configured", zap.Duration("token_lifetime", lifetime))
+		return nil
+	}
+}
+
+// WithTokenRefreshThreshold sets when to refresh tokens before they expire
+// Default is DefaultRefreshThreshold (5 minutes before expiry)
+// Tokens will be refreshed when less than this amount of time remains
+func WithTokenRefreshThreshold(threshold time.Duration) ClientOption {
+	return func(c *Client) error {
+		if threshold < MinimumRefreshThreshold {
+			return fmt.Errorf("refresh threshold must be at least %v", MinimumRefreshThreshold)
+		}
+		c.authConfig.RefreshThreshold = threshold
+		c.logger.Info("Token refresh threshold configured", zap.Duration("refresh_threshold", threshold))
 		return nil
 	}
 }
