@@ -23,8 +23,8 @@ func TestAcceptance_Domains_GetDomainReport(t *testing.T) {
 		AssertNoError(t, err, "GetDomainReport should not return an error")
 		AssertNotNil(t, result, "GetDomainReport result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
-		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
+		assert.NotNil(t, resp.Header(), "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Domain data should not be nil")
@@ -84,7 +84,7 @@ func TestAcceptance_Domains_GetDomainReport_InvalidDomain(t *testing.T) {
 		assert.Error(t, err, "GetDomainReport should return an error for invalid domain")
 		assert.Nil(t, result, "GetDomainReport result should be nil for invalid domain")
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
-		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid domain")
+		assert.NotEqual(t, 200, resp.StatusCode(), "Status code should not be 200 for invalid domain")
 
 		LogTestSuccess(t, "Expected error received: %v", err)
 	})
@@ -132,7 +132,7 @@ func TestAcceptance_Domains_GetCommentsOnDomain(t *testing.T) {
 		AssertNoError(t, err, "GetCommentsOnDomain should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnDomain result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
@@ -171,7 +171,7 @@ func TestAcceptance_Domains_GetObjectsRelatedToDomain(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToDomain should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToDomain result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Resolutions data should not be nil")
@@ -212,7 +212,7 @@ func TestAcceptance_Domains_GetObjectDescriptorsRelatedToDomain(t *testing.T) {
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToDomain should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToDomain result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -249,7 +249,7 @@ func TestAcceptance_Domains_GetVotesOnDomain(t *testing.T) {
 		AssertNoError(t, err, "GetVotesOnDomain should not return an error")
 		AssertNotNil(t, result, "GetVotesOnDomain result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

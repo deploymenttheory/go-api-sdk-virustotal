@@ -4,37 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/constants"
+	"resty.dev/v3"
 )
 
-type (
-	// CodeInsightsServiceInterface defines the interface for code insights operations
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference/analyse-binary
-	CodeInsightsServiceInterface interface {
-		// AnalyseCode analyses disassembled or decompiled code
-		//
-		// Analyzes disassembled or decompiled code and returns a Base64-encoded description
-		// of the functionality, focusing on aspects relevant to malware analysis.
-		// The input code must be Base64-encoded.
-		//
-		// Note: This endpoint is limited to 50 requests per day.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/analyse-binary
-		AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, *interfaces.Response, error)
-	}
+// Service implements the CodeInsightsServiceInterface
+type Service struct {
+	client client.Client
+}
 
-	// Service implements the CodeInsightsServiceInterface
-	Service struct {
-		client interfaces.HTTPClient
-	}
-)
-
-var _ CodeInsightsServiceInterface = (*Service)(nil)
-
-func NewService(client interfaces.HTTPClient) *Service {
+func NewService(c client.Client) *Service {
 	return &Service{
-		client: client,
+		client: c,
 	}
 }
 
@@ -45,7 +27,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 // AnalyseCode analyses disassembled or decompiled code
 // URL: POST https://www.virustotal.com/api/v3/codeinsights/analyse-binary
 // https://docs.virustotal.com/reference/analyse-binary
-func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, *interfaces.Response, error) {
+func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string, history []HistoryEntry) (*AnalyseCodeResponse, *resty.Response, error) {
 	if err := ValidateBase64(code); err != nil {
 		return nil, nil, fmt.Errorf("code validation failed: %w", err)
 	}
@@ -70,13 +52,13 @@ func (s *Service) AnalyseCode(ctx context.Context, code string, codeType string,
 		},
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result AnalyseCodeResponse
-	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetBody(requestBody).
+		SetResult(&result).
+		Post(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}

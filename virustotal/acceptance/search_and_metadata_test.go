@@ -24,7 +24,7 @@ func TestAcceptance_Search_BasicSearch(t *testing.T) {
 		AssertNoError(t, err, "Search should not return an error")
 		AssertNotNil(t, result, "Search result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Search data should not be nil")
@@ -60,7 +60,7 @@ func TestAcceptance_Search_BasicSearch_WithOptions(t *testing.T) {
 		AssertNoError(t, err, "Search should not return an error")
 		AssertNotNil(t, result, "Search result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response
 		assert.NotNil(t, result.Data, "Search data should not be nil")
@@ -110,7 +110,7 @@ func TestAcceptance_Search_IntelligenceSearch(t *testing.T) {
 		result, resp, err := service.IntelligenceSearch(ctx, "type:peexe", nil)
 		
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "IntelligenceSearch requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping IntelligenceSearch test - requires premium/enterprise API key")
 		}
@@ -118,7 +118,7 @@ func TestAcceptance_Search_IntelligenceSearch(t *testing.T) {
 		AssertNoError(t, err, "IntelligenceSearch should not return an error")
 		AssertNotNil(t, result, "IntelligenceSearch result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Search data should not be nil")
@@ -170,7 +170,7 @@ func TestAcceptance_Search_IntelligenceSearch_WithOptions(t *testing.T) {
 		result, resp, err := service.IntelligenceSearch(ctx, "size:1mb+", opts)
 		
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "IntelligenceSearch requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping IntelligenceSearch test - requires premium/enterprise API key")
 		}
@@ -178,7 +178,7 @@ func TestAcceptance_Search_IntelligenceSearch_WithOptions(t *testing.T) {
 		AssertNoError(t, err, "IntelligenceSearch should not return an error")
 		AssertNotNil(t, result, "IntelligenceSearch result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response
 		assert.NotNil(t, result.Data, "Search data should not be nil")
@@ -213,7 +213,7 @@ func TestAcceptance_Search_IntelligenceSearch_ContentSearch(t *testing.T) {
 		result, resp, err := service.IntelligenceSearch(ctx, "content:\"MZ\"", nil)
 		
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "Content search requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping content search test - requires premium/enterprise API key")
 		}
@@ -221,7 +221,7 @@ func TestAcceptance_Search_IntelligenceSearch_ContentSearch(t *testing.T) {
 		AssertNoError(t, err, "Content search should not return an error")
 		AssertNotNil(t, result, "Content search result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Search data should not be nil")
@@ -266,7 +266,7 @@ func TestAcceptance_Search_GetSearchSnippets(t *testing.T) {
 		searchResult, searchResp, searchErr := service.IntelligenceSearch(ctx, "content:\"This program\"", nil)
 		
 		// Check if search requires premium
-		if searchErr != nil && searchResp != nil && searchResp.StatusCode == 403 {
+		if searchErr != nil && searchResp != nil && searchResp.StatusCode() == 403 {
 			LogTestWarning(t, "Content search requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetSearchSnippets test - requires premium/enterprise API key")
 		}
@@ -296,7 +296,7 @@ func TestAcceptance_Search_GetSearchSnippets(t *testing.T) {
 		result, resp, err := service.GetSearchSnippets(ctx, snippetID)
 		
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetSearchSnippets requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetSearchSnippets test - requires premium/enterprise API key")
 		}
@@ -304,7 +304,7 @@ func TestAcceptance_Search_GetSearchSnippets(t *testing.T) {
 		AssertNoError(t, err, "GetSearchSnippets should not return an error")
 		AssertNotNil(t, result, "GetSearchSnippets result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Snippets data should not be nil")
@@ -358,7 +358,7 @@ func TestAcceptance_Search_GetMetadata(t *testing.T) {
 		result, resp, err := service.GetMetadata(ctx)
 		
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetMetadata requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetMetadata test - requires premium/enterprise API key")
 		}
@@ -366,7 +366,7 @@ func TestAcceptance_Search_GetMetadata(t *testing.T) {
 		AssertNoError(t, err, "GetMetadata should not return an error")
 		AssertNotNil(t, result, "GetMetadata result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data.Engines, "Engines map should not be nil")
@@ -444,7 +444,7 @@ func TestAcceptance_Search_Pagination(t *testing.T) {
 		AssertNoError(t, err, "First Search request should not return an error")
 		AssertNotNil(t, result, "Search result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		firstPageCount := len(result.Data)
 		LogTestSuccess(t, "First page returned %d result(s)", firstPageCount)

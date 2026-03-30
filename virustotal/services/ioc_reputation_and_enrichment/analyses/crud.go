@@ -6,96 +6,41 @@ import (
 	"fmt"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/constants"
+	"resty.dev/v3"
 )
 
-type (
-	// AnalysesServiceInterface defines the interface for analyses, submissions, and operations
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference/analyses-api
-	AnalysesServiceInterface interface {
-		// GetAnalysis retrieves an analysis object by its ID
-		//
-		// Returns detailed information about a file or URL analysis, including results from
-		// all security engines, status, and timestamps. The analysis ID is returned when
-		// submitting files or URLs for scanning.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/analysis
-		GetAnalysis(ctx context.Context, id string) (*AnalysisResponse, *interfaces.Response, error)
-
-		// GetObjectsRelatedToAnalysis retrieves objects related to an analysis
-		//
-		// Returns objects related to an analysis based on the specified relationship type.
-		// Currently supports: "item" (returns the file or URL that was analyzed).
-		// Results are paginated.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/analyses-get-objects
-		GetObjectsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
-
-		// GetObjectDescriptorsRelatedToAnalysis retrieves object descriptors (IDs only) related to an analysis
-		//
-		// Returns lightweight object descriptors with just IDs and context attributes instead of full objects.
-		// This is more efficient when you only need to know which objects are related without fetching all attributes.
-		// Supported relationships are the same as GetObjectsRelatedToAnalysis.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/analyses-get-descriptors
-		GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error)
-
-		// GetSubmission retrieves a submission object by its ID
-		//
-		// Returns metadata about when and how an item was submitted to VirusTotal.
-		// Premium API features include detailed information like submission interface,
-		// location, filename, and anonymized submitter token.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-submission
-		GetSubmission(ctx context.Context, id string) (*SubmissionResponse, *interfaces.Response, error)
-
-		// GetOperation retrieves an operation object by its ID
-		//
-		// Returns the status of an asynchronous operation. Operations represent long-running
-		// tasks that cannot complete immediately. Poll this endpoint to check if an operation
-		// is still running, has finished, or was aborted.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-operations-id
-		GetOperation(ctx context.Context, id string) (*OperationResponse, *interfaces.Response, error)
-	}
-
-	// Service handles communication with the analyses, submissions, and operations
-	// related methods of the VirusTotal API.
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference/analyses-api
-	Service struct {
-		client interfaces.HTTPClient
-	}
-)
-
-// Ensure Service implements AnalysesServiceInterface
-var _ AnalysesServiceInterface = (*Service)(nil)
+// Service handles communication with the analyses, submissions, and operations
+// related methods of the VirusTotal API.
+//
+// VirusTotal API docs: https://docs.virustotal.com/reference/analyses-api
+type Service struct {
+	client client.Client
+}
 
 // NewService creates a new analyses service
-func NewService(client interfaces.HTTPClient) *Service {
+func NewService(c client.Client) *Service {
 	return &Service{
-		client: client,
+		client: c,
 	}
 }
 
 // GetAnalysis retrieves an analysis object by its ID
 // URL: GET https://www.virustotal.com/api/v3/analyses/{id}
 // https://docs.virustotal.com/reference/analysis
-func (s *Service) GetAnalysis(ctx context.Context, id string) (*AnalysisResponse, *interfaces.Response, error) {
+func (s *Service) GetAnalysis(ctx context.Context, id string) (*AnalysisResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("analysis ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointAnalyses, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result AnalysisResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -108,7 +53,7 @@ func (s *Service) GetAnalysis(ctx context.Context, id string) (*AnalysisResponse
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/analyses-get-objects
-func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("analysis ID is required")
 	}
@@ -122,17 +67,14 @@ func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, re
 		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
-	queryParams := make(map[string]string)
-
 	// The "item" relationship returns a single object, not an array
 	if relationship == "item" {
 		var singleResult SingleRelatedObjectResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &singleResult)
+		resp, err := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON).
+			SetResult(&singleResult).
+			Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -146,15 +88,19 @@ func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, re
 	}
 
 	if opts != nil {
+		builder := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON)
+
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 
 		var result RelatedObjectsResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := builder.SetResult(&result).Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -164,14 +110,17 @@ func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, re
 
 	var allObjects []RelatedObject
 
-	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
-		var pageResponse RelatedObjectsResponse
-		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal page: %w", err)
-		}
-		allObjects = append(allObjects, pageResponse.Data...)
-		return nil
-	})
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		GetPaginated(endpoint, func(pageData []byte) error {
+			var pageResponse RelatedObjectsResponse
+			if err := json.Unmarshal(pageData, &pageResponse); err != nil {
+				return fmt.Errorf("failed to unmarshal page: %w", err)
+			}
+			allObjects = append(allObjects, pageResponse.Data...)
+			return nil
+		})
 
 	if err != nil {
 		return nil, resp, err
@@ -187,7 +136,7 @@ func (s *Service) GetObjectsRelatedToAnalysis(ctx context.Context, id string, re
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/analyses-get-descriptors
-func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("analysis ID is required")
 	}
@@ -200,17 +149,14 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
-	queryParams := make(map[string]string)
-
 	// The "item" relationship returns a single object, not an array
 	if relationship == "item" {
 		var singleResult SingleObjectDescriptorResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &singleResult)
+		resp, err := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON).
+			SetResult(&singleResult).
+			Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -224,15 +170,19 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 	}
 
 	if opts != nil {
+		builder := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON)
+
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 
 		var result RelatedObjectDescriptorsResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := builder.SetResult(&result).Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -242,14 +192,17 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 
 	var allDescriptors []ObjectDescriptor
 
-	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
-		var pageResponse RelatedObjectDescriptorsResponse
-		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal page: %w", err)
-		}
-		allDescriptors = append(allDescriptors, pageResponse.Data...)
-		return nil
-	})
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		GetPaginated(endpoint, func(pageData []byte) error {
+			var pageResponse RelatedObjectDescriptorsResponse
+			if err := json.Unmarshal(pageData, &pageResponse); err != nil {
+				return fmt.Errorf("failed to unmarshal page: %w", err)
+			}
+			allDescriptors = append(allDescriptors, pageResponse.Data...)
+			return nil
+		})
 
 	if err != nil {
 		return nil, resp, err
@@ -263,20 +216,19 @@ func (s *Service) GetObjectDescriptorsRelatedToAnalysis(ctx context.Context, id 
 // GetSubmission retrieves a submission object by its ID
 // URL: GET https://www.virustotal.com/api/v3/submissions/{id}
 // https://docs.virustotal.com/reference/get-submission
-func (s *Service) GetSubmission(ctx context.Context, id string) (*SubmissionResponse, *interfaces.Response, error) {
+func (s *Service) GetSubmission(ctx context.Context, id string) (*SubmissionResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("submission ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSubmissions, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result SubmissionResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -287,20 +239,19 @@ func (s *Service) GetSubmission(ctx context.Context, id string) (*SubmissionResp
 // GetOperation retrieves an operation object by its ID
 // URL: GET https://www.virustotal.com/api/v3/operations/{id}
 // https://docs.virustotal.com/reference/get-operations-id
-func (s *Service) GetOperation(ctx context.Context, id string) (*OperationResponse, *interfaces.Response, error) {
+func (s *Service) GetOperation(ctx context.Context, id string) (*OperationResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("operation ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointOperations, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result OperationResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}

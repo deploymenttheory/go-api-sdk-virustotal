@@ -18,12 +18,11 @@ func setupMockClient(t *testing.T) *Service {
 	logger := zap.NewNop()
 
 	// Create base URL for testing
-	baseURL := "https://www.virustotal.com/api/v3"
 
 	// Create HTTP client
 	httpClient, err := client.NewTransport("test-api-key",
 		client.WithLogger(logger),
-		client.WithBaseURL(baseURL),
+		client.WithBaseURL("https://www.virustotal.com/api"),
 	)
 	require.NoError(t, err)
 
@@ -56,7 +55,7 @@ func TestUnitListYaraRules_Success(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 	assert.NotEmpty(t, result.Data)
 	assert.Equal(t, "yara_rule", result.Data[0].Type)
 	assert.Equal(t, "003e1c51ef|PK_AXA_fun", result.Data[0].ID)
@@ -82,7 +81,7 @@ func TestUnitListYaraRules_WithFilters(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 
 	assert.Equal(t, 1, httpmock.GetTotalCallCount())
 }
@@ -98,7 +97,7 @@ func TestUnitListYaraRules_NoOptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 
 	assert.Equal(t, 1, httpmock.GetTotalCallCount())
 }
@@ -118,7 +117,7 @@ func TestUnitGetYaraRule_Success(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 	assert.Equal(t, "yara_rule", result.Data.Type)
 	assert.Equal(t, "003e1c51ef|PK_AXA_fun", result.Data.ID)
 	assert.Equal(t, "PK_AXA_fun", result.Data.Attributes.Name)
@@ -164,7 +163,7 @@ func TestUnitGetObjectsRelatedToYaraRule_Success(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 	assert.NotEmpty(t, result.Data)
 	assert.Equal(t, "file", result.Data[0].Type)
 	assert.NotEmpty(t, result.Data[0].ID)
@@ -190,7 +189,7 @@ func TestUnitGetObjectsRelatedToYaraRule_WithOptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 
 	assert.Equal(t, 1, httpmock.GetTotalCallCount())
 }
@@ -249,7 +248,7 @@ func TestUnitGetObjectDescriptorsRelatedToYaraRule_Success(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 	assert.NotEmpty(t, result.Data)
 	assert.Equal(t, "file", result.Data[0].Type)
 	assert.NotEmpty(t, result.Data[0].ID)
@@ -276,7 +275,7 @@ func TestUnitGetObjectDescriptorsRelatedToYaraRule_WithOptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, result)
 	require.NotNil(t, resp)
-	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, 200, resp.StatusCode())
 
 	assert.Equal(t, 1, httpmock.GetTotalCallCount())
 }

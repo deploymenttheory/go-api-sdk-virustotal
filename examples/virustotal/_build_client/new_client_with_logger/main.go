@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
 	"go.uber.org/zap"
 )
 
@@ -46,23 +45,23 @@ func main() {
 	// Step 2: Create client with custom configuration
 	vtClient, err := virustotal.NewClientFromEnv(
 		// Structured logging for production observability
-		client.WithLogger(logger),
+		virustotal.WithLogger(logger),
 
 		// Custom timeout for slow networks or large file operations
-		client.WithTimeout(60*time.Second),
+		virustotal.WithTimeout(60*time.Second),
 
 		// Retry configuration for better reliability
-		client.WithRetryCount(5),                       // Retry up to 5 times
-		client.WithRetryWaitTime(3*time.Second),        // Initial wait time
-		client.WithRetryMaxWaitTime(30*time.Second),    // Maximum wait time
+		virustotal.WithRetryCount(5),                       // Retry up to 5 times
+		virustotal.WithRetryWaitTime(3*time.Second),        // Initial wait time
+		virustotal.WithRetryMaxWaitTime(30*time.Second),    // Maximum wait time
 
 		// Add custom headers for request tracking
-		client.WithGlobalHeader("X-Application-Name", "MySecurityApp"),
-		client.WithGlobalHeader("X-Application-Version", "1.0.0"),
-		client.WithGlobalHeader("X-Environment", "production"),
+		virustotal.WithGlobalHeader("X-Application-Name", "MySecurityApp"),
+		virustotal.WithGlobalHeader("X-Application-Version", "1.0.0"),
+		virustotal.WithGlobalHeader("X-Environment", "production"),
 
 		// Uncomment to enable debug mode (only for development!)
-		// client.WithDebug(),
+		// virustotal.WithDebug(),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)

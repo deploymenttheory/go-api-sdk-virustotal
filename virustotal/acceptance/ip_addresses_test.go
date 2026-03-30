@@ -23,8 +23,8 @@ func TestAcceptance_IPAddresses_GetIPAddressReport(t *testing.T) {
 		AssertNoError(t, err, "GetIPAddressReport should not return an error")
 		AssertNotNil(t, result, "GetIPAddressReport result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
-		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
+		assert.NotNil(t, resp.Header(), "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "IP address data should not be nil")
@@ -82,7 +82,7 @@ func TestAcceptance_IPAddresses_GetIPAddressReport_InvalidIP(t *testing.T) {
 		assert.Error(t, err, "GetIPAddressReport should return an error for invalid IP")
 		assert.Nil(t, result, "GetIPAddressReport result should be nil for invalid IP")
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
-		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid IP")
+		assert.NotEqual(t, 200, resp.StatusCode(), "Status code should not be 200 for invalid IP")
 
 		LogTestSuccess(t, "Expected error received: %v", err)
 	})
@@ -130,7 +130,7 @@ func TestAcceptance_IPAddresses_GetObjectsRelatedToIPAddress(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToIPAddress should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToIPAddress result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Resolutions data should not be nil")
@@ -171,7 +171,7 @@ func TestAcceptance_IPAddresses_GetObjectDescriptorsRelatedToIPAddress(t *testin
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToIPAddress should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToIPAddress result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -208,7 +208,7 @@ func TestAcceptance_IPAddresses_GetVotesOnIPAddress(t *testing.T) {
 		AssertNoError(t, err, "GetVotesOnIPAddress should not return an error")
 		AssertNotNil(t, result, "GetVotesOnIPAddress result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

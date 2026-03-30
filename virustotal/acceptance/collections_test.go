@@ -45,7 +45,7 @@ func createTestCollection(t *testing.T, service *collections.Service, suffix str
 	result, resp, err := service.CreateCollection(ctx, req)
 	if err != nil {
 		// Check for quota exceeded
-		if resp != nil && resp.StatusCode == 429 {
+		if resp != nil && resp.StatusCode() == 429 {
 			t.Skip("API quota exceeded - skipping test")
 		}
 		t.Fatalf("Failed to create test collection: %v", err)
@@ -112,7 +112,7 @@ func TestAcceptance_Collections_CreateCollection(t *testing.T) {
 		result, resp, err := service.CreateCollection(ctx, req)
 		
 		// Check for quota exceeded
-		if err != nil && resp != nil && resp.StatusCode == 429 {
+		if err != nil && resp != nil && resp.StatusCode() == 429 {
 			LogTestWarning(t, "API quota exceeded (429) - test skipped")
 			t.Skip("Skipping test - API quota exceeded")
 		}
@@ -120,7 +120,7 @@ func TestAcceptance_Collections_CreateCollection(t *testing.T) {
 		AssertNoError(t, err, "CreateCollection should not return an error")
 		AssertNotNil(t, result, "CreateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		defer cleanupTestCollection(t, service, result.Data.ID)
 
@@ -166,7 +166,7 @@ func TestAcceptance_Collections_CreateCollection_WithRawItems(t *testing.T) {
 		result, resp, err := service.CreateCollection(ctx, req)
 		
 		// Check for quota exceeded
-		if err != nil && resp != nil && resp.StatusCode == 429 {
+		if err != nil && resp != nil && resp.StatusCode() == 429 {
 			LogTestWarning(t, "API quota exceeded (429) - test skipped")
 			t.Skip("Skipping test - API quota exceeded")
 		}
@@ -174,7 +174,7 @@ func TestAcceptance_Collections_CreateCollection_WithRawItems(t *testing.T) {
 		AssertNoError(t, err, "CreateCollection should not return an error")
 		AssertNotNil(t, result, "CreateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		defer cleanupTestCollection(t, service, result.Data.ID)
 
@@ -238,7 +238,7 @@ func TestAcceptance_Collections_GetCollection(t *testing.T) {
 		AssertNoError(t, err, "GetCollection should not return an error")
 		AssertNotNil(t, result, "GetCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
 		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
@@ -308,7 +308,7 @@ func TestAcceptance_Collections_UpdateCollection(t *testing.T) {
 		AssertNoError(t, err, "UpdateCollection should not return an error")
 		AssertNotNil(t, result, "UpdateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		assert.Equal(t, "collection", result.Data.Type, "Result type should be 'collection'")
 		assert.Equal(t, collectionID, result.Data.ID, "Collection ID should match")
@@ -349,7 +349,7 @@ func TestAcceptance_Collections_UpdateCollection_WithRawItems(t *testing.T) {
 		AssertNoError(t, err, "UpdateCollection should not return an error")
 		AssertNotNil(t, result, "UpdateCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		LogTestSuccess(t, "Collection updated with raw items")
 
@@ -383,7 +383,7 @@ func TestAcceptance_Collections_AddCommentToCollection(t *testing.T) {
 		AssertNoError(t, err, "AddCommentToCollection should not return an error")
 		AssertNotNil(t, result, "AddCommentToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		assert.Equal(t, "comment", result.Data.Type, "Result type should be 'comment'")
 		assert.NotEmpty(t, result.Data.ID, "Comment ID should not be empty")
@@ -442,7 +442,7 @@ func TestAcceptance_Collections_GetCommentsOnCollection(t *testing.T) {
 		AssertNoError(t, err, "GetCommentsOnCollection should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
 		if len(result.Data) > 0 {
@@ -482,7 +482,7 @@ func TestAcceptance_Collections_GetCommentsOnCollection_WithOptions(t *testing.T
 		AssertNoError(t, err, "GetCommentsOnCollection should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		LogTestSuccess(t, "Retrieved comments with limit successfully")
 
@@ -514,7 +514,7 @@ func TestAcceptance_Collections_GetObjectsRelatedToCollection(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToCollection should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
 
@@ -575,7 +575,7 @@ func TestAcceptance_Collections_GetObjectDescriptorsRelatedToCollection(t *testi
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToCollection should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		assert.NotNil(t, result.Data, "Object descriptors data should not be nil")
 
@@ -624,7 +624,7 @@ func TestAcceptance_Collections_AddItemsToCollection(t *testing.T) {
 		AssertNoError(t, err, "AddItemsToCollection should not return an error")
 		AssertNotNil(t, result, "AddItemsToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Note: API returns empty object {} on success, no data fields to verify
 		LogTestSuccess(t, "Items added successfully to collection")
@@ -660,7 +660,7 @@ func TestAcceptance_Collections_AddItemsToCollection_WithURLs(t *testing.T) {
 		AssertNoError(t, err, "AddItemsToCollection should not return an error")
 		AssertNotNil(t, result, "AddItemsToCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		LogTestSuccess(t, "URLs added successfully to collection")
 
@@ -730,7 +730,7 @@ func TestAcceptance_Collections_DeleteItemsFromCollection(t *testing.T) {
 		AssertNoError(t, err, "DeleteItemsFromCollection should not return an error")
 		AssertNotNil(t, result, "DeleteItemsFromCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Note: API returns empty object {} on success, no data fields to verify
 		LogTestSuccess(t, "Items deleted successfully from collection")
@@ -762,7 +762,7 @@ func TestAcceptance_Collections_DeleteCollection(t *testing.T) {
 		AssertNoError(t, err, "DeleteCollection should not return an error")
 		AssertNotNil(t, result, "DeleteCollection result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Note: API returns empty object {} on success, no data fields to verify
 		LogTestSuccess(t, "Collection deleted successfully")

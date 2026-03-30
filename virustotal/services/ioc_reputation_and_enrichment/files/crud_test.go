@@ -21,12 +21,11 @@ func setupMockClient(t *testing.T) *Service {
 	logger := zap.NewNop()
 
 	// Create base URL for testing
-	baseURL := "https://www.virustotal.com/api/v3"
 
 	// Create HTTP client first
 	apiClient, err := client.NewTransport("test-api-key",
 		client.WithLogger(logger),
-		client.WithBaseURL(baseURL),
+		client.WithBaseURL("https://www.virustotal.com/api"),
 	)
 	require.NoError(t, err)
 

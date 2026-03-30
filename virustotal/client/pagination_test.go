@@ -127,6 +127,20 @@ func TestExtractParamsFromURL(t *testing.T) {
 	}
 }
 
+func newTestTransport(t *testing.T, serverURL string) *Transport {
+	t.Helper()
+	logger := zaptest.NewLogger(t)
+	return &Transport{
+		client: resty.New().SetBaseURL(serverURL),
+		logger: logger,
+		authConfig: &AuthConfig{
+			APIKey:     "test-key",
+			APIVersion: "v3",
+		},
+		globalHeaders: make(map[string]string),
+	}
+}
+
 func TestGetPaginated_SinglePage(t *testing.T) {
 	// Create a test server that returns a single page
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -145,17 +159,7 @@ func TestGetPaginated_SinglePage(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create transport
-	logger := zaptest.NewLogger(t)
-	transport := &Transport{
-		client: resty.New().SetBaseURL(server.URL),
-		logger: logger,
-		authConfig: &AuthConfig{
-			APIKey:     "test-key",
-			APIVersion: "v3",
-		},
-		globalHeaders: make(map[string]string),
-	}
+	transport := newTestTransport(t, server.URL)
 
 	// Track pages received
 	pageCount := 0
@@ -174,7 +178,7 @@ func TestGetPaginated_SinglePage(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	resp, err := transport.GetPaginated(ctx, "/files", nil, nil, mergePage)
+	resp, err := transport.NewRequest(ctx).GetPaginated("/files", mergePage)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -229,17 +233,7 @@ func TestGetPaginated_MultiplePages(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create transport
-	logger := zaptest.NewLogger(t)
-	transport := &Transport{
-		client: resty.New().SetBaseURL(server.URL),
-		logger: logger,
-		authConfig: &AuthConfig{
-			APIKey:     "test-key",
-			APIVersion: "v3",
-		},
-		globalHeaders: make(map[string]string),
-	}
+	transport := newTestTransport(t, server.URL)
 
 	// Track pages received
 	pageCount := 0
@@ -258,7 +252,7 @@ func TestGetPaginated_MultiplePages(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	resp, err := transport.GetPaginated(ctx, "/files", nil, nil, mergePage)
+	resp, err := transport.NewRequest(ctx).GetPaginated("/files", mergePage)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -308,28 +302,16 @@ func TestGetPaginated_WithInitialQueryParams(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create transport
-	logger := zaptest.NewLogger(t)
-	transport := &Transport{
-		client: resty.New().SetBaseURL(server.URL),
-		logger: logger,
-		authConfig: &AuthConfig{
-			APIKey:     "test-key",
-			APIVersion: "v3",
-		},
-		globalHeaders: make(map[string]string),
-	}
+	transport := newTestTransport(t, server.URL)
 
 	mergePage := func(pageData []byte) error {
 		return nil
 	}
 
 	ctx := context.Background()
-	queryParams := map[string]string{
-		"limit": "10",
-	}
-
-	resp, err := transport.GetPaginated(ctx, "/files", queryParams, nil, mergePage)
+	resp, err := transport.NewRequest(ctx).
+		SetQueryParam("limit", "10").
+		GetPaginated("/files", mergePage)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -351,17 +333,7 @@ func TestGetPaginated_MergePageError(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create transport
-	logger := zaptest.NewLogger(t)
-	transport := &Transport{
-		client: resty.New().SetBaseURL(server.URL),
-		logger: logger,
-		authConfig: &AuthConfig{
-			APIKey:     "test-key",
-			APIVersion: "v3",
-		},
-		globalHeaders: make(map[string]string),
-	}
+	transport := newTestTransport(t, server.URL)
 
 	// mergePage that returns an error
 	mergePage := func(pageData []byte) error {
@@ -369,7 +341,7 @@ func TestGetPaginated_MergePageError(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	resp, err := transport.GetPaginated(ctx, "/files", nil, nil, mergePage)
+	resp, err := transport.NewRequest(ctx).GetPaginated("/files", mergePage)
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "merge failed")
@@ -384,24 +356,14 @@ func TestGetPaginated_HTTPError(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create transport
-	logger := zaptest.NewLogger(t)
-	transport := &Transport{
-		client: resty.New().SetBaseURL(server.URL),
-		logger: logger,
-		authConfig: &AuthConfig{
-			APIKey:     "test-key",
-			APIVersion: "v3",
-		},
-		globalHeaders: make(map[string]string),
-	}
+	transport := newTestTransport(t, server.URL)
 
 	mergePage := func(pageData []byte) error {
 		return nil
 	}
 
 	ctx := context.Background()
-	resp, err := transport.GetPaginated(ctx, "/files", nil, nil, mergePage)
+	resp, err := transport.NewRequest(ctx).GetPaginated("/files", mergePage)
 
 	require.Error(t, err)
 	assert.NotNil(t, resp, "Response should be returned even on error")
@@ -423,17 +385,7 @@ func TestGetPaginated_InvalidNextURL(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create transport
-	logger := zaptest.NewLogger(t)
-	transport := &Transport{
-		client: resty.New().SetBaseURL(server.URL),
-		logger: logger,
-		authConfig: &AuthConfig{
-			APIKey:     "test-key",
-			APIVersion: "v3",
-		},
-		globalHeaders: make(map[string]string),
-	}
+	transport := newTestTransport(t, server.URL)
 
 	pageCount := 0
 	mergePage := func(pageData []byte) error {
@@ -442,7 +394,7 @@ func TestGetPaginated_InvalidNextURL(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	resp, err := transport.GetPaginated(ctx, "/files", nil, nil, mergePage)
+	resp, err := transport.NewRequest(ctx).GetPaginated("/files", mergePage)
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to parse next URL")

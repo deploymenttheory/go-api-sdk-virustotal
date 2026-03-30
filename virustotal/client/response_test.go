@@ -1,59 +1,83 @@
 package client
 
 import (
+	"io"
 	"net/http"
+	"strings"
 	"testing"
-	"time"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"resty.dev/v3"
 )
+
+// newTestRestyResponse creates a *resty.Response from an http.Response for use in tests.
+func newTestRestyResponse(statusCode int, headers http.Header) *resty.Response {
+	httpResp := &http.Response{
+		StatusCode: statusCode,
+		Status:     http.StatusText(statusCode),
+		Header:     headers,
+		Body:       io.NopCloser(strings.NewReader("")),
+	}
+
+	c := resty.New()
+	req := c.R()
+	restyResp := &resty.Response{
+		RawResponse: httpResp,
+		Request:     req,
+	}
+	return restyResp
+}
 
 func TestIsResponseSuccess(t *testing.T) {
 	tests := []struct {
-		name     string
-		resp     *interfaces.Response
-		expected bool
+		name       string
+		statusCode int
+		isNil      bool
+		expected   bool
 	}{
 		{
 			name:     "nil response",
-			resp:     nil,
+			isNil:    true,
 			expected: false,
 		},
 		{
-			name:     "200 OK",
-			resp:     &interfaces.Response{StatusCode: 200},
-			expected: true,
+			name:       "200 OK",
+			statusCode: 200,
+			expected:   true,
 		},
 		{
-			name:     "201 Created",
-			resp:     &interfaces.Response{StatusCode: 201},
-			expected: true,
+			name:       "201 Created",
+			statusCode: 201,
+			expected:   true,
 		},
 		{
-			name:     "299 edge case",
-			resp:     &interfaces.Response{StatusCode: 299},
-			expected: true,
+			name:       "299 edge case",
+			statusCode: 299,
+			expected:   true,
 		},
 		{
-			name:     "400 Bad Request",
-			resp:     &interfaces.Response{StatusCode: 400},
-			expected: false,
+			name:       "400 Bad Request",
+			statusCode: 400,
+			expected:   false,
 		},
 		{
-			name:     "404 Not Found",
-			resp:     &interfaces.Response{StatusCode: 404},
-			expected: false,
+			name:       "404 Not Found",
+			statusCode: 404,
+			expected:   false,
 		},
 		{
-			name:     "500 Internal Server Error",
-			resp:     &interfaces.Response{StatusCode: 500},
-			expected: false,
+			name:       "500 Internal Server Error",
+			statusCode: 500,
+			expected:   false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := IsResponseSuccess(tt.resp)
+			var resp *resty.Response
+			if !tt.isNil {
+				resp = newTestRestyResponse(tt.statusCode, nil)
+			}
+			result := IsResponseSuccess(resp)
 			if result != tt.expected {
 				t.Errorf("IsResponseSuccess() = %v, want %v", result, tt.expected)
 			}
@@ -63,45 +87,50 @@ func TestIsResponseSuccess(t *testing.T) {
 
 func TestIsResponseError(t *testing.T) {
 	tests := []struct {
-		name     string
-		resp     *interfaces.Response
-		expected bool
+		name       string
+		statusCode int
+		isNil      bool
+		expected   bool
 	}{
 		{
 			name:     "nil response",
-			resp:     nil,
+			isNil:    true,
 			expected: false,
 		},
 		{
-			name:     "200 OK",
-			resp:     &interfaces.Response{StatusCode: 200},
-			expected: false,
+			name:       "200 OK",
+			statusCode: 200,
+			expected:   false,
 		},
 		{
-			name:     "400 Bad Request",
-			resp:     &interfaces.Response{StatusCode: 400},
-			expected: true,
+			name:       "400 Bad Request",
+			statusCode: 400,
+			expected:   true,
 		},
 		{
-			name:     "404 Not Found",
-			resp:     &interfaces.Response{StatusCode: 404},
-			expected: true,
+			name:       "404 Not Found",
+			statusCode: 404,
+			expected:   true,
 		},
 		{
-			name:     "429 Too Many Requests",
-			resp:     &interfaces.Response{StatusCode: 429},
-			expected: true,
+			name:       "429 Too Many Requests",
+			statusCode: 429,
+			expected:   true,
 		},
 		{
-			name:     "500 Internal Server Error",
-			resp:     &interfaces.Response{StatusCode: 500},
-			expected: true,
+			name:       "500 Internal Server Error",
+			statusCode: 500,
+			expected:   true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := IsResponseError(tt.resp)
+			var resp *resty.Response
+			if !tt.isNil {
+				resp = newTestRestyResponse(tt.statusCode, nil)
+			}
+			result := IsResponseError(resp)
 			if result != tt.expected {
 				t.Errorf("IsResponseError() = %v, want %v", result, tt.expected)
 			}
@@ -115,46 +144,56 @@ func TestGetResponseHeader(t *testing.T) {
 	headers.Set("X-Custom-Header", "test-value")
 
 	tests := []struct {
-		name     string
-		resp     *interfaces.Response
-		key      string
-		expected string
+		name       string
+		statusCode int
+		headers    http.Header
+		isNil      bool
+		key        string
+		expected   string
 	}{
 		{
 			name:     "nil response",
-			resp:     nil,
+			isNil:    true,
 			key:      "Content-Type",
 			expected: "",
 		},
 		{
-			name:     "nil headers",
-			resp:     &interfaces.Response{},
-			key:      "Content-Type",
-			expected: "",
+			name:       "nil headers",
+			statusCode: 200,
+			headers:    nil,
+			key:        "Content-Type",
+			expected:   "",
 		},
 		{
-			name:     "existing header",
-			resp:     &interfaces.Response{Headers: headers},
-			key:      "Content-Type",
-			expected: "application/json",
+			name:       "existing header",
+			statusCode: 200,
+			headers:    headers,
+			key:        "Content-Type",
+			expected:   "application/json",
 		},
 		{
-			name:     "case insensitive header",
-			resp:     &interfaces.Response{Headers: headers},
-			key:      "content-type",
-			expected: "application/json",
+			name:       "case insensitive header",
+			statusCode: 200,
+			headers:    headers,
+			key:        "content-type",
+			expected:   "application/json",
 		},
 		{
-			name:     "missing header",
-			resp:     &interfaces.Response{Headers: headers},
-			key:      "Missing-Header",
-			expected: "",
+			name:       "missing header",
+			statusCode: 200,
+			headers:    headers,
+			key:        "Missing-Header",
+			expected:   "",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := GetResponseHeader(tt.resp, tt.key)
+			var resp *resty.Response
+			if !tt.isNil {
+				resp = newTestRestyResponse(tt.statusCode, tt.headers)
+			}
+			result := GetResponseHeader(resp, tt.key)
 			if result != tt.expected {
 				t.Errorf("GetResponseHeader() = %v, want %v", result, tt.expected)
 			}
@@ -165,7 +204,8 @@ func TestGetResponseHeader(t *testing.T) {
 func TestGetRateLimitHeaders(t *testing.T) {
 	tests := []struct {
 		name              string
-		resp              *interfaces.Response
+		headers           http.Header
+		isNil             bool
 		expectedLimit     string
 		expectedRemaining string
 		expectedReset     string
@@ -173,7 +213,7 @@ func TestGetRateLimitHeaders(t *testing.T) {
 	}{
 		{
 			name:              "nil response",
-			resp:              nil,
+			isNil:             true,
 			expectedLimit:     "",
 			expectedRemaining: "",
 			expectedReset:     "",
@@ -181,13 +221,11 @@ func TestGetRateLimitHeaders(t *testing.T) {
 		},
 		{
 			name: "rate limit headers present",
-			resp: &interfaces.Response{
-				Headers: http.Header{
-					"X-Api-Quota-Limit":     []string{"500"},
-					"X-Api-Quota-Remaining": []string{"450"},
-					"X-Api-Quota-Reset":     []string{"1640000000"},
-					"Retry-After":           []string{"60"},
-				},
+			headers: http.Header{
+				"X-Api-Quota-Limit":     []string{"500"},
+				"X-Api-Quota-Remaining": []string{"450"},
+				"X-Api-Quota-Reset":     []string{"1640000000"},
+				"Retry-After":           []string{"60"},
 			},
 			expectedLimit:     "500",
 			expectedRemaining: "450",
@@ -196,11 +234,9 @@ func TestGetRateLimitHeaders(t *testing.T) {
 		},
 		{
 			name: "partial rate limit headers",
-			resp: &interfaces.Response{
-				Headers: http.Header{
-					"X-Api-Quota-Limit":     []string{"500"},
-					"X-Api-Quota-Remaining": []string{"450"},
-				},
+			headers: http.Header{
+				"X-Api-Quota-Limit":     []string{"500"},
+				"X-Api-Quota-Remaining": []string{"450"},
 			},
 			expectedLimit:     "500",
 			expectedRemaining: "450",
@@ -208,10 +244,8 @@ func TestGetRateLimitHeaders(t *testing.T) {
 			expectedRetry:     "",
 		},
 		{
-			name: "no rate limit headers",
-			resp: &interfaces.Response{
-				Headers: make(http.Header),
-			},
+			name:              "no rate limit headers",
+			headers:           make(http.Header),
 			expectedLimit:     "",
 			expectedRemaining: "",
 			expectedReset:     "",
@@ -221,7 +255,11 @@ func TestGetRateLimitHeaders(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			limit, remaining, reset, retry := GetRateLimitHeaders(tt.resp)
+			var resp *resty.Response
+			if !tt.isNil {
+				resp = newTestRestyResponse(200, tt.headers)
+			}
+			limit, remaining, reset, retry := GetRateLimitHeaders(resp)
 			if limit != tt.expectedLimit {
 				t.Errorf("limit = %v, want %v", limit, tt.expectedLimit)
 			}
@@ -235,66 +273,5 @@ func TestGetRateLimitHeaders(t *testing.T) {
 				t.Errorf("retry = %v, want %v", retry, tt.expectedRetry)
 			}
 		})
-	}
-}
-
-func TestGetResponseHeaders(t *testing.T) {
-	headers := make(http.Header)
-	headers.Set("Content-Type", "application/json")
-	headers.Set("X-Custom-Header", "test-value")
-
-	tests := []struct {
-		name     string
-		resp     *interfaces.Response
-		expected int // number of headers
-	}{
-		{
-			name:     "nil response",
-			resp:     nil,
-			expected: 0,
-		},
-		{
-			name:     "response with headers",
-			resp:     &interfaces.Response{Headers: headers},
-			expected: 2,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := GetResponseHeaders(tt.resp)
-			if len(result) != tt.expected {
-				t.Errorf("GetResponseHeaders() returned %d headers, want %d", len(result), tt.expected)
-			}
-		})
-	}
-}
-
-func TestResponseStructFields(t *testing.T) {
-	// Test that Response struct can hold all expected fields
-	resp := &interfaces.Response{
-		StatusCode: 200,
-		Status:     "200 OK",
-		Headers:    make(http.Header),
-		Body:       []byte("test body"),
-		Duration:   100 * time.Millisecond,
-		ReceivedAt: time.Now(),
-		Size:       9,
-	}
-
-	if resp.StatusCode != 200 {
-		t.Errorf("StatusCode = %v, want 200", resp.StatusCode)
-	}
-	if resp.Status != "200 OK" {
-		t.Errorf("Status = %v, want '200 OK'", resp.Status)
-	}
-	if resp.Duration != 100*time.Millisecond {
-		t.Errorf("Duration = %v, want 100ms", resp.Duration)
-	}
-	if resp.Size != 9 {
-		t.Errorf("Size = %v, want 9", resp.Size)
-	}
-	if string(resp.Body) != "test body" {
-		t.Errorf("Body = %v, want 'test body'", string(resp.Body))
 	}
 }

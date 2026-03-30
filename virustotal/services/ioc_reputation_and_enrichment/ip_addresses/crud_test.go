@@ -23,7 +23,7 @@ func setupMockClient(t *testing.T) (*Service, string) {
 	// Create HTTP client
 	httpClient, err := client.NewTransport("test-api-key",
 		client.WithLogger(logger),
-		client.WithBaseURL(baseURL),
+		client.WithBaseURL("https://www.virustotal.com/api"),
 	)
 	require.NoError(t, err)
 

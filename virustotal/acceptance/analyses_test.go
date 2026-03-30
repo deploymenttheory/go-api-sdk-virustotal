@@ -25,8 +25,8 @@ func TestAcceptance_Analyses_GetAnalysis(t *testing.T) {
 		AssertNoError(t, err, "GetAnalysis should not return an error")
 		AssertNotNil(t, result, "GetAnalysis result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
-		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
+		assert.NotNil(t, resp.Header(), "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Analysis data should not be nil")
@@ -78,7 +78,7 @@ func TestAcceptance_Analyses_GetAnalysis_InvalidID(t *testing.T) {
 		assert.Error(t, err, "GetAnalysis should return an error for invalid ID")
 		assert.Nil(t, result, "GetAnalysis result should be nil for invalid ID")
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
-		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
+		assert.NotEqual(t, 200, resp.StatusCode(), "Status code should not be 200 for invalid ID")
 
 		LogTestSuccess(t, "Expected error received: %v", err)
 	})
@@ -126,7 +126,7 @@ func TestAcceptance_Analyses_GetObjectsRelatedToAnalysis(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToAnalysis should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToAnalysis result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -165,7 +165,7 @@ func TestAcceptance_Analyses_GetObjectDescriptorsRelatedToAnalysis(t *testing.T)
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToAnalysis should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToAnalysis result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related descriptors data should not be nil")
@@ -284,7 +284,7 @@ func TestAcceptance_Analyses_GetSubmission(t *testing.T) {
 		AssertNoError(t, err, "GetSubmission should not return an error")
 		AssertNotNil(t, result, "GetSubmission result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Submission data should not be nil")

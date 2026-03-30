@@ -10,11 +10,8 @@ func TestNewQueryBuilder(t *testing.T) {
 	if qb == nil {
 		t.Fatal("NewQueryBuilder() returned nil")
 	}
-	if qb.params == nil {
-		t.Fatal("QueryBuilder params map is nil")
-	}
-	if len(qb.params) != 0 {
-		t.Errorf("NewQueryBuilder() should start with empty params, got %d params", len(qb.params))
+	if !qb.IsEmpty() {
+		t.Errorf("NewQueryBuilder() should start with empty params, got %d params", qb.Count())
 	}
 }
 
@@ -590,24 +587,24 @@ func TestQueryBuilder_Build(t *testing.T) {
 func TestQueryBuilder_BuildString(t *testing.T) {
 	tests := []struct {
 		name string
-		add  func(*QueryBuilder)
+		add  func(QueryBuilder)
 		want map[string]bool // possible valid orderings
 	}{
 		{
 			name: "empty builder",
-			add:  func(qb *QueryBuilder) {},
+			add:  func(qb QueryBuilder) {},
 			want: map[string]bool{"": true},
 		},
 		{
 			name: "single parameter",
-			add: func(qb *QueryBuilder) {
+			add: func(qb QueryBuilder) {
 				qb.AddString("key", "value")
 			},
 			want: map[string]bool{"key=value": true},
 		},
 		{
 			name: "multiple parameters",
-			add: func(qb *QueryBuilder) {
+			add: func(qb QueryBuilder) {
 				qb.AddString("key1", "value1")
 				qb.AddString("key2", "value2")
 			},
