@@ -28,7 +28,7 @@ func TestAcceptance_YaraRules_ListYaraRules(t *testing.T) {
 		})
 
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "ListYaraRules requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping ListYaraRules test - requires premium/enterprise API key")
 		}
@@ -36,7 +36,7 @@ func TestAcceptance_YaraRules_ListYaraRules(t *testing.T) {
 		AssertNoError(t, err, "ListYaraRules should not return an error")
 		AssertNotNil(t, result, "ListYaraRules result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Rules data should not be nil")
@@ -90,7 +90,7 @@ func TestAcceptance_YaraRules_ListYaraRules_WithFilters(t *testing.T) {
 		})
 
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "ListYaraRules requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping ListYaraRules test - requires premium/enterprise API key")
 		}
@@ -98,7 +98,7 @@ func TestAcceptance_YaraRules_ListYaraRules_WithFilters(t *testing.T) {
 		AssertNoError(t, err, "ListYaraRules should not return an error")
 		AssertNotNil(t, result, "ListYaraRules result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate that all returned rules are enabled
 		for i, rule := range result.Data {
@@ -136,7 +136,7 @@ func TestAcceptance_YaraRules_GetYaraRule(t *testing.T) {
 		})
 
 		// Check if this requires premium privileges
-		if listErr != nil && listResp != nil && listResp.StatusCode == 403 {
+		if listErr != nil && listResp != nil && listResp.StatusCode() == 403 {
 			LogTestWarning(t, "ListYaraRules requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetYaraRule test - requires premium/enterprise API key")
 		}
@@ -156,7 +156,7 @@ func TestAcceptance_YaraRules_GetYaraRule(t *testing.T) {
 		AssertNoError(t, err, "GetYaraRule should not return an error")
 		AssertNotNil(t, result, "GetYaraRule result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.Equal(t, "yara_rule", result.Data.Type, "Rule type should be 'yara_rule'")
@@ -230,7 +230,7 @@ func TestAcceptance_YaraRules_GetObjectsRelatedToYaraRule(t *testing.T) {
 		})
 
 		// Check if this requires premium privileges
-		if listErr != nil && listResp != nil && listResp.StatusCode == 403 {
+		if listErr != nil && listResp != nil && listResp.StatusCode() == 403 {
 			LogTestWarning(t, "ListYaraRules requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetObjectsRelatedToYaraRule test - requires premium/enterprise API key")
 		}
@@ -261,7 +261,7 @@ func TestAcceptance_YaraRules_GetObjectsRelatedToYaraRule(t *testing.T) {
 		})
 
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetObjectsRelatedToYaraRule requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetObjectsRelatedToYaraRule test - requires premium/enterprise API key")
 		}
@@ -269,7 +269,7 @@ func TestAcceptance_YaraRules_GetObjectsRelatedToYaraRule(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToYaraRule should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToYaraRule result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -342,7 +342,7 @@ func TestAcceptance_YaraRules_GetObjectDescriptorsRelatedToYaraRule(t *testing.T
 		})
 
 		// Check if this requires premium privileges
-		if listErr != nil && listResp != nil && listResp.StatusCode == 403 {
+		if listErr != nil && listResp != nil && listResp.StatusCode() == 403 {
 			LogTestWarning(t, "ListYaraRules requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetObjectDescriptorsRelatedToYaraRule test - requires premium/enterprise API key")
 		}
@@ -373,7 +373,7 @@ func TestAcceptance_YaraRules_GetObjectDescriptorsRelatedToYaraRule(t *testing.T
 		})
 
 		// Check if this requires premium privileges
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetObjectDescriptorsRelatedToYaraRule requires premium/enterprise API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetObjectDescriptorsRelatedToYaraRule test - requires premium/enterprise API key")
 		}
@@ -381,7 +381,7 @@ func TestAcceptance_YaraRules_GetObjectDescriptorsRelatedToYaraRule(t *testing.T
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToYaraRule should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToYaraRule result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Object descriptors data should not be nil")

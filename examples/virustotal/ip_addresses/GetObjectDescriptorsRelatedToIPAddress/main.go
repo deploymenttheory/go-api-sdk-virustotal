@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +23,7 @@ func main() {
 	defer logger.Sync()
 
 	vtClient, err := virustotal.NewClientFromEnv(
-		client.WithLogger(logger),
+		virustotal.WithLogger(logger),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)

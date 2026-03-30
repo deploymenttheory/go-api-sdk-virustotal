@@ -6,8 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/urls"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -77,16 +76,16 @@ func main() {
 	otel.SetTracerProvider(tracerProvider)
 
 	// Step 4: Create client with tracing enabled
-	vtClient, err := client.NewClient(
+	vtClient, err := virustotal.NewClient(
 		apiKey,
 		// Enable structured logging
-		client.WithLogger(logger),
+		virustotal.WithLogger(logger),
 
 		// Enable OpenTelemetry tracing - this automatically instruments all HTTP calls
-		client.WithTracing(nil), // nil uses default config with global tracer provider
+		virustotal.WithTracing(nil), // nil uses default config with global tracer provider
 
 		// Or use custom tracing configuration:
-		// client.WithTracing(&client.OTelConfig{
+		// virustotal.WithTracing(&virustotal.OTelConfig{
 		//     TracerProvider: tracerProvider,
 		//     ServiceName:    "my-virustotal-app",
 		//     SpanNameFormatter: func(operation string, req *http.Request) string {
@@ -102,7 +101,6 @@ func main() {
 
 	// Step 5: Use the client - tracing happens automatically!
 	ctx := context.Background()
-	urlsService := urls.NewService(vtClient)
 
 	// This API call will automatically create spans with:
 	// - HTTP method, URL, and status code
@@ -113,7 +111,7 @@ func main() {
 
 	logger.Info("Scanning URL", zap.String("url", urlToScan))
 
-	scanResult, resp, err := urlsService.ScanURL(ctx, urlToScan)
+	scanResult, resp, err := vtClient.URLs.ScanURL(ctx, urlToScan)
 	if err != nil {
 		logger.Error("URL scan failed",
 			zap.String("url", urlToScan),

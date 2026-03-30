@@ -23,8 +23,8 @@ func TestAcceptance_URLs_GetURLReport(t *testing.T) {
 		AssertNoError(t, err, "GetURLReport should not return an error")
 		AssertNotNil(t, result, "GetURLReport result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
-		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
+		assert.NotNil(t, resp.Header(), "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "URL data should not be nil")
@@ -89,7 +89,7 @@ func TestAcceptance_URLs_GetURLReport_InvalidURLID(t *testing.T) {
 		assert.Error(t, err, "GetURLReport should return an error for invalid URL ID")
 		assert.Nil(t, result, "GetURLReport result should be nil for invalid URL ID")
 		if resp != nil {
-			assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for invalid ID")
+			assert.NotEqual(t, 200, resp.StatusCode(), "Status code should not be 200 for invalid ID")
 		}
 
 		LogTestSuccess(t, "Expected error received: %v", err)
@@ -138,7 +138,7 @@ func TestAcceptance_URLs_GetCommentsOnURL(t *testing.T) {
 		AssertNoError(t, err, "GetCommentsOnURL should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
@@ -173,7 +173,7 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 		result, resp, err := service.GetObjectsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
 		
 		// Check for 403 Forbidden (premium feature)
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetObjectsRelatedToURL requires premium API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetObjectsRelatedToURL test - requires premium/enterprise API key")
 		}
@@ -181,7 +181,7 @@ func TestAcceptance_URLs_GetObjectsRelatedToURL(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToURL should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -217,7 +217,7 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 		result, resp, err := service.GetObjectDescriptorsRelatedToURL(ctx, Config.KnownURLID, "contacted_domains", opts)
 		
 		// Check for 403 Forbidden (premium feature)
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetObjectDescriptorsRelatedToURL requires premium API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetObjectDescriptorsRelatedToURL test - requires premium/enterprise API key")
 		}
@@ -225,7 +225,7 @@ func TestAcceptance_URLs_GetObjectDescriptorsRelatedToURL(t *testing.T) {
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToURL should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -262,7 +262,7 @@ func TestAcceptance_URLs_GetVotesOnURL(t *testing.T) {
 		AssertNoError(t, err, "GetVotesOnURL should not return an error")
 		AssertNotNil(t, result, "GetVotesOnURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

@@ -5,77 +5,18 @@ import (
 	"fmt"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/constants"
+	"resty.dev/v3"
 )
 
-type (
-	// CommentsServiceInterface defines the interface for comment operations
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference/comments-api
-	CommentsServiceInterface interface {
-		// GetLatestComments retrieves the latest comments added to VirusTotal
-		//
-		// Returns information about the latest comments added to VirusTotal. You can filter
-		// comments by tag using the filter parameter (e.g. filter=tag:malware). Results are paginated.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-comments
-		GetLatestComments(ctx context.Context, opts *GetCommentsOptions) (*GetCommentsResponse, *interfaces.Response, error)
+// Service implements the CommentsServiceInterface
+type Service struct {
+	client client.Client
+}
 
-		// GetComment retrieves a comment by its ID
-		//
-		// Returns the full details of a comment object identified by its ID.
-		// Comment IDs follow the format {prefix}-{item_id}-{random}, where prefix indicates
-		// the resource type (d=domain, f=file, g=graph, i=IP, u=URL).
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-comment
-		GetComment(ctx context.Context, commentID string) (*GetCommentResponse, *interfaces.Response, error)
-
-		// DeleteComment deletes a comment
-		//
-		// Deletes a comment identified by its ID. Only the comment author or VirusTotal
-		// administrators can delete comments.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/comment-id-delete
-		DeleteComment(ctx context.Context, commentID string) (*interfaces.Response, error)
-
-		// GetObjectsRelatedToComment retrieves objects related to a comment
-		//
-		// Returns objects related to a comment based on the specified relationship type.
-		// Supported relationships include: author. Results are paginated.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/comments-relationships
-		GetObjectsRelatedToComment(ctx context.Context, commentID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
-
-		// GetObjectDescriptorsRelatedToComment retrieves object descriptors (IDs only) related to a comment
-		//
-		// Returns lightweight object descriptors with just IDs and context attributes instead of full objects.
-		// This is more efficient when you only need to know which objects are related without fetching all attributes.
-		// Supported relationships are the same as GetObjectsRelatedToComment.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/comments-relationships-ids
-		GetObjectDescriptorsRelatedToComment(ctx context.Context, commentID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error)
-
-		// AddVoteToComment adds a vote to a comment
-		//
-		// Posts a vote for a comment. The vote can be positive (useful), negative (not useful),
-		// or marked as abuse. Each user can only vote once per comment, and subsequent votes
-		// will update the previous vote.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/vote-comment
-		AddVoteToComment(ctx context.Context, commentID string, positive int, negative int, abuse int) (*AddVoteResponse, *interfaces.Response, error)
-	}
-
-	// Service implements the CommentsServiceInterface
-	Service struct {
-		client interfaces.HTTPClient
-	}
-)
-
-var _ CommentsServiceInterface = (*Service)(nil)
-
-func NewService(client interfaces.HTTPClient) *Service {
+func NewService(c client.Client) *Service {
 	return &Service{
-		client: client,
+		client: c,
 	}
 }
 
@@ -86,28 +27,26 @@ func NewService(client interfaces.HTTPClient) *Service {
 // GetLatestComments retrieves the latest comments added to VirusTotal
 // URL: GET https://www.virustotal.com/api/v3/comments
 // https://docs.virustotal.com/reference/get-comments
-func (s *Service) GetLatestComments(ctx context.Context, opts *GetCommentsOptions) (*GetCommentsResponse, *interfaces.Response, error) {
+func (s *Service) GetLatestComments(ctx context.Context, opts *GetCommentsOptions) (*GetCommentsResponse, *resty.Response, error) {
 	endpoint := EndpointComments
 
-	queryParams := make(map[string]string)
+	builder := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON)
+
 	if opts != nil {
 		if opts.Filter != "" {
-			queryParams["filter"] = opts.Filter
+			builder = builder.SetQueryParam("filter", opts.Filter)
 		}
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
-	}
-
-	headers := map[string]string{
-		"Accept": "application/json",
 	}
 
 	var result GetCommentsResponse
-	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := builder.SetResult(&result).Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -122,19 +61,18 @@ func (s *Service) GetLatestComments(ctx context.Context, opts *GetCommentsOption
 // GetComment retrieves a comment by its ID
 // URL: GET https://www.virustotal.com/api/v3/comments/{id}
 // https://docs.virustotal.com/reference/get-comment
-func (s *Service) GetComment(ctx context.Context, commentID string) (*GetCommentResponse, *interfaces.Response, error) {
+func (s *Service) GetComment(ctx context.Context, commentID string) (*GetCommentResponse, *resty.Response, error) {
 	if err := ValidateCommentID(commentID); err != nil {
 		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointComments, commentID)
 
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
-
 	var result GetCommentResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -149,18 +87,16 @@ func (s *Service) GetComment(ctx context.Context, commentID string) (*GetComment
 // DeleteComment deletes a comment
 // URL: DELETE https://www.virustotal.com/api/v3/comments/{id}
 // https://docs.virustotal.com/reference/comment-id-delete
-func (s *Service) DeleteComment(ctx context.Context, commentID string) (*interfaces.Response, error) {
+func (s *Service) DeleteComment(ctx context.Context, commentID string) (*resty.Response, error) {
 	if err := ValidateCommentID(commentID); err != nil {
 		return nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointComments, commentID)
 
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
-
-	resp, err := s.client.Delete(ctx, endpoint, nil, headers, nil)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		Delete(endpoint)
 	if err != nil {
 		return resp, err
 	}
@@ -175,7 +111,7 @@ func (s *Service) DeleteComment(ctx context.Context, commentID string) (*interfa
 // GetObjectsRelatedToComment retrieves objects related to a comment
 // URL: GET https://www.virustotal.com/api/v3/comments/{id}/{relationship}
 // https://docs.virustotal.com/reference/comments-relationships
-func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *resty.Response, error) {
 	if err := ValidateCommentID(commentID); err != nil {
 		return nil, nil, err
 	}
@@ -189,22 +125,20 @@ func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID stri
 		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
-	queryParams := make(map[string]string)
+	builder := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON)
+
 	if opts != nil {
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
-	}
-
-	headers := map[string]string{
-		"Accept": "application/json",
 	}
 
 	var result RelatedObjectsResponse
-	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := builder.SetResult(&result).Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -215,7 +149,7 @@ func (s *Service) GetObjectsRelatedToComment(ctx context.Context, commentID stri
 // GetObjectDescriptorsRelatedToComment retrieves object descriptors related to a comment
 // URL: GET https://www.virustotal.com/api/v3/comments/{id}/relationships/{relationship}
 // https://docs.virustotal.com/reference/comments-relationships-ids
-func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, commentID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, commentID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *resty.Response, error) {
 	if err := ValidateCommentID(commentID); err != nil {
 		return nil, nil, err
 	}
@@ -229,22 +163,20 @@ func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, comm
 		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
-	queryParams := make(map[string]string)
+	builder := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON)
+
 	if opts != nil {
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
-	}
-
-	headers := map[string]string{
-		"Accept": "application/json",
 	}
 
 	var result ObjectDescriptorsResponse
-	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := builder.SetResult(&result).Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -259,7 +191,7 @@ func (s *Service) GetObjectDescriptorsRelatedToComment(ctx context.Context, comm
 // AddVoteToComment adds a vote to a comment
 // URL: POST https://www.virustotal.com/api/v3/comments/{id}/vote
 // https://docs.virustotal.com/reference/vote-comment
-func (s *Service) AddVoteToComment(ctx context.Context, commentID string, positive int, negative int, abuse int) (*AddVoteResponse, *interfaces.Response, error) {
+func (s *Service) AddVoteToComment(ctx context.Context, commentID string, positive int, negative int, abuse int) (*AddVoteResponse, *resty.Response, error) {
 	if err := ValidateCommentID(commentID); err != nil {
 		return nil, nil, err
 	}
@@ -279,13 +211,13 @@ func (s *Service) AddVoteToComment(ctx context.Context, commentID string, positi
 		},
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result AddVoteResponse
-	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetBody(requestBody).
+		SetResult(&result).
+		Post(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}

@@ -4,81 +4,23 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/constants"
+	"resty.dev/v3"
 )
 
-type (
-	// YaraRulesServiceInterface defines the interface for YARA rules operations
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference
-	YaraRulesServiceInterface interface {
-		// ListYaraRules lists crowdsourced YARA rules
-		//
-		// Returns a list of crowdsourced YARA rules available in VirusTotal. You can filter
-		// rules by various attributes and control the order and pagination of results.
-		//
-		// Filter parameter examples:
-		// - enabled:true - Get only enabled rules
-		// - name:foo - Search for rules with "foo" in their name or meta values
-		// - author:author_name - Filter by author
-		// - tag:malware - Filter by tag
-		// - creation_date:2023-01-01+ - Rules created after date
-		//
-		// Multiple filters can be combined with spaces.
-		//
-		// Order parameter controls sorting (prefix with + for ascending, - for descending):
-		// - matches, creation_date, included_date, modification_date
-		//
-		// Note: Requires VT Premium/Enterprise privileges (VT Hunting).
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/list-crowdsourced-yara-rules
-		ListYaraRules(ctx context.Context, opts *ListYaraRulesOptions) (*YaraRulesResponse, *interfaces.Response, error)
-
-		// GetYaraRule retrieves a specific YARA rule by ID
-		//
-		// Returns detailed information about a crowdsourced YARA rule, including its content,
-		// metadata, author, tags, and statistics.
-		//
-		// Note: Requires VT Premium/Enterprise privileges (VT Hunting).
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-a-crowdsourced-yara-rule
-		GetYaraRule(ctx context.Context, ruleID string) (*YaraRuleResponse, *interfaces.Response, error)
-
-		// GetObjectsRelatedToYaraRule retrieves objects related to a YARA rule
-		//
-		// Returns objects related to the YARA rule through the specified relationship.
-		// Currently supports the "files" relationship which returns files that match the rule.
-		//
-		// Note: Requires VT Premium/Enterprise privileges (VT Hunting).
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/crowdsourced-yara-rule-relationship-endpoint
-		GetObjectsRelatedToYaraRule(ctx context.Context, ruleID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
-
-		// GetObjectDescriptorsRelatedToYaraRule retrieves object descriptors related to a YARA rule
-		//
-		// Returns object descriptors (IDs and context attributes only) for objects related to
-		// the YARA rule. This is faster than GetObjectsRelatedToYaraRule as it returns only
-		// minimal information.
-		//
-		// Note: Requires VT Premium/Enterprise privileges (VT Hunting).
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/crowdsourced-yara-rule-relationship-descriptors-endpoint
-		GetObjectDescriptorsRelatedToYaraRule(ctx context.Context, ruleID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error)
-	}
-
-	// Service handles communication with the YARA rules
-	// related methods of the VirusTotal API.
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference/list-crowdsourced-yara-rules
-	Service struct {
-		client interfaces.HTTPClient
-	}
-)
+// Service handles communication with the YARA rules
+// related methods of the VirusTotal API.
+//
+// VirusTotal API docs: https://docs.virustotal.com/reference/list-crowdsourced-yara-rules
+type Service struct {
+	client client.Client
+}
 
 // NewService creates a new YARA rules service
-func NewService(client interfaces.HTTPClient) *Service {
+func NewService(c client.Client) *Service {
 	return &Service{
-		client: client,
+		client: c,
 	}
 }
 
@@ -91,30 +33,29 @@ func NewService(client interfaces.HTTPClient) *Service {
 // Query Params: filter (optional), order (optional), limit (optional), cursor (optional)
 // Note: Requires VT Premium/Enterprise privileges (VT Hunting)
 // https://docs.virustotal.com/reference/list-crowdsourced-yara-rules
-func (s *Service) ListYaraRules(ctx context.Context, opts *ListYaraRulesOptions) (*YaraRulesResponse, *interfaces.Response, error) {
+func (s *Service) ListYaraRules(ctx context.Context, opts *ListYaraRulesOptions) (*YaraRulesResponse, *resty.Response, error) {
 	endpoint := EndpointYaraRules
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
 
-	queryParams := make(map[string]string)
+	builder := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON)
+
 	if opts != nil {
 		if opts.Filter != "" {
-			queryParams["filter"] = opts.Filter
+			builder = builder.SetQueryParam("filter", opts.Filter)
 		}
 		if opts.Order != "" {
-			queryParams["order"] = opts.Order
+			builder = builder.SetQueryParam("order", opts.Order)
 		}
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 	}
 
 	var result YaraRulesResponse
-	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := builder.SetResult(&result).Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -126,18 +67,18 @@ func (s *Service) ListYaraRules(ctx context.Context, opts *ListYaraRulesOptions)
 // URL: GET https://www.virustotal.com/api/v3/yara_rules/{id}
 // Note: Requires VT Premium/Enterprise privileges (VT Hunting)
 // https://docs.virustotal.com/reference/get-a-crowdsourced-yara-rule
-func (s *Service) GetYaraRule(ctx context.Context, ruleID string) (*YaraRuleResponse, *interfaces.Response, error) {
+func (s *Service) GetYaraRule(ctx context.Context, ruleID string) (*YaraRuleResponse, *resty.Response, error) {
 	if err := ValidateYaraRuleID(ruleID); err != nil {
 		return nil, nil, err
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointYaraRules, ruleID)
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
 
 	var result YaraRuleResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -150,7 +91,7 @@ func (s *Service) GetYaraRule(ctx context.Context, ruleID string) (*YaraRuleResp
 // Query Params: limit (optional), cursor (optional)
 // Note: Requires VT Premium/Enterprise privileges (VT Hunting)
 // https://docs.virustotal.com/reference/crowdsourced-yara-rule-relationship-endpoint
-func (s *Service) GetObjectsRelatedToYaraRule(ctx context.Context, ruleID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectsRelatedToYaraRule(ctx context.Context, ruleID string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *resty.Response, error) {
 	if err := ValidateYaraRuleID(ruleID); err != nil {
 		return nil, nil, err
 	}
@@ -159,22 +100,21 @@ func (s *Service) GetObjectsRelatedToYaraRule(ctx context.Context, ruleID string
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/%s", EndpointYaraRules, ruleID, relationship)
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
 
-	queryParams := make(map[string]string)
+	builder := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON)
+
 	if opts != nil {
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 	}
 
 	var result RelatedObjectsResponse
-	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := builder.SetResult(&result).Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -187,7 +127,7 @@ func (s *Service) GetObjectsRelatedToYaraRule(ctx context.Context, ruleID string
 // Query Params: limit (optional), cursor (optional)
 // Note: Requires VT Premium/Enterprise privileges (VT Hunting)
 // https://docs.virustotal.com/reference/crowdsourced-yara-rule-relationship-descriptors-endpoint
-func (s *Service) GetObjectDescriptorsRelatedToYaraRule(ctx context.Context, ruleID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectDescriptorsRelatedToYaraRule(ctx context.Context, ruleID string, relationship string, opts *GetRelatedObjectsOptions) (*ObjectDescriptorsResponse, *resty.Response, error) {
 	if err := ValidateYaraRuleID(ruleID); err != nil {
 		return nil, nil, err
 	}
@@ -196,22 +136,21 @@ func (s *Service) GetObjectDescriptorsRelatedToYaraRule(ctx context.Context, rul
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/relationships/%s", EndpointYaraRules, ruleID, relationship)
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
 
-	queryParams := make(map[string]string)
+	builder := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON)
+
 	if opts != nil {
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 	}
 
 	var result ObjectDescriptorsResponse
-	resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+	resp, err := builder.SetResult(&result).Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}

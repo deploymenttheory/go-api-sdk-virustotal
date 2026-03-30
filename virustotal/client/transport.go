@@ -1,10 +1,10 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"time"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
 	"go.uber.org/zap"
 	"resty.dev/v3"
 )
@@ -91,6 +91,23 @@ func (t *Transport) GetLogger() *zap.Logger {
 }
 
 // QueryBuilder creates a new query builder instance
-func (t *Transport) QueryBuilder() interfaces.ServiceQueryBuilder {
+func (t *Transport) QueryBuilder() ServiceQueryBuilder {
 	return NewQueryBuilder()
+}
+
+// NewRequest returns a RequestBuilder for this transport.
+func (t *Transport) NewRequest(ctx context.Context) *RequestBuilder {
+	req := t.client.R().SetContext(ctx)
+
+	// Apply global headers
+	for k, v := range t.globalHeaders {
+		if v != "" {
+			req.SetHeader(k, v)
+		}
+	}
+
+	return &RequestBuilder{
+		req:      req,
+		executor: t,
+	}
 }

@@ -44,7 +44,7 @@ func TestAcceptance_Files_UploadFile_SmallFile(t *testing.T) {
 		result, resp, err := service.UploadFile(ctx, request)
 		
 		// Check for quota exceeded
-		if err != nil && resp != nil && resp.StatusCode == 429 {
+		if err != nil && resp != nil && resp.StatusCode() == 429 {
 			LogTestWarning(t, "API quota exceeded (429) - test skipped")
 			t.Skip("Skipping test - API quota exceeded")
 		}
@@ -52,7 +52,7 @@ func TestAcceptance_Files_UploadFile_SmallFile(t *testing.T) {
 		AssertNoError(t, err, "UploadFile should not return an error")
 		AssertNotNil(t, result, "UploadFile result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Upload data should not be nil")
@@ -110,7 +110,7 @@ func TestAcceptance_Files_UploadFile_LargeFile(t *testing.T) {
 		result, resp, err := service.UploadFile(ctx, request)
 		
 		// Check for quota exceeded
-		if err != nil && resp != nil && resp.StatusCode == 429 {
+		if err != nil && resp != nil && resp.StatusCode() == 429 {
 			LogTestWarning(t, "API quota exceeded (429) - test skipped")
 			t.Skip("Skipping test - API quota exceeded")
 		}
@@ -118,7 +118,7 @@ func TestAcceptance_Files_UploadFile_LargeFile(t *testing.T) {
 		AssertNoError(t, err, "UploadFile should not return an error")
 		AssertNotNil(t, result, "UploadFile result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Upload data should not be nil")
@@ -151,8 +151,8 @@ func TestAcceptance_Files_GetFileReport(t *testing.T) {
 		AssertNoError(t, err, "GetFileReport should not return an error")
 		AssertNotNil(t, result, "GetFileReport result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
-		assert.NotNil(t, resp.Headers, "Response headers should not be nil")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
+		assert.NotNil(t, resp.Header(), "Response headers should not be nil")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "File data should not be nil")
@@ -210,7 +210,7 @@ func TestAcceptance_Files_GetFileReport_InvalidHash(t *testing.T) {
 		assert.Error(t, err, "GetFileReport should return an error for non-existent hash")
 		assert.Nil(t, result, "GetFileReport result should be nil for non-existent hash")
 		assert.NotNil(t, resp, "Response should not be nil for API errors")
-		assert.NotEqual(t, 200, resp.StatusCode, "Status code should not be 200 for non-existent hash")
+		assert.NotEqual(t, 200, resp.StatusCode(), "Status code should not be 200 for non-existent hash")
 
 		LogTestSuccess(t, "Expected error received: %v", err)
 	})
@@ -256,7 +256,7 @@ func TestAcceptance_Files_GetUploadURL(t *testing.T) {
 		AssertNoError(t, err, "GetUploadURL should not return an error")
 		AssertNotNil(t, result, "GetUploadURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate upload URL
 		assert.NotEmpty(t, result.Data, "Upload URL should not be empty")
@@ -282,7 +282,7 @@ func TestAcceptance_Files_GetFileDownloadURL(t *testing.T) {
 		result, resp, err := service.GetFileDownloadURL(ctx, Config.KnownFileHash)
 		
 		// File download requires premium/enterprise API key
-		if err != nil && resp != nil && resp.StatusCode == 403 {
+		if err != nil && resp != nil && resp.StatusCode() == 403 {
 			LogTestWarning(t, "GetFileDownloadURL requires premium API key (403 Forbidden) - test skipped")
 			t.Skip("Skipping GetFileDownloadURL test - requires premium/enterprise API key")
 			return
@@ -291,7 +291,7 @@ func TestAcceptance_Files_GetFileDownloadURL(t *testing.T) {
 		AssertNoError(t, err, "GetFileDownloadURL should not return an error")
 		AssertNotNil(t, result, "GetFileDownloadURL result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate download URL
 		assert.NotEmpty(t, result.Data, "Download URL should not be empty")
@@ -319,7 +319,7 @@ func TestAcceptance_Files_GetCommentsOnFile(t *testing.T) {
 		AssertNoError(t, err, "GetCommentsOnFile should not return an error")
 		AssertNotNil(t, result, "GetCommentsOnFile result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Comments data should not be nil")
@@ -362,7 +362,7 @@ func TestAcceptance_Files_GetObjectsRelatedToFile(t *testing.T) {
 		AssertNoError(t, err, "GetObjectsRelatedToFile should not return an error")
 		AssertNotNil(t, result, "GetObjectsRelatedToFile result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Related objects data should not be nil")
@@ -399,7 +399,7 @@ func TestAcceptance_Files_GetObjectDescriptorsRelatedToFile(t *testing.T) {
 		AssertNoError(t, err, "GetObjectDescriptorsRelatedToFile should not return an error")
 		AssertNotNil(t, result, "GetObjectDescriptorsRelatedToFile result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Descriptors data should not be nil")
@@ -436,7 +436,7 @@ func TestAcceptance_Files_GetVotesOnFile(t *testing.T) {
 		AssertNoError(t, err, "GetVotesOnFile should not return an error")
 		AssertNotNil(t, result, "GetVotesOnFile result should not be nil")
 		AssertNotNil(t, resp, "Response should not be nil")
-		assert.Equal(t, 200, resp.StatusCode, "Status code should be 200")
+		assert.Equal(t, 200, resp.StatusCode(), "Status code should be 200")
 
 		// Validate response structure
 		assert.NotNil(t, result.Data, "Votes data should not be nil")

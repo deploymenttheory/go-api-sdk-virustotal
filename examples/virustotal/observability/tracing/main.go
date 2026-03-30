@@ -6,8 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/services/ioc_reputation_and_enrichment/files"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -56,9 +55,9 @@ func main() {
 
 	// Step 3: Create VirusTotal client with tracing enabled
 	// Option 1: Use default tracing config (uses global tracer provider)
-	vtClient, err := client.NewTransport(
+	vtClient, err := virustotal.NewClient(
 		apiKey,
-		client.WithTracing(nil), // nil uses default config
+		virustotal.WithTracing(nil), // nil uses default config
 	)
 	if err != nil {
 		log.Fatalf("Failed to create VirusTotal client: %v", err)
@@ -67,7 +66,7 @@ func main() {
 	// Option 2: Use custom tracing configuration
 	// Uncomment to use custom config:
 	/*
-		otelConfig := &client.OTelConfig{
+		otelConfig := &virustotal.OTelConfig{
 			TracerProvider: tracerProvider,
 			ServiceName:    "my-virustotal-app",
 			SpanNameFormatter: func(operation string, req *http.Request) string {
@@ -75,22 +74,21 @@ func main() {
 				return fmt.Sprintf("VirusTotal: %s %s", req.Method, req.URL.Path)
 			},
 		}
-		vtClient, err := client.NewClient(
+		vtClient, err := virustotal.NewClient(
 			apiKey,
-			client.WithTracing(otelConfig),
+			virustotal.WithTracing(otelConfig),
 		)
 	*/
 
 	// Step 4: Use the client normally - tracing happens automatically!
 	ctx := context.Background()
-	filesService := files.NewService(vtClient)
 
 	// This API call will automatically create spans for:
 	// - The HTTP request/response
 	// - Timing information
 	// - Status codes and errors
 	fileHash := "44d88612fea8a8f36de82e1278abb02f" // EICAR test file
-	fileReport, resp, err := filesService.GetFileReport(ctx, fileHash)
+	fileReport, resp, err := vtClient.Files.GetFileReport(ctx, fileHash)
 
 	if err != nil {
 		log.Printf("Error getting file report: %v", err)

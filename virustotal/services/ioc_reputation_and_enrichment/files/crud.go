@@ -6,150 +6,22 @@ import (
 	"fmt"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/constants"
+	"resty.dev/v3"
 )
 
-type (
-	// FilesServiceInterface defines the interface for file operations
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference
-	FilesServiceInterface interface {
-		// UploadFile uploads and analyses a file
-		//
-		// Uploads a file to VirusTotal for analysis. Automatically handles file size detection and
-		// selects the appropriate upload endpoint:
-		// - Files <= 32MB: uploaded directly to /files
-		// - Files > 32MB and <= 650MB: uploaded via /files/upload_url
-		// - Files > 650MB: rejected with an error
-		//
-		// The file content is streamed to avoid loading the entire file into memory.
-		// Progress updates are sent through the ProgressCallback channel if provided.
-		// Returns an analysis ID that can be used to retrieve the results.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-scan
-		UploadFile(ctx context.Context, request *UploadFileRequest) (*UploadFileResponse, *interfaces.Response, error)
-
-		// GetUploadURL gets a URL for uploading files larger than 32MB
-		//
-		// Returns a special upload URL that can be used to upload files up to 650MB.
-		// Each URL can only be used once and expires after 1 hour.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-upload-url
-		GetUploadURL(ctx context.Context) (*UploadURLResponse, *interfaces.Response, error)
-
-		// GetFileReport retrieves information about a file
-		//
-		// Returns comprehensive information about a file including detection results, metadata,
-		// PE information, signatures, and more. The file ID can be any hash (MD5, SHA1, SHA256).
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/file-info
-		GetFileReport(ctx context.Context, id string) (*FileResponse, *interfaces.Response, error)
-
-		// RescanFile requests a file rescan (re-analysis)
-		//
-		// Reanalyses a file already in VirusTotal without uploading it again. Returns an analysis ID
-		// that can be used to retrieve the updated results.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-analyse
-		RescanFile(ctx context.Context, id string) (*RescanResponse, *interfaces.Response, error)
-
-		// GetFileDownloadURL gets a download URL for a file
-		//
-		// Returns a signed URL from where the file can be downloaded. Getting the URL counts as a file
-		// download in quota. The URL expires after 1 hour. Requires special privileges.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-download-url
-		GetFileDownloadURL(ctx context.Context, id string) (*DownloadURLResponse, *interfaces.Response, error)
-
-		// DownloadFile downloads a file
-		//
-		// Returns a redirect URL to download the file. Similar to GetFileDownloadURL but redirects
-		// directly. The URL can be reused for 1 hour. Requires premium privileges.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-download
-		DownloadFile(ctx context.Context, id string) (*DownloadURLResponse, *interfaces.Response, error)
-
-		// GetCommentsOnFile retrieves comments on a file
-		//
-		// Returns a list of comments posted by the VirusTotal community about the file.
-		// Comments may include tags extracted from words starting with #. Results are paginated.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-comments-get
-		GetCommentsOnFile(ctx context.Context, id string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
-
-		// AddCommentToFile adds a comment to a file
-		//
-		// Posts a comment for a file. Words starting with # in the comment text are automatically
-		// converted to tags. Returns the created comment object with its assigned ID and creation date.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-comments-post
-		AddCommentToFile(ctx context.Context, id string, comment string) (*AddCommentResponse, *interfaces.Response, error)
-
-		// GetObjectsRelatedToFile retrieves objects related to a file
-		//
-		// Returns objects related to a file based on the specified relationship type.
-		// Supported relationships include: contacted_domains, contacted_ips, contacted_urls,
-		// dropped_files, bundled_files, and more. Results are paginated.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-relationships
-		GetObjectsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error)
-
-		// GetObjectDescriptorsRelatedToFile retrieves object descriptors (IDs only) related to a file
-		//
-		// Returns lightweight object descriptors with just IDs and context attributes instead of full objects.
-		// This is more efficient when you only need to know which objects are related without fetching all attributes.
-		// Supported relationships are the same as GetObjectsRelatedToFile.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-relationships-ids
-		GetObjectDescriptorsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error)
-
-		// GetSigmaRule retrieves a crowdsourced Sigma rule object
-		//
-		// Returns information about a Sigma rule used in crowdsourced analysis results.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-sigma-rules
-		GetSigmaRule(ctx context.Context, id string) (*SigmaRuleResponse, *interfaces.Response, error)
-
-		// GetYARARuleset retrieves a crowdsourced YARA ruleset
-		//
-		// Returns information about a YARA ruleset used in crowdsourced analysis results.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/get-yara-rulesets
-		GetYARARuleset(ctx context.Context, id string) (*YARARulesetResponse, *interfaces.Response, error)
-
-		// GetVotesOnFile retrieves votes on a file
-		//
-		// Returns a list of votes from the VirusTotal community on whether the file is harmless or malicious.
-		// Each vote includes the verdict, date, and value. Results are paginated.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-votes-get
-		GetVotesOnFile(ctx context.Context, id string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error)
-
-		// AddVoteToFile adds a vote to a file
-		//
-		// Posts a vote for a file. The verdict must be either "harmless" or "malicious".
-		// Returns the created vote object with its assigned ID, creation date, and value.
-		//
-		// VirusTotal API docs: https://docs.virustotal.com/reference/files-votes-post
-		AddVoteToFile(ctx context.Context, id string, verdict string) (*AddVoteResponse, *interfaces.Response, error)
-	}
-
-	// Service handles communication with the files
-	// related methods of the VirusTotal API.
-	//
-	// VirusTotal API docs: https://docs.virustotal.com/reference
-	Service struct {
-		client interfaces.HTTPClient
-	}
-)
-
-// Ensure Service implements FilesServiceInterface
-var _ FilesServiceInterface = (*Service)(nil)
+// Service handles communication with the files
+// related methods of the VirusTotal API.
+//
+// VirusTotal API docs: https://docs.virustotal.com/reference
+type Service struct {
+	client client.Client
+}
 
 // NewService creates a new files service
-func NewService(client interfaces.HTTPClient) *Service {
+func NewService(c client.Client) *Service {
 	return &Service{
-		client: client,
+		client: c,
 	}
 }
 
@@ -167,7 +39,7 @@ func NewService(client interfaces.HTTPClient) *Service {
 //
 // https://docs.virustotal.com/reference/files-scan
 // https://docs.virustotal.com/reference/files-upload-url
-func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*UploadFileResponse, *interfaces.Response, error) {
+func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*UploadFileResponse, *resty.Response, error) {
 	if request == nil || request.File == nil {
 		return nil, nil, fmt.Errorf("file is required")
 	}
@@ -206,10 +78,6 @@ func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*
 		endpoint = EndpointFiles // Relative path: "/files"
 	}
 
-	headers := map[string]string{
-		"Accept": "application/json",
-	}
-
 	var formFields map[string]string
 	if request.Password != "" {
 		formFields = map[string]string{
@@ -218,7 +86,12 @@ func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*
 	}
 
 	var result UploadFileResponse
-	resp, err := s.client.PostMultipart(ctx, endpoint, "file", request.Filename, request.File, request.FileSize, formFields, headers, request.ProgressCallback, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetMultipartFile("file", request.Filename, request.File, request.FileSize, client.MultipartProgressCallback(request.ProgressCallback)).
+		SetMultipartFormData(formFields).
+		SetResult(&result).
+		Post(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -229,16 +102,15 @@ func (s *Service) UploadFile(ctx context.Context, request *UploadFileRequest) (*
 // GetUploadURL gets a URL for uploading files larger than 32MB
 // URL: GET https://www.virustotal.com/api/v3/files/upload_url
 // https://docs.virustotal.com/reference/files-upload-url
-func (s *Service) GetUploadURL(ctx context.Context) (*UploadURLResponse, *interfaces.Response, error) {
+func (s *Service) GetUploadURL(ctx context.Context) (*UploadURLResponse, *resty.Response, error) {
 	endpoint := fmt.Sprintf("%s/upload_url", EndpointFiles)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result UploadURLResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -249,20 +121,19 @@ func (s *Service) GetUploadURL(ctx context.Context) (*UploadURLResponse, *interf
 // GetFileReport retrieves information about a file
 // URL: GET https://www.virustotal.com/api/v3/files/{id}
 // https://docs.virustotal.com/reference/file-info
-func (s *Service) GetFileReport(ctx context.Context, id string) (*FileResponse, *interfaces.Response, error) {
+func (s *Service) GetFileReport(ctx context.Context, id string) (*FileResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointFiles, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result FileResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -273,20 +144,19 @@ func (s *Service) GetFileReport(ctx context.Context, id string) (*FileResponse, 
 // RescanFile requests a file rescan (re-analysis)
 // URL: POST https://www.virustotal.com/api/v3/files/{id}/analyse
 // https://docs.virustotal.com/reference/files-analyse
-func (s *Service) RescanFile(ctx context.Context, id string) (*RescanResponse, *interfaces.Response, error) {
+func (s *Service) RescanFile(ctx context.Context, id string) (*RescanResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/analyse", EndpointFiles, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result RescanResponse
-	resp, err := s.client.Post(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Post(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -297,20 +167,19 @@ func (s *Service) RescanFile(ctx context.Context, id string) (*RescanResponse, *
 // GetFileDownloadURL gets a download URL for a file
 // URL: GET https://www.virustotal.com/api/v3/files/{id}/download_url
 // https://docs.virustotal.com/reference/files-download-url
-func (s *Service) GetFileDownloadURL(ctx context.Context, id string) (*DownloadURLResponse, *interfaces.Response, error) {
+func (s *Service) GetFileDownloadURL(ctx context.Context, id string) (*DownloadURLResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/download_url", EndpointFiles, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result DownloadURLResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -321,20 +190,19 @@ func (s *Service) GetFileDownloadURL(ctx context.Context, id string) (*DownloadU
 // DownloadFile downloads a file
 // URL: GET https://www.virustotal.com/api/v3/files/{id}/download
 // https://docs.virustotal.com/reference/files-download
-func (s *Service) DownloadFile(ctx context.Context, id string) (*DownloadURLResponse, *interfaces.Response, error) {
+func (s *Service) DownloadFile(ctx context.Context, id string) (*DownloadURLResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/download", EndpointFiles, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result DownloadURLResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -347,30 +215,27 @@ func (s *Service) DownloadFile(ctx context.Context, id string) (*DownloadURLResp
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/files-comments-get
-func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
+func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/comments", EndpointFiles, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
-	queryParams := make(map[string]string)
-
 	if opts != nil {
+		builder := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON)
+
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 
 		var result RelatedObjectsResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := builder.SetResult(&result).Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -380,14 +245,17 @@ func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRel
 
 	var allObjects []RelatedObject
 
-	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
-		var pageResponse RelatedObjectsResponse
-		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal page: %w", err)
-		}
-		allObjects = append(allObjects, pageResponse.Data...)
-		return nil
-	})
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		GetPaginated(endpoint, func(pageData []byte) error {
+			var pageResponse RelatedObjectsResponse
+			if err := json.Unmarshal(pageData, &pageResponse); err != nil {
+				return fmt.Errorf("failed to unmarshal page: %w", err)
+			}
+			allObjects = append(allObjects, pageResponse.Data...)
+			return nil
+		})
 
 	if err != nil {
 		return nil, resp, err
@@ -401,7 +269,7 @@ func (s *Service) GetCommentsOnFile(ctx context.Context, id string, opts *GetRel
 // AddCommentToFile adds a comment to a file
 // URL: POST https://www.virustotal.com/api/v3/files/{id}/comments
 // https://docs.virustotal.com/reference/files-comments-post
-func (s *Service) AddCommentToFile(ctx context.Context, id string, comment string) (*AddCommentResponse, *interfaces.Response, error) {
+func (s *Service) AddCommentToFile(ctx context.Context, id string, comment string) (*AddCommentResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
@@ -420,13 +288,13 @@ func (s *Service) AddCommentToFile(ctx context.Context, id string, comment strin
 		},
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result AddCommentResponse
-	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetBody(requestBody).
+		SetResult(&result).
+		Post(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -439,7 +307,7 @@ func (s *Service) AddCommentToFile(ctx context.Context, id string, comment strin
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/files-relationships
-func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectsResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
@@ -452,23 +320,20 @@ func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relati
 		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
-	queryParams := make(map[string]string)
-
 	if opts != nil {
+		builder := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON)
+
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 
 		var result RelatedObjectsResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := builder.SetResult(&result).Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -478,14 +343,17 @@ func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relati
 
 	var allObjects []RelatedObject
 
-	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
-		var pageResponse RelatedObjectsResponse
-		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal page: %w", err)
-		}
-		allObjects = append(allObjects, pageResponse.Data...)
-		return nil
-	})
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		GetPaginated(endpoint, func(pageData []byte) error {
+			var pageResponse RelatedObjectsResponse
+			if err := json.Unmarshal(pageData, &pageResponse); err != nil {
+				return fmt.Errorf("failed to unmarshal page: %w", err)
+			}
+			allObjects = append(allObjects, pageResponse.Data...)
+			return nil
+		})
 
 	if err != nil {
 		return nil, resp, err
@@ -501,7 +369,7 @@ func (s *Service) GetObjectsRelatedToFile(ctx context.Context, id string, relati
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/files-relationships-ids
-func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *interfaces.Response, error) {
+func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id string, relationship string, opts *GetRelatedObjectsOptions) (*RelatedObjectDescriptorsResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
@@ -514,23 +382,20 @@ func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id stri
 		return nil, nil, fmt.Errorf("failed to build relationship endpoint: %w", err)
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
-	queryParams := make(map[string]string)
-
 	if opts != nil {
+		builder := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON)
+
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 
 		var result RelatedObjectDescriptorsResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := builder.SetResult(&result).Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -540,14 +405,17 @@ func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id stri
 
 	var allDescriptors []ObjectDescriptor
 
-	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
-		var pageResponse RelatedObjectDescriptorsResponse
-		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal page: %w", err)
-		}
-		allDescriptors = append(allDescriptors, pageResponse.Data...)
-		return nil
-	})
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		GetPaginated(endpoint, func(pageData []byte) error {
+			var pageResponse RelatedObjectDescriptorsResponse
+			if err := json.Unmarshal(pageData, &pageResponse); err != nil {
+				return fmt.Errorf("failed to unmarshal page: %w", err)
+			}
+			allDescriptors = append(allDescriptors, pageResponse.Data...)
+			return nil
+		})
 
 	if err != nil {
 		return nil, resp, err
@@ -561,20 +429,19 @@ func (s *Service) GetObjectDescriptorsRelatedToFile(ctx context.Context, id stri
 // GetSigmaRule retrieves a crowdsourced Sigma rule object
 // URL: GET https://www.virustotal.com/api/v3/sigma_rules/{id}
 // https://docs.virustotal.com/reference/get-sigma-rules
-func (s *Service) GetSigmaRule(ctx context.Context, id string) (*SigmaRuleResponse, *interfaces.Response, error) {
+func (s *Service) GetSigmaRule(ctx context.Context, id string) (*SigmaRuleResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("sigma rule ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointSigmaRules, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result SigmaRuleResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -585,20 +452,19 @@ func (s *Service) GetSigmaRule(ctx context.Context, id string) (*SigmaRuleRespon
 // GetYARARuleset retrieves a crowdsourced YARA ruleset
 // URL: GET https://www.virustotal.com/api/v3/yara_rulesets/{id}
 // https://docs.virustotal.com/reference/get-yara-rulesets
-func (s *Service) GetYARARuleset(ctx context.Context, id string) (*YARARulesetResponse, *interfaces.Response, error) {
+func (s *Service) GetYARARuleset(ctx context.Context, id string) (*YARARulesetResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("YARA ruleset ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s", EndpointYARARulesets, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result YARARulesetResponse
-	resp, err := s.client.Get(ctx, endpoint, nil, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetResult(&result).
+		Get(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}
@@ -611,30 +477,27 @@ func (s *Service) GetYARARuleset(ctx context.Context, id string) (*YARARulesetRe
 // Query Params: limit (optional), cursor (optional)
 // Pagination: Pass nil opts for automatic pagination (all pages). Provide opts for manual pagination (single page).
 // https://docs.virustotal.com/reference/files-votes-get
-func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesOptions) (*VotesResponse, *interfaces.Response, error) {
+func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesOptions) (*VotesResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
 
 	endpoint := fmt.Sprintf("%s/%s/votes", EndpointFiles, id)
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
-	queryParams := make(map[string]string)
-
 	if opts != nil {
+		builder := s.client.NewRequest(ctx).
+			SetHeader("Accept", constants.ApplicationJSON).
+			SetHeader("Content-Type", constants.ApplicationJSON)
+
 		if opts.Limit > 0 {
-			queryParams["limit"] = fmt.Sprintf("%d", opts.Limit)
+			builder = builder.SetQueryParam("limit", fmt.Sprintf("%d", opts.Limit))
 		}
 		if opts.Cursor != "" {
-			queryParams["cursor"] = opts.Cursor
+			builder = builder.SetQueryParam("cursor", opts.Cursor)
 		}
 
 		var result VotesResponse
-		resp, err := s.client.Get(ctx, endpoint, queryParams, headers, &result)
+		resp, err := builder.SetResult(&result).Get(endpoint)
 		if err != nil {
 			return nil, resp, err
 		}
@@ -644,14 +507,17 @@ func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesO
 
 	var allVotes []Vote
 
-	resp, err := s.client.GetPaginated(ctx, endpoint, queryParams, headers, func(pageData []byte) error {
-		var pageResponse VotesResponse
-		if err := json.Unmarshal(pageData, &pageResponse); err != nil {
-			return fmt.Errorf("failed to unmarshal page: %w", err)
-		}
-		allVotes = append(allVotes, pageResponse.Data...)
-		return nil
-	})
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		GetPaginated(endpoint, func(pageData []byte) error {
+			var pageResponse VotesResponse
+			if err := json.Unmarshal(pageData, &pageResponse); err != nil {
+				return fmt.Errorf("failed to unmarshal page: %w", err)
+			}
+			allVotes = append(allVotes, pageResponse.Data...)
+			return nil
+		})
 
 	if err != nil {
 		return nil, resp, err
@@ -665,7 +531,7 @@ func (s *Service) GetVotesOnFile(ctx context.Context, id string, opts *GetVotesO
 // AddVoteToFile adds a vote (harmless or malicious) to a file
 // URL: POST https://www.virustotal.com/api/v3/files/{id}/votes
 // https://docs.virustotal.com/reference/files-votes-post
-func (s *Service) AddVoteToFile(ctx context.Context, id string, verdict string) (*AddVoteResponse, *interfaces.Response, error) {
+func (s *Service) AddVoteToFile(ctx context.Context, id string, verdict string) (*AddVoteResponse, *resty.Response, error) {
 	if id == "" {
 		return nil, nil, fmt.Errorf("file ID is required")
 	}
@@ -687,13 +553,13 @@ func (s *Service) AddVoteToFile(ctx context.Context, id string, verdict string) 
 		},
 	}
 
-	headers := map[string]string{
-		"Accept":       "application/json",
-		"Content-Type": "application/json",
-	}
-
 	var result AddVoteResponse
-	resp, err := s.client.Post(ctx, endpoint, requestBody, headers, &result)
+	resp, err := s.client.NewRequest(ctx).
+		SetHeader("Accept", constants.ApplicationJSON).
+		SetHeader("Content-Type", constants.ApplicationJSON).
+		SetBody(requestBody).
+		SetResult(&result).
+		Post(endpoint)
 	if err != nil {
 		return nil, resp, err
 	}

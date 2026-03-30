@@ -1,13 +1,11 @@
 package client
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"maps"
 	"net/url"
 
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/interfaces"
+	"resty.dev/v3"
 )
 
 // PaginationMeta contains pagination metadata for VirusTotal cursor-based pagination
@@ -28,48 +26,42 @@ type PaginationOptions struct {
 	Cursor string `json:"cursor,omitempty"`
 }
 
-// GetPaginated executes a paginated GET request, automatically looping through all pages.
-// The mergePage callback receives raw JSON for each page and handles unmarshaling and merging.
-// Returns response metadata from the last page and error.
-func (t *Transport) GetPaginated(ctx context.Context, path string, queryParams map[string]string, headers map[string]string, mergePage func(pageData []byte) error) (*interfaces.Response, error) {
-	currentParams := make(map[string]string)
-	maps.Copy(currentParams, queryParams)
-
-	var lastResp *interfaces.Response
+// executePaginated implements requestExecutor for Transport.
+// Uses VirusTotal's cursor-based pagination via links.next.
+func (t *Transport) executePaginated(req *resty.Request, path string, mergePage func([]byte) error) (*resty.Response, error) {
+	var lastResp *resty.Response
 
 	for {
-		var rawResponse json.RawMessage
-		resp, err := t.Get(ctx, path, currentParams, headers, &rawResponse)
+		resp, err := t.executeRequest(req, "GET", path)
 		lastResp = resp
 		if err != nil {
 			return lastResp, err
 		}
 
-		// CRUD function handles unmarshaling and merging
-		if err := mergePage(rawResponse); err != nil {
+		body := resp.Bytes()
+		if err := mergePage(body); err != nil {
 			return lastResp, err
 		}
 
-		// Extract pagination info to check for next page
 		var pageInfo struct {
 			Links *PaginationLinks `json:"links,omitempty"`
 		}
-		if err := json.Unmarshal(rawResponse, &pageInfo); err != nil {
+		if err := json.Unmarshal(body, &pageInfo); err != nil {
 			return lastResp, fmt.Errorf("failed to parse pagination info: %w", err)
 		}
 
-		// No more pages available
 		if !HasNextPage(pageInfo.Links) {
 			break
 		}
 
-		// Extract parameters from next page URL
 		nextParams, err := extractParamsFromURL(pageInfo.Links.Next)
 		if err != nil {
 			return lastResp, fmt.Errorf("failed to parse next URL: %w", err)
 		}
 
-		maps.Copy(currentParams, nextParams)
+		for k, v := range nextParams {
+			req.SetQueryParam(k, v)
+		}
 	}
 
 	return lastResp, nil

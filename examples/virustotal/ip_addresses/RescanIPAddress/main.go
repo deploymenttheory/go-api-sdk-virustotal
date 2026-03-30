@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal"
-	"github.com/deploymenttheory/go-api-sdk-virustotal/virustotal/client"
 	"go.uber.org/zap"
 )
 
@@ -27,10 +26,10 @@ func main() {
 	defer logger.Sync()
 
 	vtClient, err := virustotal.NewClientFromEnv(
-		client.WithLogger(logger),
-		client.WithTimeout(30*time.Second),
-		client.WithRetryCount(3),
-		client.WithDebug(),
+		virustotal.WithLogger(logger),
+		virustotal.WithTimeout(30*time.Second),
+		virustotal.WithRetryCount(3),
+		virustotal.WithDebug(),
 	)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
